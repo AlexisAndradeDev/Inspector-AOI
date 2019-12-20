@@ -1,0 +1,75 @@
+Pasos previos:
+    - Las imágenes de los tableros a debugear deben estar alineadas (regallbrds.py), de lo contrario, los resultados no serán coherentes.
+    - El nombre de las imágenes de las sub-templates deben ser: nombre-núm_de_subtemplate. Ejemplo: resistencia_clasica-1.jpg
+
+Estructura de datos:
+
+[
+
+['Ruta de los tableros terminando en /', 'uv_inspection:True', número de imágenes, número de multihilos para tableros, número de multihilos para puntos de inspección],
+
+[Lista vacía],
+
+[
+
+# Template Matching
+# gray
+['luz_utilizada', 'nombre_de_punto_de_ins)', [x1,y1,x2,y2], 'm', [ "gray", 'Ruta y nombre de la imagen, sin numero de subtemplate ni .jpg', núm de sub-templates, [calificación mínima de las sub-templates separadas por comas], número de coincidencias necesarias], [['Filtro secundario', parámetros], ['Otro filtro secundario', parámetros]] ]
+['white', 'resistencia1-presencia', [1840+124, 430+111, 1840+345+124, 430+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+# binary HSV
+['luz_utilizada', 'nombre_de_punto_de_ins)', [x1,y1,x2,y2], 'm', [ ["binary", invertir_binarizado, "hsv", [mínimos, máximos] ], 'Ruta y nombre de la imagen, sin numero de subtemplate ni .jpg', núm de sub-templates, [calificación mínima de las sub-templates separadas por comas], número de coincidencias necesarias], [['Filtro secundario', parámetros], ['Otro filtro secundario', parámetros]] ]
+['white', 'resistencia393-presencia', [1207, 829, 1207+73, 829+170], 'm', [["binary", False, "hsv", [[0,16,147],[180,81,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [1], 1], [['GaussianBlur', 5]] ],
+# binary HSV invertido
+['luz_utilizada', 'nombre_de_punto_de_ins)', [x1,y1,x2,y2], 'm', [ ["binary", invertir_binarizado, "hsv", [mínimos, máximos] ], 'Ruta y nombre de la imagen, sin numero de subtemplate ni .jpg', núm de sub-templates, [calificación mínima de las sub-templates separadas por comas], número de coincidencias necesarias], [['Filtro secundario', parámetros], ['Otro filtro secundario', parámetros]] ]
+['white', 'resistencia393-presencia', [1207, 829, 1207+73, 829+170], 'm', [["binary", True, "hsv", [[0,16,147],[180,81,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [1], 1], [['GaussianBlur', 5]] ],
+# binary GRAY
+['luz_utilizada', 'nombre_de_punto_de_ins)', [x1,y1,x2,y2], 'm', [ ["binary", invertir_binarizado, "gray", [mínimos, máximos] ], 'Ruta y nombre de la imagen, sin numero de subtemplate ni .jpg', núm de sub-templates, [calificación mínima de las sub-templates separadas por comas], número de coincidencias necesarias], [['Filtro secundario', parámetros], ['Otro filtro secundario', parámetros]] ]
+['white', 'resistencia393-presencia_gray', [1207, 829, 1207+73, 829+170], 'm', [["binary", False, "gray", [147,255]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+# binary GRAY invertido
+['luz_utilizada', 'nombre_de_punto_de_ins)', [x1,y1,x2,y2], 'm', [ ["binary", invertir_binarizado, "gray", [mínimos, máximos] ], 'Ruta y nombre de la imagen, sin numero de subtemplate ni .jpg', núm de sub-templates, [calificación mínima de las sub-templates separadas por comas], número de coincidencias necesarias], [['Filtro secundario', parámetros], ['Otro filtro secundario', parámetros]] ]
+['white', 'resistencia393-presencia_gray', [1207, 829, 1207+73, 829+170], 'm', [["binary", True, "gray", [147,255]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+
+# Blob
+['luz_utilizada', 'nombre_de_punto_de_ins)', [x1,y1,x2,y2], 'b', [invertir_binarizado, 'gray/hsv', [mín color, máx color], min_tamaño_de_blob, máx_tamaño_de_blob, mín_área_total, máx_área_total, máx_tamaño_de_un_blob_permitido], [['Filtro secundario', parámetros], ['Otro filtro secundario', parámetros]] ]
+# gray
+['white', 'polaridad-gray', [904, 1198, 904+185, 1198+32], 'b', [False, 'gray', [21, 255], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+# gray invertido
+['white', 'polaridad-gray', [904, 1198, 904+185, 1198+32], 'b', [True, 'gray', [21, 255], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+# HSV
+['white', 'polaridad-hsv', [904, 1198, 904+185, 1198+32], 'b', [False, 'hsv', [[0, 0, 23], [180, 255, 255]], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+# HSV invertido
+['white', 'polaridad-hsv', [904, 1198, 904+185, 1198+32], 'b', [True, 'hsv', [[0, 0, 23], [180, 255, 255]], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+
+
+]
+
+]
+
+
+Ejemplo real (datos utilizados para tablero MCI-01 con resolución 2464x2056):
+
+[
+
+['C:/Dexill/Inspector/Alpha-Premium/x64/pd/', "uv_inspection:True", 8, 4, 2],
+
+[],
+
+[
+['white', '[r0603,r1,100]', [1840+124, 430+111, 1840+345+124, 430+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia2-presencia', [1840+124, 600+111, 1840+345+124, 600+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia3-presencia', [1840+124, 755+111, 1840+345+124, 755+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia4-presencia', [1840+124, 980+111, 1840+345+124, 980+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia5-presencia', [1840+124, 1140+111, 1840+345+124, 1140+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia6-presencia', [1840+124, 1295+111, 1840+345+124, 1295+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia224-presencia', [1253, 541, 1253+137, 541+82], 'm', [["binary", False, "hsv", [[13,0,167],[136,124,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_224', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia393-presencia', [1207, 829, 1207+73, 829+170], 'm', [["binary", False, "hsv", [[0,16,147],[180,81,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [1], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia393-presencia_gray', [1207, 829, 1207+73, 829+170], 'm', [["binary", False, "gray", [147,255]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+["ultraviolet", 'polaridad-hsv', [904, 1198, 904+185, 1198+32], 'b', [False, 'hsv', [[0, 0, 23], [180, 255, 255]], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+["ultraviolet", 'polaridad-gray', [904, 1198, 904+185, 1198+32], 'b', [False, 'gray', [21, 255], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+],
+
+
+]
+
+Notas:
+    * Con datos numéricos, se pueden utilizar operaciones. Por ejemplo, en las coordenadas de las ventanas es válido poner: [1840+124, 430+111, 1840+345+124, 430+155+111]

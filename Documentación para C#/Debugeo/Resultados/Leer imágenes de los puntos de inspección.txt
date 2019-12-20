@@ -1,0 +1,10 @@
+Las imágenes de los tableros alineados se encuentran en la ruta C:/Dexill/Inspector/Alpha-Premium/x64/pd/ con el nombre de:
+	núm_tablero-nombre_del_punto_de_inspección-luz_utilizada-nombre_de_imagen.bmp
+
+El formato del nombre de las imagenes es: num_de_tablero-nombre_del_punto_de_inspeccion-luz_utilizada(white/ultraviolet)-nombre_de_imagen.bmp
+Ejemplo: 1-[resistencia1,cuerpo]-white-filtered.bmp (template matching)
+         1-[resistencia2,cuerpo]-white-rgb.bmp (template matching)
+         1-[todas_las_resistencias]-white-matches.bmp (template matching)
+         2-[resistencia1,izq]-white-rgb.bmp (blob)
+         2-[resistencia2,izq]-white-filtered.bmp (blob)
+         2-[resistencia2,izq]-white-binary.bmp (blob)

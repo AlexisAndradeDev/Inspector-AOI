@@ -1,0 +1,15 @@
+Las imagenes de los tableros alineados al terminar de inspeccionar estarán en la ruta:
+C:/Dexill/Inspector/Alpha-Premium/x64/inspections\status\board-num_de_tablero.jpg
+
+board-1.bmp
+board-2.bmp
+board-3.bmp
+board-4.bmp
+...
+
+Las imágenes del tablero alineado con luz ultravioleta estarán en la misma ruta con la extensión -ultraviolet:
+
+board-1-ultraviolet.bmp
+board-2-ultraviolet.bmp
+board-3-ultraviolet.bmp
+...

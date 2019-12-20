@@ -1,0 +1,32 @@
+Los errores deben leerse después de leer los resultados (al finalizar la inspeccion), ya que los errores se escriben durante la inspección y no al final de ésta.
+
+Errores de programación graves:
+Son los errores que se dan por un error en la programación o en un fallo al comunicar con C#.
+Se escribe solo el código del error en el archivo "error.io".
+Un ejemplo es el código NO_RESULTS, que indica que no se obtuvo el resultado de ningún tablero.
+Son el tipo de error menos frecuente y mas grave.
+
+
+Errores de programacion durante la inspección de un tablero: 
+Son los errores que se dan por un error en la programación o en un fallo al comunicar con C#, por ejemplo, NO_RESULTS significa
+que no se obtuvo datos de ningún punto de inspección de un tablero. Se escriben en el archivo de resultados.
+
+Tiene el formato:
+    &num_de_tablero;error;[codigo_del_error];tiempo_de_registro;tiempo_de_inspeccion#
+Ejemplo:
+    &1;error;['NO_RESULTS'];0.14240070000000005;0.0325302999999999#
+    &3;error;['NO_RESULTS'];0.12340070000000005;0.0265302999999999#
+    &2;error;['NO_RESULTS'];0.11540070000000005;0.0393029999999999#
+
+
+Errores de registro:
+Son los errores que hubo en el proceso de registro del tablero.
+
+Tiene el formato:
+    &num_de_tablero;registration_failed;[codigo_del_error];tiempo_de_registro;tiempo_de_inspeccion#
+Ejemplo:
+    &1;registration_failed;['APPROPRIATE_CIRCLE_FID_1'];0.025868900000000306;0#
+
+Se escriben en los resultados de los tableros (results.io).
+Estos errores pueden ser causados por un mal ajuste de parámetros para registrar (muy común), o por un error desconocido de programación con el que hasta el momento no me he topado.
+Este error NO tiene nada que ver con que no haya pasado la función de Skip.

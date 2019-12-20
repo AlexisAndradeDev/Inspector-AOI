@@ -1,0 +1,57 @@
+ADVERTENCIA: Para escribir una ruta que leera el script de Python, utilizar el slash /, no el backslash \.
+
+Todos los elementos son una combinacion de los datos de registro y debugeo.
+
+Lo unico que cambia es la primera lista:
+
+[
+
+[
+'uv_inspection:True/False',
+num de tableros, num de multihilos (para inspeccionar tableros), num de sub-multihilos (para los puntos de inspección), "check:no/low/advanced", [[region del tablero 1], [region del tablero 2], [region del tablero 3]],
+[datos de la función skip]
+],
+
+[datos de registro],
+
+[datos de debugeo]
+
+]
+
+
+Los datos de la función skip son exactamente los mismos que un punto de inspección normal, como el siguiente ejemplo (realiza un Template Matching en un área grande, si no encuentra coincidencias, el tablero no se registra):
+["white", 'skip', [1700+124, 300+111, 1700+700+124, 300+500+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ]
+
+
+
+Ejemplo real (MCI-01 5MPX):
+
+[
+
+[
+"uv_inspection:True",
+4, 4, 2, "check:advanced", [[0, 0, 2450, 2056], [2450, 0, 4920, 2056], [0, 2056, 2450, 4112], [2450, 2056, 4920, 4112]],
+["white", 'skip', [1700+124, 300+111, 1700+700+124, 300+500+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+
+],
+
+[
+[[970, 500, 970+249, 500+222], [930, 940, 930+308, 940+251]], [20, 20], [60, 60], [0.85, 0.85], [1.2, 1.2], 90, [1094, 611],
+[ [["medianBlur", 9], ["reverseBinary", [[40, 40, 40], [255, 255, 255]] ]], [["medianBlur", 9], ["reverseBinary", [[40, 40, 40], [255, 255, 255]] ]] ],
+],
+
+[
+['white', '[r0603,r1,100]', [1840+124, 430+111, 1840+345+124, 430+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia2-presencia', [1840+124, 600+111, 1840+345+124, 600+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia3-presencia', [1840+124, 755+111, 1840+345+124, 755+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia4-presencia', [1840+124, 980+111, 1840+345+124, 980+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia5-presencia', [1840+124, 1140+111, 1840+345+124, 1140+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia6-presencia', [1840+124, 1295+111, 1840+345+124, 1295+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia224-presencia', [1253, 541, 1253+137, 541+82], 'm', [["binary", False, "hsv", [[13,0,167],[136,124,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_224', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia393-presencia', [1207, 829, 1207+73, 829+170], 'm', [["binary", False, "hsv", [[0,16,147],[180,81,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [1], 1], [['GaussianBlur', 5]] ],
+['white', 'resistencia393-presencia_gray', [1207, 829, 1207+73, 829+170], 'm', [["binary", False, "gray", [147,255]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+["ultraviolet", 'polaridad-hsv', [904, 1198, 904+185, 1198+32], 'b', [False, 'hsv', [[0, 0, 23], [180, 255, 255]], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+["ultraviolet", 'polaridad-gray', [904, 1198, 904+185, 1198+32], 'b', [False, 'gray', [21, 255], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+],
+
+]
