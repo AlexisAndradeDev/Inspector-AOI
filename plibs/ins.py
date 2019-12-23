@@ -105,7 +105,7 @@ def use_skip_function(board_image, skip_function):
         return False, status, results, resulting_images, fails
 
 
-def inspect_boards(first_board, last_board, photo, inspection_points, fiducial_1, fiducial_2, settings, photo_ultraviolet):
+def inspect_boards(first_board, last_board, photo, inspection_points, registration_settings, settings, photo_ultraviolet):
     global results
 
     # la función range toma desde first hasta last-1, así que hay que sumarle 1
@@ -145,7 +145,7 @@ def inspect_boards(first_board, last_board, photo, inspection_points, fiducial_1
         # Alinear imagen del tablero con las ventanas y guardar tiempo de registro
         start = timer()
         fail, _, aligned_board_image, rotation, translation = cv_functions.align_board_image(
-            board_image, fiducial_1, fiducial_2, objective_angle, objective_x, objective_y, return_rotation_and_translation=True
+            board_image, registration_settings
         )
         end = timer()
         registration_time = end-start
@@ -155,7 +155,7 @@ def inspect_boards(first_board, last_board, photo, inspection_points, fiducial_1
             board_image, _ = cv_functions.rotate(board_image, 180)
             start = timer()
             fail, _, aligned_board_image, rotation, translation = cv_functions.align_board_image(
-                board_image, fiducial_1, fiducial_2, objective_angle, objective_x, objective_y, return_rotation_and_translation=True
+                board_image, registration_settings
             )
             end = timer()
             registration_time += end-start
@@ -211,7 +211,7 @@ def inspect_boards(first_board, last_board, photo, inspection_points, fiducial_1
 
         results += board.get_results() # resultados de los puntos de inspección y resultados del tablero (tiempos, status)
 
-def inspect(photo, inspection_points, fiducial_1, fiducial_2, settings, photo_ultraviolet=None):
+def inspect(photo, inspection_points, registration_settings, settings, photo_ultraviolet=None):
     global results
 
     # Inspeccionar los tableros con multihilos
@@ -219,7 +219,7 @@ def inspect(photo, inspection_points, fiducial_1, fiducial_2, settings, photo_ul
         func=inspect_boards,
         threads_num=settings["threads_num_for_boards"],
         targets_num=settings["boards_num"],
-        func_args=[photo, inspection_points, fiducial_1, fiducial_2, settings, photo_ultraviolet]
+        func_args=[photo, inspection_points, registration_settings, settings, photo_ultraviolet]
     )
 
     start = timer()
@@ -229,7 +229,7 @@ def inspect(photo, inspection_points, fiducial_1, fiducial_2, settings, photo_ul
     # agregar tiempo de inspección total al final de los resultados
     results += "%{0}".format(total_time)
 
-def start_inspection_loop(inspection_points, fiducial_1, fiducial_2, settings):
+def start_inspection_loop(inspection_points, registration_settings, settings):
     global results
     while True:
         # esperar a que exista la imagen de los tableros o el archivo exit.ii para salir de la inspección
@@ -242,9 +242,9 @@ def start_inspection_loop(inspection_points, fiducial_1, fiducial_2, settings):
             if settings["uv_inspection"] == "uv_inspection:True":
                 photo_ultraviolet = force_read_image("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo-ultraviolet.bmp")
                 delete_file("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo-ultraviolet.bmp")
-                inspect(photo, inspection_points, fiducial_1, fiducial_2, settings, photo_ultraviolet=photo_ultraviolet)
+                inspect(photo, inspection_points, registration_settings, settings, photo_ultraviolet=photo_ultraviolet)
             else:
-                inspect(photo, inspection_points, fiducial_1, fiducial_2, settings)
+                inspect(photo, inspection_points, registration_settings, settings)
 
             if not results:
                 write_file_error("NO_RESULTS")
@@ -293,20 +293,77 @@ if __name__ == '__main__':
 
 
     # Datos de registro del tablero (alineación de imagen)
-    [fiducials_windows, min_diameters, max_diameters, min_circle_perfections,
-    max_circle_perfections, objective_angle, [objective_x, objective_y],
-    fiducials_filters] = registration_data
+    [registration_method, method_data] = registration_data
 
-    # Crear 2 objetos con los datos de los fiduciales 1 y 2
-    fiducial_1 = cv_functions.Fiducial(
-        1, fiducials_windows[0], min_diameters[0],
-        max_diameters[0], min_circle_perfections[0],
-        max_circle_perfections[0], fiducials_filters[0])
+    if registration_method == "circular_fiducials":
+        [fiducials_windows, min_diameters, max_diameters, min_circle_perfections,
+        max_circle_perfections, objective_angle, [objective_x, objective_y],
+        fiducials_filters] = method_data
 
-    fiducial_2 = cv_functions.Fiducial(
-        2, fiducials_windows[1], min_diameters[1],
-        max_diameters[1], min_circle_perfections[1],
-        max_circle_perfections[1], fiducials_filters[1])
+        # Crear 2 objetos con los datos de los fiduciales 1 y 2
+        fiducial_1 = cv_functions.Fiducial(
+            1, fiducials_windows[0], min_diameters[0],
+            max_diameters[0], min_circle_perfections[0],
+            max_circle_perfections[0], fiducials_filters[0])
+
+        fiducial_2 = cv_functions.Fiducial(
+            2, fiducials_windows[1], min_diameters[1],
+            max_diameters[1], min_circle_perfections[1],
+            max_circle_perfections[1], fiducials_filters[1])
+
+        registration_settings = {
+            "method":"circular_fiducials",
+            "fiducial_1":fiducial_1,
+            "fiducial_2":fiducial_2,
+            "objective_x":objective_x,
+            "objective_y":objective_y,
+            "objective_angle":objective_angle,
+        }
+
+    if registration_method == "rotation_points_and_translation_point":
+        [rotation_point1_data, rotation_point2_data, translation_point_data,
+        objective_angle, [objective_x, objective_y], rotation_iterations] = method_data
+
+        # Punto de rotación 1
+        [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
+        filters, contours_filters] = rotation_point1_data
+
+        rotation_point1 = cv_functions.create_reference_point(
+            rp_type=rp_type, name="ROTATION_POINT1", coordinates=coordinates,
+            color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
+            invert_binary=invert_binary, filters=filters, contours_filters=contours_filters,
+        )
+
+        # Punto de rotación 2
+        [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
+        filters, contours_filters] = rotation_point2_data
+
+        rotation_point2 = cv_functions.create_reference_point(
+            rp_type=rp_type, name="ROTATION_POINT2", coordinates=coordinates,
+            color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
+            invert_binary=invert_binary, filters=filters, contours_filters=contours_filters,
+        )
+
+        # Punto de traslación
+        [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
+        filters, contours_filters] = translation_point_data
+
+        translation_point = cv_functions.create_reference_point(
+            rp_type=rp_type, name="TRANSLATION_POINT", coordinates=coordinates,
+            color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
+            invert_binary=invert_binary, filters=filters, contours_filters=contours_filters,
+        )
+
+        registration_settings = {
+            "method":"rotation_points_and_translation_point",
+            "rotation_point1":rotation_point1,
+            "rotation_point2":rotation_point2,
+            "translation_point":translation_point,
+            "objective_x":objective_x,
+            "objective_y":objective_y,
+            "objective_angle":objective_angle,
+            "rotation_iterations":rotation_iterations,
+        }
 
 
     # Puntos de inspección
@@ -314,4 +371,4 @@ if __name__ == '__main__':
 
     # Iniciar el bucle de inspección
     results = "" # crear variable global para resultados
-    start_inspection_loop(inspection_points, fiducial_1, fiducial_2, settings)
+    start_inspection_loop(inspection_points, registration_settings, settings)
