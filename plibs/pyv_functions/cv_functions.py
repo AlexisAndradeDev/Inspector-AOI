@@ -308,6 +308,12 @@ def export_images(images, board_number, ins_point_name, light, images_path):
 
 
 # Image Tools
+def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1, c2_size=3, c2_color=(0,0,255), c2_thickness=1):
+    found = img.copy()
+    cv2.circle(found, (x, y), c1_size, c1_color, c1_thickness)
+    cv2.circle(found, (x, y), c2_size, c2_color, c2_thickness)
+    return found
+
 def crop_image(image, coordinates):
     [x1,y1,x2,y2] = coordinates
     return image[y1:y2,x1:x2].copy()
@@ -373,7 +379,7 @@ def rotate(image, angleInDegrees):
     rot[0, 2] += ((b_w / 2) - img_c[0])
     rot[1, 2] += ((b_h / 2) - img_c[1])
 
-    outImg = cv2.warpAffine(image, rot, (b_w, b_h), flags=cv2.INTER_NEAREST)
+    outImg = cv2.warpAffine(image, rot, (b_w, b_h), flags=cv2.INTER_LINEAR)
     return outImg, rot
 
 def translate(img, x, y):
@@ -381,7 +387,7 @@ def translate(img, x, y):
     cols = img.shape[1]
 
     M = np.float32([[1, 0, x],[0, 1, y]])
-    dst = cv2.warpAffine(img,M,(cols,rows), flags=cv2.INTER_NEAREST)
+    dst = cv2.warpAffine(img,M,(cols,rows))
 
     return dst
 
@@ -442,7 +448,31 @@ def apply_filters(img, filters):
 
 
 # Registration tools
-def find_contours(img, lower, upper, color_scale, invert_binary=False):
+def detect_shape(contour):
+    # Inicializar el nombre de la figura y aproximar el contorno (número de vértices)
+    shape = "unidentified"
+    peri = cv2.arcLength(contour, True)
+    vertices = cv2.approxPolyDP(contour, 0.04 * peri, True)
+
+    if len(vertices) == 3:
+	       shape = "triangle"
+
+    elif len(vertices) == 4:
+        # Computar la relación de aspecto (relación entre ancho y alto)
+        (x, y, w, h) = cv2.boundingRect(vertices)
+        ar = w / float(h)
+
+        # un cuadrado tendrá una relación de aspecto aproximada a uno,
+        # de otra forma será un cuadrado
+        if ar >= 0.95 and ar <= 1.05:
+            shape = "square"
+        else:
+            shape = "rectangle"
+
+    return shape
+
+
+def find_all_contours(img, lower, upper, color_scale, invert_binary=False):
     # retorna los contornos encontrados y la imagen binarizada
     if color_scale == "hsv":
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -455,7 +485,6 @@ def find_contours(img, lower, upper, color_scale, invert_binary=False):
         # invertir binarizado
         binary_image = cv2.bitwise_not(binary_image)
 
-
     # Encontrar contornos
     try:
         _, contours, _ = cv2.findContours(binary_image,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
@@ -467,8 +496,88 @@ def find_contours(img, lower, upper, color_scale, invert_binary=False):
 def sort_contours(cnts):
     """ Sorts contours max to min. """
     cnts = sorted(cnts, key = get_contour_area, reverse = True)
-
     return cnts
+
+def find_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+    """
+    Retorna el primer contorno que cumpla con los filtros de contornos introducidos
+    por el usuario.
+    Puede encontrarse según los siguientes parámetros (contours_filters):
+    1. Área mínima del contorno.
+    2. Área máxima del contorno
+    3. Polígono regular: detectar si es un cuadrado, rectángulo o triángulo
+    4. Círculo: circularidad mín del contorno.
+    5. Círculo: mín diámetro.
+    6. Círculo: máx diámetro.
+    """
+
+    contours, binary = find_all_contours(img,
+        lower_color, upper_color, color_scale, invert_binary)
+
+    if contours is None:
+        return None, binary
+
+    # eliminar de la lista los filtros que no existan
+    contours_filters, _ = get_valid_contours_filters(contours_filters)
+
+    for cnt in contours:
+        # si no pasa alguno de los filtros, se cambiará a falso y continuará con el siguiente contorno
+        contour_found = True
+
+        for filter, parameters in contours_filters.items():
+            if filter not in CONTOURS_FILTERS:
+                continue
+
+            if filter == "min_area":
+                min_area = parameters["min_area"]
+                if not get_contour_area(cnt) >= min_area:
+                    contour_found = False
+                    break
+            elif filter == "max_area":
+                max_area = parameters["max_area"]
+                if not get_contour_area(cnt) <= max_area:
+                    contour_found = False
+                    break
+            elif filter == "regular_polygon":
+                required_polygon = parameters["required_polygon"]
+                polygon = detect_shape(cnt)
+                if polygon != required_polygon:
+                    contour_found = False
+                    break
+            elif filter == "circularity":
+                min_circle_perfection = parameters["min_circularity"]
+                max_circle_perfection = 1.2
+
+                perimeter = cv2.arcLength(cnt, True)
+                area = get_contour_area(cnt)
+
+                if not perimeter:
+                    contour_found = False
+                    break
+
+                circularity = math_functions.calculate_circularity(area, perimeter)
+
+                if not min_circle_perfection <= circularity <= max_circle_perfection:
+                    contour_found = False
+                    break
+            elif filter == "min_diameter":
+                min_diameter = parameters["min_diameter"]
+                _,_,diameter,_ = cv2.boundingRect(cnt)
+                if not diameter >= min_diameter:
+                    contour_found = False
+                    break
+            elif filter == "max_diameter":
+                max_diameter = parameters["max_diameter"]
+                _,_,diameter,_ = cv2.boundingRect(cnt)
+                if not diameter <= max_diameter:
+                    contour_found = False
+                    break
+
+        if contour_found:
+            return cnt, binary
+
+    if not contour_found:
+        return None, binary
 
 def get_contour_area(contour):
     x, y, w, h = cv2.boundingRect(contour)
@@ -484,9 +593,93 @@ def get_contour_area(contour):
 
     return none_zero_pixels
 
-def find_fiducial(photo, fiducial):
-    # lista de imágenes que se retornará para ser exportada
-    images_to_export = []
+CONTOURS_FILTERS = ["min_area", "max_area", "regular_polygon", "circularity", "min_diameter", "max_diameter"]
+def get_valid_contours_filters(filters):
+    valid_filters = {} # dict
+    invalid_filters = [] # filtros no existentes
+
+    for filter, parameters in filters.items():
+        if filter in CONTOURS_FILTERS:
+            valid_filters[filter] = parameters
+        else:
+            invalid_filters.append(filter)
+    return valid_filters, invalid_filters
+
+
+def create_corner_parameters(name, coordinates, lower_color, upper_color,
+        color_scale, invert_binary=False, filters=[], contours_filters={}):
+    corner_parameters = {
+        "name":name,
+        "coordinates":coordinates,
+        "lower_color":lower_color,
+        "upper_color":upper_color,
+        "color_scale":color_scale,
+        "invert_binary":invert_binary,
+        "filters":filters,
+        "contours_filters":contours_filters,
+    }
+    return corner_parameters
+
+def find_corner(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+    images_to_return = [] # imágenes que se retornarán
+
+    corner_contour, binary = find_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
+    images_to_return.append(["binary",binary])
+
+    if corner_contour is None:
+        return None, images_to_return
+
+    # calcular x,y de la esquina superior izquierda del contorno
+    x,y,_,_ = cv2.boundingRect(corner_contour)
+
+    # imagen de la esquina encontrada
+    found = draw_found_circle(img, x, y)
+    images_to_return.append(["found", found])
+
+    return [x,y], images_to_return
+
+def create_centroid_parameters(name, coordinates, lower_color, upper_color,
+        color_scale, invert_binary=False, filters=[], contours_filters={}):
+    centroid_parameters = {
+        "name":name,
+        "coordinates":coordinates,
+        "lower_color":lower_color,
+        "upper_color":upper_color,
+        "color_scale":color_scale,
+        "invert_binary":invert_binary,
+        "filters":filters,
+        "contours_filters":contours_filters,
+    }
+    return centroid_parameters
+
+def find_centroid(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+    images_to_return = [] # imágenes que se retornarán
+
+    centroid_contour, binary = find_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
+    images_to_return.append(["binary", binary])
+
+    if centroid_contour is None:
+        return None, images_to_return
+
+    # Obtener datos sobre el blob
+    M = cv2.moments(centroid_contour)
+    # Obtener x,y del centroide del contorno
+    if M["m00"] != 0:
+        x = int(M["m10"] / M["m00"])
+        y = int(M["m01"] / M["m00"])
+    else:
+        return None, images_to_return
+
+    # imagen del centroide encontrado
+    found = draw_found_circle(img, x, y)
+    images_to_return.append(["found", found])
+
+    return [x,y], images_to_return
+
+
+def find_circular_fiducial(photo, fiducial):
+    # lista de imágenes que se retornará
+    images_to_return = []
     # Recortar el área en que se buscará el fiducial
     x1,y1,x2,y2 = fiducial.window
     searching_area_img = photo[y1:y2, x1:x2]
@@ -494,15 +687,15 @@ def find_fiducial(photo, fiducial):
     # Aplicarle filtros secundarios (como blurs)
     searching_area_img_filtered = apply_filters(searching_area_img, fiducial.filters)
 
-    # Agregar imagen sin filtrar y filtrada del área de búsqueda a images_to_export
-    images_to_export.append(["rgb{0}".format(fiducial.number), searching_area_img])
-    images_to_export.append(["filtered{0}".format(fiducial.number), searching_area_img_filtered])
+    # Agregar imagen sin filtrar y filtrada del área de búsqueda a images_to_return
+    images_to_return.append(["rgb{0}".format(fiducial.number), searching_area_img])
+    images_to_return.append(["filtered{0}".format(fiducial.number), searching_area_img_filtered])
 
     # Encontrar contornos
     try:
         _,contours,_ = cv2.findContours(searching_area_img_filtered, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     except:
-        return ("CONTOURS_NOT_FOUND_FID_{0}".format(fiducial.number)), None, None, images_to_export
+        return ("CONTOURS_NOT_FOUND_FID_{0}".format(fiducial.number)), None, None, images_to_return
 
     # Encontrar contorno que cumpla con los requisitos de circularidad y diámetro
     circle = None
@@ -520,18 +713,18 @@ def find_fiducial(photo, fiducial):
                 break
 
     if circle is None:
-        return ("APPROPRIATE_CIRCLE_FID_{0}".format(fiducial.number)), None, None, images_to_export
+        return ("APPROPRIATE_CIRCLE_FID_{0}".format(fiducial.number)), None, None, images_to_return
 
     (x, y), circle_radius = cv2.minEnclosingCircle(circle)
     circle_center = (round(x), round(y))
     circle_radius = round(circle_radius)
-    images_to_export.append(["found{0}".format(fiducial.number), cv2.circle(
+    images_to_return.append(["found{0}".format(fiducial.number), cv2.circle(
             cv2.circle(searching_area_img.copy(), circle_center, circle_radius, (0, 255, 0), 1),
             circle_center, 1, (0, 255, 0), 1)])
 
-    return None, circle_center, circle_radius, images_to_export
+    return None, circle_center, circle_radius, images_to_return
 
-def align_board_image(photo, fiducial_1, fiducial_2, objective_angle, objective_x, objective_y, return_rotation_and_translation=False):
+def register_with_two_circular_fiducials(photo, fiducial_1, fiducial_2, objective_angle, objective_x, objective_y):
     """Rotates and translates the image to align the windows in the correct place."""
     # lista de imágenes que se retornará para ser exportada
     images_to_export = []
@@ -539,23 +732,19 @@ def align_board_image(photo, fiducial_1, fiducial_2, objective_angle, objective_
     w_original = photo.shape[1]
     h_original = photo.shape[0]
     # Detectar centro del fiducial 1
-    fail_code, circle_center, circle_radius, resulting_images = find_fiducial(photo, fiducial_1)
+    fail_code, circle_center, circle_radius, resulting_images = find_circular_fiducial(photo, fiducial_1)
     images_to_export += resulting_images
     if fail_code:
-        if return_rotation_and_translation:
-            return fail_code, images_to_export, None, None, None
-        else: return fail_code, images_to_export, None
+        return fail_code, images_to_export, None, None, None
 
     fiducial_1_center = (circle_center[0] + fiducial_1.window[0], circle_center[1] + fiducial_1.window[1])
     fiducial_1_radius = circle_radius
 
     # Detectar centro del fiducial 2
-    fail_code, circle_center, circle_radius, resulting_images = find_fiducial(photo, fiducial_2)
+    fail_code, circle_center, circle_radius, resulting_images = find_circular_fiducial(photo, fiducial_2)
     images_to_export += resulting_images
     if fail_code:
-        if return_rotation_and_translation:
-            return fail_code, images_to_export, None, None, None
-        else: return fail_code, images_to_export, None
+        return fail_code, images_to_export, None, None, None
 
     fiducial_2_center = (circle_center[0] + fiducial_2.window[0], circle_center[1] + fiducial_2.window[1])
     fiducial_2_radius = circle_radius
@@ -578,10 +767,179 @@ def align_board_image(photo, fiducial_1, fiducial_2, objective_angle, objective_
 
     images_to_export += [["board_aligned", photo]]
 
-    if return_rotation_and_translation:
-        return fail_code, images_to_export, photo, rotation, [x_diference, y_diference]
-    else: return fail_code, images_to_export, photo
+    return fail_code, images_to_export, photo, rotation, [x_diference, y_diference]
 
+
+def create_reference_point(rp_type, name, coordinates, color_scale, lower_color,
+        upper_color, invert_binary=False, filters=[], contours_filters={}):
+    """
+    Crea un diccionario con los parámetros para encontrar un punto de referencia.
+    Un punto de referencia es aquel cuyas coordenadas son utilizadas para orientarse
+    en el tablero, usándolas para rotarlo o trasladarlo para el registro de la imagen.
+    Los puntos de referencia son centroides o esquinas de contornos.
+    """
+    contours_filters, invalid_filters = get_valid_contours_filters(contours_filters)
+
+    if color_scale == "hsv":
+        # convertir a array de numpy
+        if type(lower_color) is not np.ndarray:
+            lower_color = np.array(lower_color)
+        if type(upper_color) is not np.ndarray:
+            upper_color = np.array(upper_color)
+
+    if rp_type == "corner":
+        # la coordenada será la esquina de un contorno
+        reference_point = create_corner_parameters(
+            name, coordinates, lower_color, upper_color, color_scale,
+            invert_binary, filters, contours_filters
+        )
+
+    elif rp_type == "centroid":
+        # la coordenada será el centroide de un contorno
+        reference_point = create_centroid_parameters(
+            name, coordinates, lower_color, upper_color, color_scale,
+            invert_binary, filters, contours_filters
+        )
+
+    reference_point["type"] = rp_type
+    return reference_point
+
+def find_reference_point_in_photo(img, reference_point):
+    [x1,y1,x2,y2] = reference_point["coordinates"]
+    rp_img = img[y1:y2, x1:x2]
+
+    coordinates, images_to_export = find_reference_point(rp_img, reference_point)
+    if not coordinates:
+        return None, images_to_export
+
+    # Coordenadas reales en el tablero
+    [x,y] = coordinates
+    coordinates = (x+x1,y+y1)
+
+    return coordinates, images_to_export
+
+def find_reference_point(img_, reference_point):
+    images_to_return = [] # imágenes que se retornarán
+    images_to_return.append(["rgb", img_])
+
+    # Aplicar filtros secundarios a la imagen
+    img = apply_filters(img_, reference_point["filters"])
+
+    if reference_point["type"] == "centroid":
+        coordinates, resulting_images = find_centroid(img, reference_point["color_scale"],
+            reference_point["lower_color"], reference_point["upper_color"],
+            reference_point["invert_binary"], reference_point["contours_filters"])
+
+    elif reference_point["type"] == "corner":
+        coordinates, resulting_images = find_corner(img, reference_point["color_scale"],
+            reference_point["lower_color"], reference_point["upper_color"],
+            reference_point["invert_binary"], reference_point["contours_filters"])
+
+    images_to_return += resulting_images
+
+    return coordinates, images_to_return
+
+def add_to_images_name(images, str_):
+    """
+    Es utilizado para agregar una cadena de texto al nombre de todas las
+    imágenes que son retornadas por funciones de inspección y métodos de registro
+    para ser exportadas.
+    """
+    for image_index in range(len(images)):
+        image_name, image = images[image_index]
+        new_name = image_name + str_
+        # actualizar nombre
+        images[image_index][0] = new_name
+
+    return images
+
+def register_with_rotation_points_and_translation_point(photo, rotation_iterations, rotation_point1, rotation_point2, translation_point, objective_angle, objective_x, objective_y):
+    """
+    Rota y traslada la imagen del tablero para alinearla con las ventanas de inspección.
+    Retorna las imágenes de la última iteración de rotación y la imagen del tablero alineado.
+    Lo logra con el siguiente algoritmo:
+        1. for (iteraciones deseadas):
+            1. Localizar el punto de rotación 1 (se localiza encontrando el centroide de un contorno).
+            2. Localizar el punto de rotación 2.
+            3. Calcular el ángulo entre los 2 puntos de rotación.
+            4. Rotar al ángulo objetivo con: ángulo entre puntos de rotación - ángulo objetivo
+        2. Encontrar punto de traslación (como la esquina del tablero o el centroide de un triángulo).
+        3. Trasladar el tablero con la diferencia entre las coordenadas objetivas y el punto de traslación.
+    """
+
+    # número de grados que se ha rotado el tablero sumando todas las iteraciones
+    total_rotation = 0
+    for _ in range(rotation_iterations):
+        # limpiar lista de imágenes que se retornará para ser exportada
+        images_to_export = []
+
+        # Encontrar punto de rotación 1
+        rotation_point1_coordinates, resulting_images = find_reference_point_in_photo(photo, rotation_point1)
+        # agregar nombre del punto de rotación a las imágenes
+        resulting_images = add_to_images_name(resulting_images, "rp1")
+        images_to_export += resulting_images
+
+        if not rotation_point1_coordinates:
+            fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point1["name"])
+            return fail_code, images_to_export, None, None, None
+
+        # Encontrar punto de rotación 2
+        rotation_point2_coordinates, resulting_images = find_reference_point_in_photo(photo, rotation_point2)
+        # agregar nombre del punto de rotación a las imágenes
+        resulting_images = add_to_images_name(resulting_images, "rp2")
+        images_to_export += resulting_images
+
+        if not rotation_point2_coordinates:
+            fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point2["name"])
+            return fail_code, images_to_export, None, None, None
+
+
+        # Ángulo entre los 2 puntos de rotación
+        angle_between_rotation_points = math_functions.calculate_angle(rotation_point1_coordinates, rotation_point2_coordinates)
+
+        # Rotar la imagen
+        rotation = angle_between_rotation_points - objective_angle
+        photo, trMat = rotate(photo, rotation)
+
+        total_rotation += rotation
+
+
+    # Encontrar punto de traslación
+    translation_point_coordinates, resulting_images = find_reference_point_in_photo(photo, translation_point)
+    # agregar nombre del punto de traslación a las imágenes
+    resulting_images = add_to_images_name(resulting_images, "tp")
+    images_to_export += resulting_images
+
+    if not translation_point_coordinates:
+        fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(translation_point["name"])
+        return fail_code, images_to_export, None, None, None
+
+    # Se traslada la diferencia entre las coordenadas donde debería ubicarse el fiducial 1 menos las coordenadas encontradas
+    x_diference = objective_x - translation_point_coordinates[0]
+    y_diference = objective_y - translation_point_coordinates[1]
+    photo = translate(photo, x_diference, y_diference)
+
+    images_to_export += [["board_aligned", photo]]
+
+    return None, images_to_export, photo, total_rotation, [x_diference, y_diference]
+
+
+def align_board_image(board_image, registration_settings):
+    if registration_settings["method"] == "circular_fiducials":
+        fail, images_to_export, aligned_board_image, rotation, translation = register_with_two_circular_fiducials(
+            board_image, registration_settings["fiducial_1"], registration_settings["fiducial_2"],
+            registration_settings["objective_angle"], registration_settings["objective_x"],
+            registration_settings["objective_y"]
+        )
+    elif registration_settings["method"] == "rotation_points_and_translation_point":
+        fail, images_to_export, aligned_board_image, rotation, translation = register_with_rotation_points_and_translation_point(
+            board_image, registration_settings["rotation_iterations"],
+            registration_settings["rotation_point1"], registration_settings["rotation_point2"],
+            registration_settings["translation_point"], registration_settings["objective_angle"],
+            registration_settings["objective_x"], registration_settings["objective_y"]
+        )
+
+    return fail, images_to_export, aligned_board_image, rotation, translation
 
 # Inspection tools
 def inspection_function_blob(inspection_point_image, inspection_point):
@@ -619,7 +977,7 @@ def inspection_function_blob(inspection_point_image, inspection_point):
     return [], [blob_area, biggest_blob], status, images_to_export
 
 def calculate_blob_area(img, lower_color, upper_color, color_scale, min_blob_size, max_blob_size, invert_binary=False):
-    contours, binary_image = find_contours(img, lower_color, upper_color, color_scale, invert_binary)
+    contours, binary_image = find_all_contours(img, lower_color, upper_color, color_scale, invert_binary)
     if not contours:
         return 0, 0, binary_image
 
@@ -752,9 +1110,6 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
     # Inspeccionar con template matching usando sub-templates
     fails = []
     status = None
-    images_to_export = []
-
-    images_to_export += [["filtered", inspection_point_image]]
 
     best_match = 0
     matches_number = 0
@@ -783,7 +1138,6 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
             inspection_point["parameters"]["color_scale_for_binary"],
             inspection_point["parameters"]["color_range"],
         )
-        images_to_export += [["color_converted", color_converted_img]]
 
         if fail_code:
             status = "failed"
@@ -813,11 +1167,12 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
                          (x+template_width, y+template_height),
                          (0, 255, 0), 2)
 
-        images_to_export += [["matches", matches_image]]
+        images_to_export = [["filtered", inspection_point_image], ["matches", matches_image], ["color_converted", color_converted_img]]
         # fails, window_results, window_status, resulting_images
         return fails, [matches_number, best_match], status, images_to_export
     # Si no se encontraron coincidencias, exportar sólo imagen filtrada
     else:
+        images_to_export = [["filtered", inspection_point_image], ["color_converted", color_converted_img]]
         # fails, window_results, window_status, resulting_images
         return fails, [matches_number, best_match], status, images_to_export
 
