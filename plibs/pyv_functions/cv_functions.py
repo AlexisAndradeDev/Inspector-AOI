@@ -379,7 +379,7 @@ def rotate(image, angleInDegrees):
     rot[0, 2] += ((b_w / 2) - img_c[0])
     rot[1, 2] += ((b_h / 2) - img_c[1])
 
-    outImg = cv2.warpAffine(image, rot, (b_w, b_h), flags=cv2.INTER_LINEAR)
+    outImg = cv2.warpAffine(image, rot, (b_w, b_h), flags=cv2.INTER_CUBIC)
     return outImg, rot
 
 def translate(img, x, y):
@@ -387,7 +387,7 @@ def translate(img, x, y):
     cols = img.shape[1]
 
     M = np.float32([[1, 0, x],[0, 1, y]])
-    dst = cv2.warpAffine(img,M,(cols,rows))
+    dst = cv2.warpAffine(img,M,(cols,rows), flags=cv2.INTER_CUBIC)
 
     return dst
 
