@@ -39,20 +39,10 @@ class ObjectInspected:
 
         # agregar resultados del punto a los resultados del tablero
         self.results += inspection_point_results
-    def set_board_results(self, registration_time, inspection_time, stage):
-        """
-        El parámetro << stage >> se refiere a la etapa en la que se está: debugeo o inspección.
-        Si se está en debugeo, el tiempo de registro no se escribe ya que no se registra el tablero en debugeo.
-        Si se está en inspección, se escribe el tiempo de registro e inspección.
-        """
-        if stage == "inspection":
-            self.board_results = "&{0};{1};{2};{3}#".format(
-                self.number, self.status, registration_time, inspection_time
-            )
-        if stage == "debug":
-            self.board_results = "&{0};{1};{2}#".format(
-                self.number, self.status, inspection_time
-            )
+    def set_board_results(self):
+        self.board_results = "&{0};{1}#".format(
+            self.number, self.status
+        )
 
         # agregar resultados a los resultados del tablero
         self.results += self.board_results
@@ -218,7 +208,7 @@ def inspect_point(inspection_image_filt, inspection_point):
     return fails, window_results, window_status, resulting_images
 
 def inspect_inspection_points(first_inspection_point, last_inspection_point,
-        aligned_board_image, board, inspection_points, stage, check_mode, aligned_board_image_ultraviolet=None,
+        photo_number, board, aligned_board_image, inspection_points, stage, check_mode, aligned_board_image_ultraviolet=None,
     ):
     global results
     """
@@ -267,27 +257,27 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
         # Escribir imágenes sin filtrar de puntos de inspección malos si se activó el modo de revisión bajo
         if(window_status == "bad" and check_mode == "check:low"):
             cv2.imwrite(
-                "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
+                "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
 
-        # Escribir imágenes filtradas de puntos de inspección malos si se activó el modo de revisión avanzado
+        # Escribir imágenes del proceso de inspección de puntos de inspección malos si se activó el modo de revisión avanzado
         elif(window_status == "bad" and check_mode == "check:advanced" and resulting_images is not None):
             cv2.imwrite(
-                "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
+                "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
             # Exportar imágenes
-            export_images(resulting_images, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
+            export_images(resulting_images, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
 
         # Escribir todas las imágenes de todos los puntos de inspección buenos y malos con el modo de revisión total (solo usado en debugeo)
         elif (check_mode == "check:total" and resulting_images is not None):
             cv2.imwrite(
-                "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
+                "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
             # Exportar imágenes
-            export_images(resulting_images, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
+            export_images(resulting_images, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
 
         # El estado del tablero es malo si hubo un defecto y no hubo fallos.
         # El estado del tablero es fallido si hubo un fallo al inspeccionar
@@ -300,11 +290,11 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
         # Agregar resultados al string que se utilizará para escribirlos en el archivo ins_results.io
         board.add_inspection_point_results(inspection_point["name"], inspection_point["light"], window_status, window_results, fails)
 
-def export_images(images, board_number, ins_point_name, light, images_path):
+def export_images(images, photo_number, board_number, ins_point_name, light, images_path):
     # Exportar imágenes del proceso de la función skip
     for image_name, image in images:
         # num_de_tablero-nombre_de_punto_de_inspección-luz_usada(ultraviolet/white)-nombre_de_imagen
-        cv2.imwrite("{0}{1}-{2}-{3}-{4}.bmp".format(images_path, board_number, ins_point_name, light, image_name), image)
+        cv2.imwrite("{0}{1}-{2}-{3}-{4}-{5}.bmp".format(images_path, photo_number, board_number, ins_point_name, light, image_name), image)
 
 
 # Image Tools
@@ -379,7 +369,7 @@ def rotate(image, angleInDegrees):
     rot[0, 2] += ((b_w / 2) - img_c[0])
     rot[1, 2] += ((b_h / 2) - img_c[1])
 
-    outImg = cv2.warpAffine(image, rot, (b_w, b_h), flags=cv2.INTER_LINEAR)
+    outImg = cv2.warpAffine(image, rot, (b_w, b_h), flags=cv2.INTER_CUBIC)
     return outImg, rot
 
 def translate(img, x, y):
@@ -387,7 +377,7 @@ def translate(img, x, y):
     cols = img.shape[1]
 
     M = np.float32([[1, 0, x],[0, 1, y]])
-    dst = cv2.warpAffine(img,M,(cols,rows))
+    dst = cv2.warpAffine(img,M,(cols,rows), flags=cv2.INTER_CUBIC)
 
     return dst
 
