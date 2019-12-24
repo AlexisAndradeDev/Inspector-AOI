@@ -1,36 +1,79 @@
 [
 
-[
-"uv_inspection:False",
-4, 4, 2, "check:advanced", [[0, 0, 2450, 2056], [2450, 0, 4920, 2056], [0, 2056, 2450, 4112], [2450, 2056, 4920, 4112]],
-["white", 'skip', [1700+124, 300+111, 1700+700+124, 300+500+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
-
-],
+[2],
 
 [
-"rotation_points_and_translation_point",
 
-[
-["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
-["centroid", [930, 940, 930+308, 940+251], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
-["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
-90,
-[1094, 611],
-1
+  [
+
+    [
+    "uv_inspection:False",
+    1, 2, "check:advanced",
+    ],
+
+    [
+    "rotation_points_and_translation_point",
+    [
+    ["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 3]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+    ["centroid", [930, 940, 930+308, 940+251], "gray", 240, 255, True, [["medianBlur", 3]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+    ["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 3]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+    90, [1094, 611], 1]
+    ],
+
+    [
+    ['white', 'polaridad-hsv', [904, 1198, 904+185, 1198+32], 'b', [False, 'hsv', [[0, 0, 23], [180, 255, 255]], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+    ['white', 'polaridad-gray', [904, 1198, 904+185, 1198+32], 'b', [False, 'gray', [21, 255], 500, None, 2000, None, None], [['GaussianBlur', 5]] ],
+    ],
+
+  ],
+
+  [
+    [
+    "uv_inspection:False",
+    1, 2, "check:advanced",
+    ],
+
+    [
+    "rotation_points_and_translation_point",
+    [
+    ["centroid", [0, 500, 0+249, 500+222], "gray", 240, 255, True, [["medianBlur", 3]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+    ["centroid", [0, 940, 0+308, 940+251], "gray", 240, 255, True, [["medianBlur", 3]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+    ["centroid", [0, 500, 0+249, 500+222], "gray", 240, 255, True, [["medianBlur", 3]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+    90, [1094-970, 611], 1]
+    ],
+
+    [
+    ['white', '[r0603,r1,100]', [1840+124-970, 430+111, 1840+345+124-970, 430+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia2-presencia', [1840+124-970, 600+111, 1840+345+124-970, 600+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia3-presencia', [1840+124-970, 755+111, 1840+345+124-970, 755+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia4-presencia', [1840+124-970, 980+111, 1840+345+124-970, 980+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia5-presencia', [1840+124-970, 1140+111, 1840+345+124-970, 1140+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia6-presencia', [1840+124-970, 1295+111, 1840+345+124-970, 1295+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia224-presencia', [1253-970, 541, 1253+137-970, 541+82], 'm', [["binary", False, "hsv", [[13,0,167],[136,124,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_224', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia393-presencia', [1207-970, 829, 1207+73-970, 829+170], 'm', [["binary", False, "hsv", [[0,16,147],[180,81,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia393-presencia_gray', [1207-970, 829, 1207+73-970, 829+170], 'm', [["binary", False, "gray", [147,255]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', '[r0603,r1,100]', [1840+124-970, 430+111, 1840+345+124-970, 430+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia2-presencia', [1840+124-970, 600+111, 1840+345+124-970, 600+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia3-presencia', [1840+124-970, 755+111, 1840+345+124-970, 755+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia4-presencia', [1840+124-970, 980+111, 1840+345+124-970, 980+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia5-presencia', [1840+124-970, 1140+111, 1840+345+124-970, 1140+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia6-presencia', [1840+124-970, 1295+111, 1840+345+124-970, 1295+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia224-presencia', [1253-970, 541, 1253+137-970, 541+82], 'm', [["binary", False, "hsv", [[13,0,167],[136,124,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_224', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia393-presencia', [1207-970, 829, 1207+73-970, 829+170], 'm', [["binary", False, "hsv", [[0,16,147],[180,81,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia393-presencia_gray', [1207-970, 829, 1207+73-970, 829+170], 'm', [["binary", False, "gray", [147,255]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', '[r0603,r1,100]', [1840+124-970, 430+111, 1840+345+124-970, 430+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia2-presencia', [1840+124-970, 600+111, 1840+345+124-970, 600+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia3-presencia', [1840+124-970, 755+111, 1840+345+124-970, 755+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia4-presencia', [1840+124-970, 980+111, 1840+345+124-970, 980+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia5-presencia', [1840+124-970, 1140+111, 1840+345+124-970, 1140+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia6-presencia', [1840+124-970, 1295+111, 1840+345+124-970, 1295+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia224-presencia', [1253-970, 541, 1253+137-970, 541+82], 'm', [["binary", False, "hsv", [[13,0,167],[136,124,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_224', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia393-presencia', [1207-970, 829, 1207+73-970, 829+170], 'm', [["binary", False, "hsv", [[0,16,147],[180,81,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ['white', 'resistencia393-presencia_gray', [1207-970, 829, 1207+73-970, 829+170], 'm', [["binary", False, "gray", [147,255]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+    ],
+
+  ]
+
 ]
-
-],
-
-[
-['white', '[r0603,r1,100]', [1840+124, 430+111, 1840+345+124, 430+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
-['white', 'resistencia2-presencia', [1840+124, 600+111, 1840+345+124, 600+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
-['white', 'resistencia3-presencia', [1840+124, 755+111, 1840+345+124, 755+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
-['white', 'resistencia4-presencia', [1840+124, 980+111, 1840+345+124, 980+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
-['white', 'resistencia5-presencia', [1840+124, 1140+111, 1840+345+124, 1140+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
-['white', 'resistencia6-presencia', [1840+124, 1295+111, 1840+345+124, 1295+155+111], 'm', ["gray",'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['GaussianBlur', 5]] ],
-['white', 'resistencia224-presencia', [1253, 541, 1253+137, 541+82], 'm', [["binary", False, "hsv", [[13,0,167],[136,124,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_224', 1, [0.7], 1], [['GaussianBlur', 5]] ],
-['white', 'resistencia393-presencia', [1207, 829, 1207+73, 829+170], 'm', [["binary", False, "hsv", [[0,16,147],[180,81,255]]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [1], 1], [['GaussianBlur', 5]] ],
-['white', 'resistencia393-presencia_gray', [1207, 829, 1207+73, 829+170], 'm', [["binary", False, "gray", [147,255]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
-],
 
 ]
