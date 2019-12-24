@@ -176,7 +176,7 @@ def inspect_board(results, board, photo_number, board_image, inspection_points, 
     board.set_board_results()
     results.value += board.get_results() # resultados de los puntos de inspección y resultados del tablero (tiempos, status)
 
-def inspect_boards(results, first_board, last_board, photo_number, photo, inspection_points, registration_settings, settings, photo_ultraviolet):
+def inspect_boards(first_board, last_board, results, photo_number, photo, inspection_points, registration_settings, settings, photo_ultraviolet):
     # la función range toma desde first hasta last-1, así que hay que sumarle 1
     for board_number in range(first_board, last_board+1):
         board = cv_functions.ObjectInspected(board_number=board_number)
