@@ -4,80 +4,26 @@
 
 [
 
-"método de registro",
-
-[parámetros]
-
-]
-
-]
-
-En caso de que el método de registro sean 2 fiduciales circulares:
-
-[
-"circular_fiducials",
-
-[
 [[x1, y1, x2, y2 Fiducial 1], [x1, y1, x2, y2 Fiducial 2]], [min diametro Fiducial 1, min diametro Fiducial 2], [max diametro, max diametro], 
 [min perfeccion del circulo, min perfeccion del circulo], [max perfeccion del circulo, max perfeccion del circulo], angulo deseado entre los 2 fiduciales,
 [coordenadas a las que se debe trasladar el fiducial 1 despues de rotar], 
 [ [['Filtro secundario fiducial 1', params], ['Filtro secundario fiducial 1', params]], [['Filtro secundario 2', params], ['Filtro secundario fiducial 2', params]] ]
-]
 
-]
-
-En caso de utilizar dos puntos de rotación y uno de traslación:
-
-[
-"rotation_points_and_translation_point",
-
-[
-["centroid/corner", [x1,y1,x2,y2], "hsv/gray", [hsv minimo]/gray minimo, [hsv máximo]/gray máximo, invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ],
-["centroid/corner", [x1,y1,x2,y2], "hsv/gray", [hsv minimo]/gray minimo, [hsv máximo]/gray máximo, invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ],
-["centroid/corner", [x1,y1,x2,y2], "hsv/gray", [hsv minimo]/gray minimo, [hsv máximo]/gray máximo, invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ],
-angulo deseado entre los 2 puntos de rotación,
-[coordenadas a las que se debe trasladar el punto de traslación despues de rotar],
-número_de_iteraciones_de_rotación
 ]
 
 ]
 
-
-Ejemplo para alinear MCI-01 con 4 tableros en cada foto (2 fiduciales circulares):
+Ejemplo para alinear MCI-01 con 4 tableros en cada foto:
 [
 
-['uv_inspection:True', 'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/', 1, 4, 2, [[0, 0, 2450, 2056], [2450, 0, 4920, 2056], [0, 2056, 2450, 4112], [2450, 2056, 4920, 4112]] ],
+['uv_inspection:True', 'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/', 2, 4, 4, [[0, 0, 2450, 2056], [2450, 0, 4920, 2056], [0, 2056, 2450, 4112], [2450, 2056, 4920, 4112]] ],
 
 [
-"circular_fiducials",
 
-[
 [[970, 500, 970+249, 500+222], [930, 940, 930+308, 940+251]], [20, 20], [60, 60], [0.85, 0.85], [1.2, 1.2], 90, [1094, 611],
-[ [["medianBlur", 9], ["reverseBinary", [[40, 40, 40], [255, 255, 255]] ]], [["medianBlur", 9], ["reverseBinary", [[40, 40, 40], [255, 255, 255]] ]] ],
-]
+
+[ [["medianBlur", 9], ["reverseBinary", [[40, 40, 40], [255, 255, 255]] ]], [["medianBlur", 9], ["reverseBinary", [[40, 40, 40], [255, 255, 255]] ]] ]
+
+],
 
 ]
-
-]
-
-Ejemplo para alinear MCI-01 con 4 tableros en cada foto (2 puntos de rotación y 1 punto de traslación):
-[
-
-['uv_inspection:True', 'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/', 1, 4, 2, [[0, 0, 2450, 2056], [2450, 0, 4920, 2056], [0, 2056, 2450, 4112], [2450, 2056, 4920, 4112]] ],
-
-[
-"rotation_points_and_translation_point",
-
-[
-["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
-["centroid", [930, 940, 930+308, 940+251], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
-["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
-90,
-[1094, 611],
-1
-]
-
-]
-
-]
-
