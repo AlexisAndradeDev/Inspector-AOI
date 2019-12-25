@@ -1,29 +1,34 @@
-El modo de revision de operador se activa con el cuarto elemento de la primera lista de los datos de inspeccion (data.ii), colocando "check:low"
+El modo de revision de operador se activa colocando "check:low".
 
-[num_de_tableros, num_de_multihilos_para_tableros, num_de_multihilos_para_puntos_de_inspeccion, "check:low", ...]
-
-Al activarlo, las imágenes sin filtrar de los puntos de inspeccion que no pasaron seran guardadas en
+Al activarlo, las imágenes sin filtrar de los puntos de inspección que no pasaron seran guardadas en
 C:/Dexill/Inspector/Alpha-Premium/x64/inspections\bad_windows_results\
 
-El formato del nombre de las imagenes es: num_de_tablero-nombre_del_punto_de_inspeccion-luz_utilizada(white/ultraviolet)-rgb.bmp
-Ejemplo: 1-resistencia1-cuerpo_de_la_resistencia-white-rgb.bmp
-         1-resistencia2-cuerpo_de_la_resistencia-white-rgb.bmp
-         2-resistencia3-cuerpo_de_la_resistencia-white-rgb.bmp
+El formato del nombre de las imagenes es: 
+    num_de_foto-num_de_tablero-nombre_del_punto_de_inspeccion-luz_utilizada(white/ultraviolet)-rgb.bmp
+Ejemplo: 1-1-resistencia1-cuerpo_de_la_resistencia-white-rgb.bmp
+         1-1-resistencia2-cuerpo_de_la_resistencia-white-rgb.bmp
+         1-2-resistencia3-cuerpo_de_la_resistencia-white-rgb.bmp
+         2-1-resistencia5-cuerpo_de_la_resistencia-white-rgb.bmp
 
 
-El modo de revision de ingeniero se activa con el cuarto elemento de la primera lista de los datos de inspeccion (data.ii), colocando "check:advanced"
+El modo de revision de ingeniero se activa colocando "check:advanced".
 
-[num_de_tableros, num_de_multihilos_para_tableros, num_de_multihilos_para_puntos_de_inspeccion, "check:advanced", ...]
+Al activarlo, las imágenes de todo el proceso de los puntos de inspección que no pasaron seran guardadas en 
+C:/Dexill/Inspector/Alpha-Premium/x64/inspections/bad_windows_results/
 
-Al activarlo, las imágenes de todo el proceso de los puntos de inspeccion que no pasaron seran guardadas en 
-C:/Dexill/Inspector/Alpha-Premium/x64/inspections\bad_windows_results\
-
-El formato del nombre de las imagenes es: num_de_tablero-nombre_del_punto_de_inspeccion-luz_utilizada(white/ultraviolet)-nombre_de_imagen.bmp
-Ejemplo: 1-[resistencia1,cuerpo]-white-filtered.bmp (template matching)
-         1-[resistencia2,cuerpo]-white-rgb.bmp (template matching)
-         1-[todas_las_resistencias]-white-matches.bmp (template matching)
-         2-[resistencia1,izq]-white-rgb.bmp (blob)
-         2-[resistencia2,izq]-white-filtered.bmp (blob)
-         2-[resistencia2,izq]-white-binary.bmp (blob)
+El formato del nombre de las imagenes es: 
+    num_de_foto-num_de_tablero-nombre_del_punto_de_inspeccion-luz_utilizada(white/ultraviolet)-nombre_de_imagen.bmp
+Ejemplo: 1-1-[resistencia1_cuerpo]-white-filtered.bmp (template matching)
+         1-1-[resistencia1_cuerpo]-white-rgb.bmp (template matching)
+         1-1-[resistencia1_cuerpo]-white-matches.bmp (template matching)
+         1-2-[resistencia1_izq]-white-rgb.bmp (blob)
+         1-2-[resistencia1_izq]-white-filtered.bmp (blob)
+         1-2-[resistencia1_izq]-white-binary.bmp (blob)
+         2-1-[resistencia4_cuerpo]-white-filtered.bmp (template matching)
+         2-1-[resistencia4_cuerpo]-white-rgb.bmp (template matching)
+         2-1-[resistencia4_cuerpo]-white-matches.bmp (template matching)
+         2-2-[resistencia5_der]-white-rgb.bmp (blob)
+         2-2-[resistencia5_der]-white-filtered.bmp (blob)
+         2-2-[resistencia5_der]-white-binary.bmp (blob)
          
 Si la función Skip no pasó, las imágenes de la función skip se escriben como si fuera un punto de inspección cualquiera.
