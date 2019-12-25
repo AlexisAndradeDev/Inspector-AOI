@@ -2,8 +2,8 @@ En la ruta C:/Dexill/Inspector/Alpha-Premium/x64/inspections\status\, se encontr
 
 
 SEPARACIÓN
-Cada tablero está separado por el símbolo #, los puntos de inspeccion estan separados por el simbolo $, 
-y los datos de un punto de inspeccion estan separados por el simbolo ;
+Cada foto está separada por el símbolo %, cada tablero de la foto está separado por el símbolo #, los puntos de inspeccion están 
+separados por el simbolo $, y los datos de un punto de inspeccion estan separados por el simbolo ;
 
 
 FORMATO DE RESULTADOS DE LOS PUNTOS DE INSPECCIÓN
@@ -22,65 +22,91 @@ Ejemplo: 2;resistencia1-soldadura_izquierda;white;bad;[948, 465];[]$
 
 
 RESULTADOS GENERALES DE CADA TABLERO
-Al final de los resultados de un tablero, se encuentra el numero del tablero, status (bad/failed/good), 
-tiempo de registro y tiempo de inspeccion, señalado por un & al inicio.
+Al final de los resultados de un tablero, se encuentra el numero del tablero y status (bad/failed/good) señalado por un & al inicio.
 Ejemplo:
-&2;bad;0.5787624280000001;1.6556659329999999#
+    &2;bad
 
-Si el tablero tuvo un error (no en los puntos de inspección, sino error general en el tablero), se escrbirá "error" como status:
-    &número_de_tablero;error;código_del_error;tiempo_de_registro;tiempo_de_inspeccion#
+Si el tablero tuvo un error (no en los puntos de inspección, sino error general en el tablero), se escrbirá "error" como status y un código:
+    &número_de_tablero;error;código_del_error
 
+
+RESULTADOS GENERALES DE CADA FOTOGRAFÍA
+Al final de los resultados de cada fotografía, se encuentra el número de fotografía con el formato: &&número&&
+Ejemplo:
+    &&2&&
 
 TIEMPO TOTAL DE INSPECCIÓN
-Al final del archivo, se encuentra el tiempo que se tardó en inspeccionar en total todos los tableros.
-Señalado por un % al inicio.
+Al final del archivo, se encuentra el tiempo que se tardó en inspeccionar en total todas las fotografías.
+Se encuentra con el formato: ##tiempo_de_inspección##
 Ejemplo:
-%0.3425600
+    ##0.46103479999999997##
 
 
 ALGORITMO DE SKIP
-Si un algoritmo de Skip no pasó, significa que el tablero no se inspeccionó, así que sólo tendrá los resultados de la función de skip (como si fuera un punto de inspección) y los resultados generales del tablero (con los tiempos de inspección en 0):
-    num_de_tablero;nombre_asignado_a_la_funcion_skip;luz_utilizada;status_de_la_función_de_skip;resultados_de_la_funcion_de_skip;    [fallos]$
-    &num_de_tablero;skip;0;0#
+Si un algoritmo de Skip no pasó, significa que el tablero no se inspeccionó, así que sólo tendrá los resultados de la 
+función de skip (como si fuera su único punto de inspección) y los resultados generales del tablero con "skip" como status:
+    num_de_tablero;nombre_asignado_a_la_funcion_skip;luz_utilizada;status_de_la_función_de_skip;resultados_de_la_funcion_de_skip;[fallos]$
+    &num_de_tablero;skip
+Ejemplo:
+    2;skip;white;bad;[0, 0.06560398638248444];[]$
+    &2;skip
 
 
-EJEMPLO:
-2;skip;white;bad;[0, 0.06560398638248444];[]$
-&2;skip;0;0#
-3;resistencia224-presencia;white;good;[1, 0.8518406748771667];[]$
-3;resistencia1-presencia;white;bad;[0, 0.43091171979904175];[]$
-3;resistencia2-presencia;white;good;[1, 0.876467764377594];[]$
-3;resistencia393-presencia;white;bad;[0, 0.9712615013122559];[]$
-3;resistencia393-presencia_gray;white;good;[1, 0.9686506986618042];[]$
-3;polaridad-hsv;ultraviolet;good;[3379, 3379];[]$
-3;polaridad-gray;ultraviolet;good;[3499, 3499];[]$
-3;resistencia3-presencia;white;good;[1, 0.998852550983429];[]$
-3;resistencia4-presencia;white;good;[1, 0.9367159008979797];[]$
-3;resistencia5-presencia;white;good;[1, 0.9420493841171265];[]$
-3;resistencia6-presencia;white;good;[1, 0.9523155093193054];[]$
-&3;bad;0.4281707000000008;0.08274429999999988#
-4;resistencia224-presencia;white;good;[1, 0.8510974049568176];[]$
-4;resistencia393-presencia;white;bad;[0, 0.9741453528404236];[]$
-4;resistencia393-presencia_gray;white;good;[1, 0.9697138667106628];[]$
-4;polaridad-hsv;ultraviolet;good;[3381, 3381];[]$
-4;polaridad-gray;ultraviolet;good;[3500, 3500];[]$
-4;resistencia1-presencia;white;bad;[0, 0.4308236837387085];[]$
-4;resistencia2-presencia;white;good;[1, 0.8766564726829529];[]$
-4;resistencia3-presencia;white;good;[1, 0.9988247156143188];[]$
-4;resistencia4-presencia;white;good;[1, 0.936549723148346];[]$
-4;resistencia5-presencia;white;good;[1, 0.9421815276145935];[]$
-4;resistencia6-presencia;white;good;[1, 0.9521163702011108];[]$
-&4;bad;0.26147580000000037;0.10567740000000025#
-1;resistencia224-presencia;white;good;[1, 0.8563326001167297];[]$
-1;resistencia393-presencia;white;bad;[0, 0.9885305166244507];[]$
-1;resistencia393-presencia_gray;white;good;[1, 0.9875073432922363];[]$
-1;resistencia1-presencia;white;bad;[0, 0.43131911754608154];[]$
-1;polaridad-hsv;ultraviolet;good;[3388, 3388];[]$
-1;polaridad-gray;ultraviolet;good;[3501, 3501];[]$
-1;resistencia2-presencia;white;good;[1, 0.8762953877449036];[]$
-1;resistencia3-presencia;white;good;[1, 0.9990367889404297];[]$
-1;resistencia4-presencia;white;good;[1, 0.9365760087966919];[]$
-1;resistencia5-presencia;white;good;[1, 0.9426627159118652];[]$
-1;resistencia6-presencia;white;good;[1, 0.9525701999664307];[]$
-&1;bad;0.4195342999999996;0.06837959999999921#
-%1.0587689000000005---------------------------------
+EJEMPLO (Dos fotografías, cada una inspecciona una parte de un tablero, así que cuenta como que cada foto tiene 1 tablero):
+
+1;polaridad-gray;white;good;[3544, 3544];[]$
+1;polaridad-hsv;white;good;[3409, 3409];[]$
+&1;good#
+&&1&&%
+1;resistencia6-presencia;white;good;[1, 0.9518591165542603];[]$
+1;resistencia224-presencia;white;good;[1, 0.9103513956069946];[]$
+1;[r0603,r1,100];white;bad;[0, 0.4368891716003418];[]$
+1;resistencia393-presencia;white;good;[1, 0.9128029942512512];[]$
+1;resistencia393-presencia_gray;white;good;[1, 0.9013566970825195];[]$
+1;resistencia2-presencia;white;good;[1, 0.8756623864173889];[]$
+1;resistencia3-presencia;white;good;[1, 0.9978439807891846];[]$
+1;resistencia4-presencia;white;good;[1, 0.9367979764938354];[]
+;resistencia5-presencia;white;good;[1, 0.9415570497512817];[]$
+&1;bad#
+&&2&&%
+##0.13895899999999983##
+
+EJEMPLO (Dos fotografías, cada una inspecciona 2 tableros de un panel de 4 tableros):
+
+2;resistencia6-presencia;white;good;[1, 0.952026903629303];[]$
+2;resistencia224-presencia;white;good;[1, 0.900574803352356];[]$
+2;[r0603,r1,100];white;bad;[0, 0.4365617036819458];[]$
+2;resistencia393-presencia;white;bad;[0, 0.9136824607849121];[]$
+2;resistencia2-presencia;white;good;[1, 0.8762818574905396];[]$
+2;resistencia393-presencia_gray;white;good;[1, 0.9046498537063599];[]$
+2;resistencia3-presencia;white;good;[1, 0.9975165724754333];[]$
+2;resistencia4-presencia;white;good;[1, 0.9362908601760864];[]$
+2;resistencia5-presencia;white;good;[1, 0.9402238130569458];[]$
+&2;bad#
+1;resistencia6-presencia;white;good;[1, 0.9526302218437195];[]$
+1;resistencia224-presencia;white;good;[1, 0.8528630137443542];[]$
+1;[r0603,r1,100];white;bad;[0, 0.43620818853378296];[]$
+1;resistencia2-presencia;white;good;[1, 0.8763527274131775];[]$
+1;resistencia393-presencia;white;bad;[0, 0.9174737334251404];[]$
+1;resistencia393-presencia_gray;white;good;[1, 0.898495078086853];[]$
+1;resistencia3-presencia;white;good;[1, 0.9975875020027161];[]$
+1;resistencia4-presencia;white;good;[1, 0.9371733665466309];[]
+;resistencia5-presencia;white;good;[1, 0.9402406215667725];[]$&
+1;bad#
+&&1&&
+%
+1;skip;white;bad;[0, 0.05485612899065018];[]$
+&1;skip#
+2;resistencia6-presencia;white;good;[1, 0.9515562057495117];[]$
+2;resistencia224-presencia;white;good;[1, 0.8315978050231934];[]$
+2;[r0603,r1,100];white;bad;[0, 0.4367901384830475];[]$
+2;resistencia2-presencia;white;good;[1, 0.8757116794586182];[]$
+2;resistencia393-presencia;white;bad;[0, 0.9164503216743469];[]$
+2;resistencia393-presencia_gray;white;good;[1, 0.9005193710327148];[]$
+2;resistencia3-presencia;white;good;[1, 0.9974991679191589];[]$
+2;resistencia4-presencia;white;good;[1, 0.9357478022575378];[]$
+2;resistencia5-presencia;white;good;[1, 0.939861536026001];[]$
+&2;bad#
+&&2&&
+%
+##0.6766494999999999##
