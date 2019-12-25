@@ -108,7 +108,7 @@ def use_skip_function(board_image, skip_function):
     else:
         return False, status, results, resulting_images, fails
 
-def inspect_board(results, board, photo_number, board_image, inspection_points, registration_settings, settings, photo_ultraviolet):
+def inspect_board(results, board, photo_number, board_image, inspection_points, registration_settings, settings, board_image_ultraviolet):
     # Alinear imagen del tablero con las ventanas y guardar tiempo de registro
     start = timer()
     fail, _, aligned_board_image, rotation, translation = cv_functions.align_board_image(
@@ -250,9 +250,9 @@ def start_inspection_loop(general_settings, photos_settings):
                 photo = force_read_image("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo-{0}.bmp".format(photo_settings["settings"]["photo_index"]+1))
                 delete_file("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo-{0}.bmp".format(photo_settings["settings"]["photo_index"]+1))
 
-                if settings["uv_inspection"] == "uv_inspection:True":
-                    photo_ultraviolet = force_read_image("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo-ultraviolet-{0}.bmp".format(photo_index+1))
-                    delete_file("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo-ultraviolet-{0}.bmp".format(photo_index+1))
+                if photo_settings["settings"]["uv_inspection"] == "uv_inspection:True":
+                    photo_ultraviolet = force_read_image("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo-{0}-ultraviolet.bmp".format(photo_settings["settings"]["photo_index"]+1))
+                    delete_file("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo-{0}-ultraviolet.bmp".format(photo_settings["settings"]["photo_index"]+1))
                     photo_results, photo_time = inspect_photo(photo_settings["settings"]["photo_index"]+1, photo, photo_settings["inspection_points"], photo_settings["registration_settings"], photo_settings["settings"], photo_ultraviolet=photo_ultraviolet)
                 else:
                     photo_results, photo_time = inspect_photo(photo_settings["settings"]["photo_index"]+1, photo, photo_settings["inspection_points"], photo_settings["registration_settings"], photo_settings["settings"])
