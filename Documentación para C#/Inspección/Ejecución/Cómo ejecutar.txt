@@ -1,7 +1,27 @@
 Antes de ejecutar el script de inspeccion de Python, se debe tener el archivo data.ii en la ruta C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/ con los 
-datos de inspeccion. La documentacion de como escribir este archivo esta en el repositorio de Gitlab del sistema PyV Alpha Black (https://gitlab.com/Alexismtzan/pyv-alpha-black)
-en python/inspeccion/documentacion para C#/Ejecucion/Estructura de los datos.txt
+datos de inspeccion. La documentacion de como escribir este archivo esta en Inspección/Ejecución/Estructura de los datos.txt
 
 
-Primero, se debe correr el script ins.py, estara en bucle esperando y empezara el procesamiento del tablero cuando se creen los archivos .bmp de la 
-fotografía de los tableros con luz blanca (photo.bmp) y con luz negra (photo-ultraviolet.bmp), que serán eliminadas por el script una vez leidas.
+Primero, se debe correr el script ins.py, estará en bucle esperando y empezará la inspección de la primera fotografía cuando se cree la imagen
+con el nombre de photo-1.bmp, y en caso de utilizar luz UV deberán crearse las imágenes photo-1.bmp y photo-1-ultraviolet.bmp
+Las siguientes fotografías las inspeccionará de la misma forma, cuando se cree photo-2.bmp empezará a inspeccionar la segunda fotografía, photo-3.bmp
+la tercera...
+
+
+Tres fotografías, la primera y la tercera utilizan luz UV.
+    1. Se crea dt.ii
+    2. Se ejecuta ins.py
+    
+    loop:
+        3. Se crea la primera fotografía (photo-1.bmp)
+            3.2 Se crea después photo-1-ultraviolet.bmp
+        4. ins.py lee y borra photo-1.bmp y photo-1-ultraviolet.bmp
+
+        5. Se crea la segunda fotografía (photo-2.bmp)
+        6. ins.py lee y borra photo-2.bmp
+
+        7. Se crea la tercera fotografía (photo-3.bmp)
+            5.2 Se crea photo-3-ultraviolet.bmp
+        8. ins.py lee y borra photo-3.bmp y photo-3-ultraviolet.bmp
+
+        9. ins.py escribe los resultados.
