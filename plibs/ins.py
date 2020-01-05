@@ -8,8 +8,8 @@ import copy
 
 import sys
 # Hacer esto para importar módulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/pyv_functions/')
-import cv_functions, math_functions
+sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
+import math_functions, cv_func, ins_func, operations, reg_methods_func
 
 def read_file(path):
     with open(path) as f:
@@ -86,14 +86,14 @@ def create_threads(func, threads_num, targets_num, func_args):
 
 def use_skip_function(board_image, skip_function):
     coordinates = skip_function["coordinates"]
-    inspection_image = cv_functions.crop_image(board_image,coordinates)
+    inspection_image = cv_func.crop_image(board_image,coordinates)
     # Aplicar filtros secundarios al punto de inspección
-    inspection_image_filt = cv_functions.apply_filters(
+    inspection_image_filt = cv_func.apply_filters(
         img=inspection_image,
         filters=skip_function["filters"]
     )
 
-    fails, results, status, resulting_images = cv_functions.inspect_point(inspection_image_filt, skip_function)
+    fails, results, status, resulting_images = ins_func.inspect_point(inspection_image_filt, skip_function)
 
     # añadir la imagen sin filtrar a la lista de imágenes
     resulting_images.insert(0, ["rgb", inspection_image])
@@ -110,20 +110,20 @@ def inspect_boards(first_board, last_board, photo, inspection_points, registrati
 
     # la función range toma desde first hasta last-1, así que hay que sumarle 1
     for board_number in range(first_board, last_board+1):
-        board = cv_functions.ObjectInspected(board_number=board_number)
+        board = operations.ObjectInspected(board_number=board_number)
 
         # Recortar imagen de la región del tablero
         coordinates = settings["boards_coordinates"][board.get_index()]
-        board_image = cv_functions.crop_image(photo, coordinates)
+        board_image = cv_func.crop_image(photo, coordinates)
         if settings["uv_inspection"] == "uv_inspection:True":
-            board_image_ultraviolet = cv_functions.crop_image(photo_ultraviolet, coordinates)
+            board_image_ultraviolet = cv_func.crop_image(photo_ultraviolet, coordinates)
 
 
         skip, skip_status, skip_results, skip_images, skip_fails = use_skip_function(board_image, settings["skip_function"])
         # Si no pasó la función skip, saltar al siguiente tablero
         if skip:
             # volver a intentarlo con la imagen rotada 180°
-            board_image_180, _ = cv_functions.rotate(board_image, 180)
+            board_image_180, _ = cv_func.rotate(board_image, 180)
             skip, _, _, _, _ = use_skip_function(board_image_180, settings["skip_function"])
             if skip:
                 # si no pasó con el tablero a 180°, skippear
@@ -137,14 +137,14 @@ def inspect_boards(first_board, last_board, photo, inspection_points, registrati
 
                 # si está activado el check mode (low, advanced o total), exportar todas las imágenes
                 if settings["check_mode"] != "check:no":
-                    cv_functions.export_images(skip_images, board.get_number(), settings["skip_function"]["name"], settings["skip_function"]["light"], images_path=settings["images_path"])
+                    operations.export_images(skip_images, board.get_number(), settings["skip_function"]["name"], settings["skip_function"]["light"], images_path=settings["images_path"])
 
                 continue
 
 
         # Alinear imagen del tablero con las ventanas y guardar tiempo de registro
         start = timer()
-        fail, _, aligned_board_image, rotation, translation = cv_functions.align_board_image(
+        fail, _, aligned_board_image, rotation, translation = reg_methods_func.align_board_image(
             board_image, registration_settings
         )
         end = timer()
@@ -152,9 +152,9 @@ def inspect_boards(first_board, last_board, photo, inspection_points, registrati
 
         if fail:
             # Volver a intentar el registro con la imagen a 180°
-            board_image, _ = cv_functions.rotate(board_image, 180)
+            board_image, _ = cv_func.rotate(board_image, 180)
             start = timer()
-            fail, _, aligned_board_image, rotation, translation = cv_functions.align_board_image(
+            fail, _, aligned_board_image, rotation, translation = reg_methods_func.align_board_image(
                 board_image, registration_settings
             )
             end = timer()
@@ -167,16 +167,16 @@ def inspect_boards(first_board, last_board, photo, inspection_points, registrati
                 results += board.get_board_results()
                 continue
             # si pasó, rotar 180° la imagen con luz UV tambien
-            board_image_ultraviolet, _ = cv_functions.rotate(board_image_ultraviolet, 180)
+            board_image_ultraviolet, _ = cv_func.rotate(board_image_ultraviolet, 180)
 
         # Escribir imagen del tablero alineado con luz blanca
         imwrite("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/board-{0}.bmp".format(board.get_number()), aligned_board_image)
 
         if settings["uv_inspection"] == "uv_inspection:True":
             # Alinear imagen del tablero con luz ultravioleta con los datos de la imagen de luz blanca
-            aligned_board_image_ultraviolet, _ = cv_functions.rotate(board_image_ultraviolet, rotation)
+            aligned_board_image_ultraviolet, _ = cv_func.rotate(board_image_ultraviolet, rotation)
             [x_translation, y_translation] = translation
-            aligned_board_image_ultraviolet = cv_functions.translate(aligned_board_image_ultraviolet, x_translation, y_translation)
+            aligned_board_image_ultraviolet = cv_func.translate(aligned_board_image_ultraviolet, x_translation, y_translation)
 
             # Escribir imagen del tablero alineado con luz ultravioleta
             imwrite("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/board-{0}-ultraviolet.bmp".format(board.get_number()), aligned_board_image_ultraviolet)
@@ -184,14 +184,14 @@ def inspect_boards(first_board, last_board, photo, inspection_points, registrati
         # Inspeccionar puntos de inspección con multihilos
         if settings["uv_inspection"] == "uv_inspection:True":
             threads = create_threads(
-                func=cv_functions.inspect_inspection_points,
+                func=ins_func.inspect_inspection_points,
                 threads_num=settings["threads_num_for_inspection_points"],
                 targets_num=len(inspection_points),
                 func_args=[aligned_board_image,board,inspection_points,"inspection",settings["check_mode"],aligned_board_image_ultraviolet]
             )
         else:
             threads = create_threads(
-                func=cv_functions.inspect_inspection_points,
+                func=ins_func.inspect_inspection_points,
                 threads_num=settings["threads_num_for_inspection_points"],
                 targets_num=len(inspection_points),
                 func_args=[aligned_board_image,board,inspection_points,"inspection",settings["check_mode"],None]
@@ -278,7 +278,7 @@ if __name__ == '__main__':
 
     # Función de inspección para verificar que el tablero N esté en la imagen, si no pasa
     # la función, no se inspecciona el tablero
-    skip_function = cv_functions.create_inspection_point(skip_function_data)
+    skip_function = ins_func.create_inspection_point(skip_function_data)
 
     settings = { # diccionario con datos de configuración
         "images_path":"C:/Dexill/Inspector/Alpha-Premium/x64/inspections/bad_windows_results/",
@@ -301,12 +301,12 @@ if __name__ == '__main__':
         fiducials_filters] = method_data
 
         # Crear 2 objetos con los datos de los fiduciales 1 y 2
-        fiducial_1 = cv_functions.Fiducial(
+        fiducial_1 = reg_methods_func.Fiducial(
             1, fiducials_windows[0], min_diameters[0],
             max_diameters[0], min_circle_perfections[0],
             max_circle_perfections[0], fiducials_filters[0])
 
-        fiducial_2 = cv_functions.Fiducial(
+        fiducial_2 = reg_methods_func.Fiducial(
             2, fiducials_windows[1], min_diameters[1],
             max_diameters[1], min_circle_perfections[1],
             max_circle_perfections[1], fiducials_filters[1])
@@ -328,7 +328,7 @@ if __name__ == '__main__':
         [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
         filters, contours_filters] = rotation_point1_data
 
-        rotation_point1 = cv_functions.create_reference_point(
+        rotation_point1 = cv_func.create_reference_point(
             rp_type=rp_type, name="ROTATION_POINT1", coordinates=coordinates,
             color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
             invert_binary=invert_binary, filters=filters, contours_filters=contours_filters,
@@ -338,7 +338,7 @@ if __name__ == '__main__':
         [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
         filters, contours_filters] = rotation_point2_data
 
-        rotation_point2 = cv_functions.create_reference_point(
+        rotation_point2 = cv_func.create_reference_point(
             rp_type=rp_type, name="ROTATION_POINT2", coordinates=coordinates,
             color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
             invert_binary=invert_binary, filters=filters, contours_filters=contours_filters,
@@ -348,7 +348,7 @@ if __name__ == '__main__':
         [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
         filters, contours_filters] = translation_point_data
 
-        translation_point = cv_functions.create_reference_point(
+        translation_point = cv_func.create_reference_point(
             rp_type=rp_type, name="TRANSLATION_POINT", coordinates=coordinates,
             color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
             invert_binary=invert_binary, filters=filters, contours_filters=contours_filters,
@@ -367,7 +367,7 @@ if __name__ == '__main__':
 
 
     # Puntos de inspección
-    inspection_points = cv_functions.create_inspection_points(inspection_points_data)
+    inspection_points = ins_func.create_inspection_points(inspection_points_data)
 
     # Iniciar el bucle de inspección
     results = "" # crear variable global para resultados
