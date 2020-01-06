@@ -99,7 +99,7 @@ def apply_filters(img, filters):
             img = cv2.inRange(hsv, np.array(lower), np.array(upper))
         elif filter[0] == "reverseBinary":
             # Convertir imagen de fiducial a HSV
-            hsv = bgr2hsv(img)
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             # Aplicar threshold para encontrar los colores para encontrar el fiducial
             threshold_range = filter[1]
             [lower, upper] = threshold_range
@@ -107,7 +107,7 @@ def apply_filters(img, filters):
             img = cv2.bitwise_not(img)
         elif filter[0] == "bitwise":
             # Convertir imagen de fiducial a HSV
-            hsv = bgr2hsv(img)
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             # Aplicar threshold para encontrar los colores para encontrar el fiducial
             threshold_range = filter[1]
             [lower, upper] = threshold_range
@@ -115,7 +115,7 @@ def apply_filters(img, filters):
             img = cv2.bitwise_and(img, img, mask = thresholded)
         elif filter[0] == "reverseBitwise":
             # Convertir imagen de fiducial a HSV
-            hsv = bgr2hsv(img)
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             # Aplicar threshold para encontrar los colores para encontrar el fiducial
             threshold_range = filter[1]
             [lower, upper] = threshold_range
