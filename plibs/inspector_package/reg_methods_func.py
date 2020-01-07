@@ -96,7 +96,7 @@ def register_with_two_circular_fiducials(photo, fiducial_1, fiducial_2, objectiv
     fiducial_2_center = (circle_center[0] + fiducial_2.window[0], circle_center[1] + fiducial_2.window[1])
     fiducial_2_radius = circle_radius
 
-    # ángulo entre los 2 fiduciales
+    # ángulo entre los 2 fiduciales
     angle = math_functions.calculate_angle(fiducial_1_center, fiducial_2_center)
     # Rotar la imagen para alinearla con las ventanas
     rotation = angle - objective_angle
