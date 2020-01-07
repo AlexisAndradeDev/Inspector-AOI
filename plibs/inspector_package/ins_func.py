@@ -1,5 +1,5 @@
 import sys
-# Hacer esto para importar mÃ³dulos y paquetes externos
+# Hacer esto para importar módulos y paquetes externos
 sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
 import math_functions, cv_func, operations
 
@@ -15,13 +15,13 @@ def create_inspection_point(inspection_point_data):
     inspection_point = {
         "light":inspection_point_data[0], # white / ultraviolet
         "name":inspection_point_data[1],
-        "type":"single", # no utiliza cadenas esta versiÃ³n
+        "type":"single", # no utiliza cadenas esta versión
         "coordinates":inspection_point_data[2],
         "inspection_function":inspection_point_data[3],
         "filters":inspection_point_data[5],
     }
 
-    # parÃ¡metros de la funciÃ³n de inspecciÃ³n del punto (Ã¡reas de blob, templates de template matching, etc.)
+    # parámetros de la función de inspección del punto (áreas de blob, templates de template matching, etc.)
     parameters_data = inspection_point_data[4]
     inspection_point["parameters"] = get_inspection_function_parameters(inspection_point, parameters_data)
 
@@ -86,7 +86,7 @@ def get_template_matching_parameters(inspection_point, parameters_data):
 
 def get_sub_templates(number_of_sub_templates, template_path, filters):
     sub_templates = []
-    # Lista de subtemplates y la calificaciÃ³n mÃ­nima de cada una
+    # Lista de subtemplates y la calificación mí­nima de cada una
     for i in range(number_of_sub_templates):
         sub_template_img = imread(template_path + "-" + str(i+1) + ".bmp")
         sub_template_img = cv_func.apply_filters(sub_template_img, filters)
@@ -118,10 +118,10 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
     elif stage == "inspection":
         images_path = "C:/Dexill/Inspector/Alpha-Premium/x64/inspections/bad_windows_results/"
 
-    # se le resta 1 a la posiciÃ³n de los puntos de inspecciÃ³n para obtener su Ã­ndice en la lista
+    # se le resta 1 a la posición de los puntos de inspección para obtener su í­ndice en la lista
     first_inspection_point -= 1
     last_inspection_point -= 1
-    # la funciÃ³n range toma desde first hasta last-1, asÃ­ que hay que sumarle 1
+    # la función range toma desde first hasta last-1, así­ que hay que sumarle 1
     inspection_points = inspection_points[first_inspection_point:last_inspection_point+1]
 
     for inspection_point in inspection_points:
@@ -137,29 +137,29 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
 
         fails, window_results, window_status, resulting_images = inspect_point(inspection_image_filt, inspection_point)
 
-        # Escribir imÃ¡genes sin filtrar de puntos de inspecciÃ³n malos si se activÃ³ el modo de revisiÃ³n bajo
+        # Escribir imágenes sin filtrar de puntos de inspección malos si se activó el modo de revisión bajo
         if(window_status == "bad" and check_mode == "check:low"):
             imwrite(
                 "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
 
-        # Escribir imÃ¡genes filtradas de puntos de inspecciÃ³n malos si se activÃ³ el modo de revisiÃ³n avanzado
+        # Escribir imágenes filtradas de puntos de inspección malos si se activó el modo de revisión avanzado
         elif(window_status == "bad" and check_mode == "check:advanced" and resulting_images is not None):
             imwrite(
                 "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
-            # Exportar imÃ¡genes
+            # Exportar imágenes
             operations.export_images(resulting_images, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
 
-        # Escribir todas las imÃ¡genes de todos los puntos de inspecciÃ³n buenos y malos con el modo de revisiÃ³n total (solo usado en debugeo)
+        # Escribir todas las imágenes de todos los puntos de inspección buenos y malos con el modo de revisión total (solo usado en debugeo)
         elif (check_mode == "check:total" and resulting_images is not None):
             imwrite(
                 "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
-            # Exportar imÃ¡genes
+            # Exportar imágenes
             operations.export_images(resulting_images, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
 
         # El estado del tablero es malo si hubo un defecto y no hubo fallos.
@@ -170,13 +170,13 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
         if (window_status == "failed"):
             board.set_status("failed")
 
-        # Agregar resultados al string que se utilizarÃ¡ para escribirlos en el archivo ins_results.io
+        # Agregar resultados al string que se utilizará para escribirlos en el archivo ins_results.io
         board.add_inspection_point_results(inspection_point["name"], inspection_point["light"], window_status, window_results, fails)
 
 
 def inspection_function_blob(inspection_point_image, inspection_point):
     """
-    Las imÃ¡genes a exportar cuando se utiliza blob son:
+    Las imágenes a exportar cuando se utiliza blob son:
     imagen filtrada, imagen binarizada.
     """
     status = ""
@@ -197,7 +197,7 @@ def inspection_function_blob(inspection_point_image, inspection_point):
 
     images_to_export.append(["binary", binary_image])
 
-    # Evaluar el punto de inspecciÃ³n
+    # Evaluar el punto de inspección
     blob_is_correct = evaluate_blob_results(
         blob_area, biggest_blob,
         inspection_point["parameters"]["min_area"],
@@ -214,9 +214,9 @@ def inspection_function_blob(inspection_point_image, inspection_point):
     return fails, window_results, status, images_to_export
 
 def evaluate_blob_results(blob_area, biggest_blob, min_area, max_area, max_allowed_blob_size):
-    # evaluar con mÃ¡ximo tamaÃ±o de blob permitido
+    # evaluar con máximo tamaño de blob permitido
     max_blob_size_passed = evaluate_blob_results_by_blob_size(biggest_blob, max_allowed_blob_size)
-    # evaluar con Ã¡rea total de blobs
+    # evaluar con área total de blobs
     blob_area_passed = evaluate_blob_results_by_blob_area(blob_area, min_area, max_area)
 
     if max_blob_size_passed and blob_area_passed:
@@ -233,10 +233,10 @@ def evaluate_blob_results_by_blob_size(biggest_blob, max_allowed_blob_size):
         return False
 
 def evaluate_blob_results_by_blob_area(blob_area, min_area, max_area):
-    # Evaluar con 3 opciones el Ã¡rea total de blobs:
-    # Si hay Ã¡rea mÃ­nima y mÃ¡xima
-    # Si hay Ã¡rea mÃ­nima
-    # Si hay Ã¡rea mÃ¡xima
+    # Evaluar con 3 opciones el área total de blobs:
+    # Si hay área mí­nima y máxima
+    # Si hay área mí­nima
+    # Si hay área máxima
 
     if min_area and max_area:
         if(blob_area >= min_area and blob_area <= max_area):
@@ -258,7 +258,7 @@ def evaluate_blob_results_by_blob_area(blob_area, min_area, max_area):
 
 def inspection_function_template_matching(inspection_point_image, inspection_point):
     """
-    Las imÃ¡genes a exportar cuando se utiliza template matching son:
+    Las imágenes a exportar cuando se utiliza template matching son:
     imagen filtrada,
     imagen rgb con las coincidencias encontradas marcadas.
     """
@@ -305,7 +305,7 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
             continue
 
 
-        # Evaluar el punto de inspecciÃ³n
+        # Evaluar el punto de inspección
         matches_number = len(matches_locations)
         if(matches_number == inspection_point["parameters"]["required_matches"]):
             correct_matches_number = True
@@ -318,14 +318,14 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
     if not status == "good" and status != "failed":
         status = "bad"
 
-    # Si se encontrÃ³ al menos una coincidencia, exportar imagen con las coincidencias marcadas
+    # Si se encontró al menos una coincidencia, exportar imagen con las coincidencias marcadas
     if matches_number:
         matches_image = inspection_point_image.copy()
-        # Dibujar rectÃ¡ngulos en las coincidencias
+        # Dibujar rectángulos en las coincidencias
         for match_location in matches_locations:
             x = match_location[0]
             y = match_location[1]
-            # Dibujar un rectÃ¡ngulos en la coincidencia
+            # Dibujar un rectángulos en la coincidencia
             rectangle(matches_image, (x, y),
                          (x+template_width, y+template_height),
                          (0, 255, 0), 2)
