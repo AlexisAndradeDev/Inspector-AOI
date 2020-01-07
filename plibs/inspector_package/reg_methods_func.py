@@ -1,7 +1,7 @@
 import cv2
 
 import sys
-# Hacer esto para importar mÃ³dulos y paquetes externos
+# Hacer esto para importar módulos y paquetes externos
 sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
 import math_functions, cv_func, operations
 
@@ -10,7 +10,7 @@ class Fiducial:
     """
     Objeto con los datos de un fiducial.
     # ADVERTENCIA IMPORTANTE: No asignar atributo de coordenadas del centro
-    # del fiducial al objeto Fiducial que se pasarÃ¡ a todos los hilos,
+    # del fiducial al objeto Fiducial que se pasará a todos los hilos,
     # ya que ocasiona que los hilos utilicen el mismo objeto Fiducial y asignen
     # valores incorrectos a las coordenadas.
     """
@@ -25,16 +25,16 @@ class Fiducial:
 
 
 def find_circular_fiducial(photo, fiducial):
-    # lista de imÃ¡genes que se retornarÃ¡
+    # lista de imágenes que se retornará
     images_to_return = []
-    # Recortar el Ã¡rea en que se buscarÃ¡ el fiducial
+    # Recortar el área en que se buscará el fiducial
     x1,y1,x2,y2 = fiducial.window
     searching_area_img = photo[y1:y2, x1:x2]
 
     # Aplicarle filtros secundarios (como blurs)
     searching_area_img_filtered = cv_func.apply_filters(searching_area_img, fiducial.filters)
 
-    # Agregar imagen sin filtrar y filtrada del Ã¡rea de bÃºsqueda a images_to_return
+    # Agregar imagen sin filtrar y filtrada del área de búsqueda a images_to_return
     images_to_return.append(["rgb{0}".format(fiducial.number), searching_area_img])
     images_to_return.append(["filtered{0}".format(fiducial.number), searching_area_img_filtered])
 
@@ -44,7 +44,7 @@ def find_circular_fiducial(photo, fiducial):
     except:
         return ("CONTOURS_NOT_FOUND_FID_{0}".format(fiducial.number)), None, None, images_to_return
 
-    # Encontrar contorno que cumpla con los requisitos de circularidad y diÃ¡metro
+    # Encontrar contorno que cumpla con los requisitos de circularidad y diámetro
     circle = None
     for cnt in contours:
         perimeter = cv2.arcLength(cnt, True)
@@ -73,7 +73,7 @@ def find_circular_fiducial(photo, fiducial):
 
 def register_with_two_circular_fiducials(photo, fiducial_1, fiducial_2, objective_angle, objective_x, objective_y):
     """Rotates and translates the image to align the windows in the correct place."""
-    # lista de imÃ¡genes que se retornarÃ¡ para ser exportada
+    # lista de imágenes que se retornará para ser exportada
     images_to_export = []
     # dimensiones originales de la foto
     w_original = photo.shape[1]
@@ -96,17 +96,17 @@ def register_with_two_circular_fiducials(photo, fiducial_1, fiducial_2, objectiv
     fiducial_2_center = (circle_center[0] + fiducial_2.window[0], circle_center[1] + fiducial_2.window[1])
     fiducial_2_radius = circle_radius
 
-    # Ãngulo entre los 2 fiduciales
+    # ángulo entre los 2 fiduciales
     angle = math_functions.calculate_angle(fiducial_1_center, fiducial_2_center)
     # Rotar la imagen para alinearla con las ventanas
     rotation = angle - objective_angle
     photo, trMat = cv_func.rotate(photo, rotation)
 
-    # Multiplicar el centro del fiducial desaliando por la matriz de rotaciÃ³n usada para rotar la imagen, para encontrar el centro rotado
+    # Multiplicar el centro del fiducial desaliando por la matriz de rotación usada para rotar la imagen, para encontrar el centro rotado
     fiducial_1_rotated_center = math_functions.multiply_matrices(fiducial_1_center, trMat)
     fiducial_1_rotated_center = (int(fiducial_1_rotated_center[0]), int(fiducial_1_rotated_center[1]))
 
-    # Se traslada la diferencia entre coordenadas del fiducial 1 trazado en la creaciÃ³n de programas menos el fiducial 1 encontrado
+    # Se traslada la diferencia entre coordenadas del fiducial 1 trazado en la creación de programas menos el fiducial 1 encontrado
     x_diference = objective_x - fiducial_1_rotated_center[0]
     y_diference = objective_y - fiducial_1_rotated_center[1]
 
@@ -118,27 +118,27 @@ def register_with_two_circular_fiducials(photo, fiducial_1, fiducial_2, objectiv
 
 def register_with_rotation_points_and_translation_point(photo, rotation_iterations, rotation_point1, rotation_point2, translation_point, objective_angle, objective_x, objective_y):
     """
-    Rota y traslada la imagen del tablero para alinearla con las ventanas de inspecciÃ³n.
-    Retorna las imÃ¡genes de la Ãºltima iteraciÃ³n de rotaciÃ³n y la imagen del tablero alineado.
+    Rota y traslada la imagen del tablero para alinearla con las ventanas de inspección.
+    Retorna las imágenes de la última iteración de rotación y la imagen del tablero alineado.
     Lo logra con el siguiente algoritmo:
         1. for (iteraciones deseadas):
-            1. Localizar el punto de rotaciÃ³n 1 (se localiza encontrando el centroide de un contorno).
-            2. Localizar el punto de rotaciÃ³n 2.
-            3. Calcular el Ã¡ngulo entre los 2 puntos de rotaciÃ³n.
-            4. Rotar al Ã¡ngulo objetivo con: Ã¡ngulo entre puntos de rotaciÃ³n - Ã¡ngulo objetivo
-        2. Encontrar punto de traslaciÃ³n (como la esquina del tablero o el centroide de un triÃ¡ngulo).
-        3. Trasladar el tablero con la diferencia entre las coordenadas objetivas y el punto de traslaciÃ³n.
+            1. Localizar el punto de rotación 1 (se localiza encontrando el centroide de un contorno).
+            2. Localizar el punto de rotación 2.
+            3. Calcular el ángulo entre los 2 puntos de rotación.
+            4. Rotar al ángulo objetivo con: ángulo entre puntos de rotación - ángulo objetivo
+        2. Encontrar punto de traslación (como la esquina del tablero o el centroide de un triángulo).
+        3. Trasladar el tablero con la diferencia entre las coordenadas objetivas y el punto de traslación.
     """
 
-    # nÃºmero de grados que se ha rotado el tablero sumando todas las iteraciones
+    # número de grados que se ha rotado el tablero sumando todas las iteraciones
     total_rotation = 0
     for _ in range(rotation_iterations):
-        # limpiar lista de imÃ¡genes que se retornarÃ¡ para ser exportada
+        # limpiar lista de imágenes que se retornará para ser exportada
         images_to_export = []
 
-        # Encontrar punto de rotaciÃ³n 1
+        # Encontrar punto de rotación 1
         rotation_point1_coordinates, resulting_images = cv_func.find_reference_point_in_photo(photo, rotation_point1)
-        # agregar nombre del punto de rotaciÃ³n a las imÃ¡genes
+        # agregar nombre del punto de rotación a las imágenes
         resulting_images = operations.add_to_images_name(resulting_images, "rp1")
         images_to_export += resulting_images
 
@@ -146,9 +146,9 @@ def register_with_rotation_points_and_translation_point(photo, rotation_iteratio
             fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point1["name"])
             return fail_code, images_to_export, None, None, None
 
-        # Encontrar punto de rotaciÃ³n 2
+        # Encontrar punto de rotación 2
         rotation_point2_coordinates, resulting_images = cv_func.find_reference_point_in_photo(photo, rotation_point2)
-        # agregar nombre del punto de rotaciÃ³n a las imÃ¡genes
+        # agregar nombre del punto de rotación a las imágenes
         resulting_images = operations.add_to_images_name(resulting_images, "rp2")
         images_to_export += resulting_images
 
@@ -157,7 +157,7 @@ def register_with_rotation_points_and_translation_point(photo, rotation_iteratio
             return fail_code, images_to_export, None, None, None
 
 
-        # Ãngulo entre los 2 puntos de rotaciÃ³n
+        # ángulo entre los 2 puntos de rotación
         angle_between_rotation_points = math_functions.calculate_angle(rotation_point1_coordinates, rotation_point2_coordinates)
 
         # Rotar la imagen
@@ -167,9 +167,9 @@ def register_with_rotation_points_and_translation_point(photo, rotation_iteratio
         total_rotation += rotation
 
 
-    # Encontrar punto de traslaciÃ³n
+    # Encontrar punto de traslación
     translation_point_coordinates, resulting_images = cv_func.find_reference_point_in_photo(photo, translation_point)
-    # agregar nombre del punto de traslaciÃ³n a las imÃ¡genes
+    # agregar nombre del punto de traslación a las imágenes
     resulting_images = operations.add_to_images_name(resulting_images, "tp")
     images_to_export += resulting_images
 
@@ -177,7 +177,7 @@ def register_with_rotation_points_and_translation_point(photo, rotation_iteratio
         fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(translation_point["name"])
         return fail_code, images_to_export, None, None, None
 
-    # Se traslada la diferencia entre las coordenadas donde deberÃ­a ubicarse el fiducial 1 menos las coordenadas encontradas
+    # Se traslada la diferencia entre las coordenadas donde deberá ubicarse el fiducial 1 menos las coordenadas encontradas
     x_diference = objective_x - translation_point_coordinates[0]
     y_diference = objective_y - translation_point_coordinates[1]
     photo = cv_func.translate(photo, x_diference, y_diference)
