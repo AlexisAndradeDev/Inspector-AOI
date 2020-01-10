@@ -312,6 +312,8 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
             status = "good"
             break
 
+    window_results = [matches_number, best_match]
+
     # Si no se encontraron las coincidencia necesarias con ninguna subtemplate
     if not status == "good" and status != "failed":
         status = "bad"
@@ -329,9 +331,5 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
                          (0, 255, 0), 2)
 
         images_to_export += [["matches", matches_image]]
-        # fails, window_results, window_status, resulting_images
-        return fails, [matches_number, best_match], status, images_to_export
-    # Si no se encontraron coincidencias, exportar sólo imagen filtrada
-    else:
-        # fails, window_results, window_status, resulting_images
-        return fails, [matches_number, best_match], status, images_to_export
+
+    return fails, window_results, status, images_to_export
