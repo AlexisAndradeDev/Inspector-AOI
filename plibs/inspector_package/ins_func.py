@@ -1,7 +1,4 @@
-import sys
-# Hacer esto para importar módulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
-import math_functions, cv_func, operations
+from inspector_package import math_functions, cv_func, operations
 
 from cv2 import imread, imwrite, rectangle
 from numpy import array
