@@ -5,10 +5,7 @@ import os
 import codecs
 import copy
 
-import sys
-# Hacer esto para importar módulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/pyv_functions/')
-import cv_functions, math_functions
+from inspector_package import math_functions, ins_func, operations
 
 def read_file(path):
     with open(path) as f:
@@ -83,7 +80,7 @@ def inspect(first_board, last_board, inspection_points, settings):
     # la función range toma desde first hasta last-1, así que hay que sumarle 1
     for board_index in range(first_board, last_board+1):
 
-        board = cv_functions.ObjectInspected(board_number=board_index)
+        board = operations.ObjectInspected(board_number=board_index)
 
         aligned_board_image = imread("{0}{1}-white-board_aligned.bmp".format(settings["images_path"], board.get_number()))
         if aligned_board_image is None:
@@ -109,14 +106,14 @@ def inspect(first_board, last_board, inspection_points, settings):
                 continue
 
             threads = create_threads(
-                func=cv_functions.inspect_inspection_points,
+                func=ins_func.inspect_inspection_points,
                 threads_num=settings["threads_num_for_inspection_points"],
                 targets_num=len(inspection_points),
                 func_args=[aligned_board_image,board,inspection_points,"debug","check:total",aligned_board_image_ultraviolet]
             )
         else:
             threads = create_threads(
-                func=cv_functions.inspect_inspection_points,
+                func=ins_func.inspect_inspection_points,
                 threads_num=settings["threads_num_for_inspection_points"],
                 targets_num=len(inspection_points),
                 func_args=[aligned_board_image,board,inspection_points,"debug","check:total",None]
@@ -187,7 +184,7 @@ if __name__ == '__main__':
     }
 
     # Puntos de inspección
-    inspection_points = cv_functions.create_inspection_points(inspection_points_data)
+    inspection_points = ins_func.create_inspection_points(inspection_points_data)
 
     # Iniciar el debugeo de los tableros
     results = "" # crear variable global para resultados
