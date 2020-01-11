@@ -5,10 +5,7 @@ import os
 import codecs
 import copy
 
-import sys
-# Hacer esto para importar módulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
-import math_functions, ins_func, operations
+from inspector_package import math_functions, ins_func, operations
 
 def read_file(path):
     with open(path) as f:

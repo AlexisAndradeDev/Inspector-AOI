@@ -5,10 +5,7 @@ Script para registrar (alinear) imágenes de tableros desalineados.
 Hecho por: Martín Alexis Martínez Andrade.
 """
 
-import sys
-# Hacer esto para importar módulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
-import math_functions, cv_func, reg_methods_func
+from inspector_package import math_functions, cv_func, reg_methods_func
 
 import threading
 import codecs
