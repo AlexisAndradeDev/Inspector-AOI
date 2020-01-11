@@ -1,7 +1,4 @@
-import sys
-# Hacer esto para importar mÃ³dulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
-import math_functions, cv_func, operations
+from inspector_package import math_functions, cv_func, operations
 
 from cv2 import imread, imwrite, rectangle
 from numpy import array
@@ -15,13 +12,13 @@ def create_inspection_point(inspection_point_data):
     inspection_point = {
         "light":inspection_point_data[0], # white / ultraviolet
         "name":inspection_point_data[1],
-        "type":"single", # no utiliza cadenas esta versiÃ³n
+        "type":"single", # no utiliza cadenas esta versión
         "coordinates":inspection_point_data[2],
         "inspection_function":inspection_point_data[3],
         "filters":inspection_point_data[5],
     }
 
-    # parÃ¡metros de la funciÃ³n de inspecciÃ³n del punto (Ã¡reas de blob, templates de template matching, etc.)
+    # parámetros de la función de inspección del punto (áreas de blob, templates de template matching, etc.)
     parameters_data = inspection_point_data[4]
     inspection_point["parameters"] = get_inspection_function_parameters(inspection_point, parameters_data)
 
@@ -86,7 +83,7 @@ def get_template_matching_parameters(inspection_point, parameters_data):
 
 def get_sub_templates(number_of_sub_templates, template_path, filters):
     sub_templates = []
-    # Lista de subtemplates y la calificaciÃ³n mÃ­Â­nima de cada una
+    # Lista de subtemplates y la calificación mí­nima de cada una
     for i in range(number_of_sub_templates):
         sub_template_img = imread(template_path + "-" + str(i+1) + ".bmp")
         sub_template_img = cv_func.apply_filters(sub_template_img, filters)
@@ -113,7 +110,7 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
         aligned_board_image_ultraviolet=None,
     ):
     """
-    PodrÃ­a quitar el argumento 'photo_number' al incluir el atributo
+    Podrá quitar el argumento 'photo_number' al incluir el atributo
     photo_number en el objeto board.
     """
 
@@ -122,10 +119,10 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
     elif stage == "inspection":
         images_path = "C:/Dexill/Inspector/Alpha-Premium/x64/inspections/bad_windows_results/"
 
-    # se le resta 1 a la posiciÃ³n de los puntos de inspecciÃ³n para obtener su Ã­ndice en la lista
+    # se le resta 1 a la posición de los puntos de inspección para obtener su índice en la lista
     first_inspection_point -= 1
     last_inspection_point -= 1
-    # la funciÃ³n range toma desde first hasta last-1, asÃ­ que hay que sumarle 1
+    # la función range toma desde first hasta last-1, así que hay que sumarle 1
     inspection_points = inspection_points[first_inspection_point:last_inspection_point+1]
 
     for inspection_point in inspection_points:
@@ -141,29 +138,29 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
 
         fails, window_results, window_status, resulting_images = inspect_point(inspection_image_filt, inspection_point)
 
-        # Escribir imÃ¡genes sin filtrar de puntos de inspecciÃ³n malos si se activÃ³ el modo de revisiÃ³n bajo
+        # Escribir imágenes sin filtrar de puntos de inspección malos si se activó el modo de revisión bajo
         if(window_status == "bad" and check_mode == "check:low"):
             imwrite(
                 "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
 
-        # Escribir imÃ¡genes del proceso de inspecciÃ³n de puntos de inspecciÃ³n malos si se activÃ³ el modo de revisiÃ³n avanzado
+        # Escribir imágenes del proceso de inspección de puntos de inspección malos si se activó el modo de revisión avanzado
         elif(window_status == "bad" and check_mode == "check:advanced" and resulting_images is not None):
             imwrite(
                 "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
-            # Exportar imÃ¡genes
+            # Exportar imágenes
             operations.export_images(resulting_images, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
 
-        # Escribir todas las imÃ¡genes de todos los puntos de inspecciÃ³n buenos y malos con el modo de revisiÃ³n total (solo usado en debugeo)
+        # Escribir todas las imágenes de todos los puntos de inspección buenos y malos con el modo de revisión total (solo usado en debugeo)
         elif (check_mode == "check:total" and resulting_images is not None):
             imwrite(
                 "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
-            # Exportar imÃ¡genes
+            # Exportar imágenes
             operations.export_images(resulting_images, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
 
         # El estado del tablero es malo si hubo un defecto y no hubo fallos.
@@ -174,7 +171,7 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
         if (window_status == "failed"):
             board.set_status("failed")
 
-        # Agregar resultados al string que se utilizarÃ¡ para escribirlos en el archivo ins_results.io
+        # Agregar resultados al string que se utilizará para escribirlos en el archivo ins_results.io
         board.add_inspection_point_results(inspection_point["name"], inspection_point["light"], window_status, window_results, fails)
 
 def inspect_inspection_points_for_debug(first_inspection_point, last_inspection_point,
@@ -182,28 +179,28 @@ def inspect_inspection_points_for_debug(first_inspection_point, last_inspection_
         aligned_board_image_ultraviolet=None,
     ):
     """
-    Esta funciÃ³n debe ser eliminada, y hacer que el script de debugeo (dbg.py)
-    pueda utilizar la misma funciÃ³n que el script de inspecciÃ³n (ins.py).
-    El problema es que el script de debugeo exporta las imÃ¡genes sin utilizar
-    el nÃºmero de fotografÃ­a, ya que debugeo no utiliza fotografÃ­as mÃºltiples.
+    Esta función debe ser eliminada, y hacer que el script de debugeo (dbg.py)
+    pueda utilizar la misma función que el script de inspección (ins.py).
+    El problema es que el script de debugeo exporta las imágenes sin utilizar
+    el número de fotografá, ya que debugeo no utiliza fotografás múltiples.
 
-    Las 2 opciones que se me han ocurrido (UTILIZAR LA OPCIÃN A, MÃS FÃCIL DE ADAPTAR A CAMBIOS):
-        A) La mÃ¡s Ã³ptima a largo plazo: Hacer que debugeo pueda utilizar fotografÃ­as mÃºltiples.
-           SerÃ­a la forma mÃ¡s limpia de hacerlo, aunque requiere mÃ¡s trabajo.
-           + ServirÃ­a para que el programa de C# no tenga que ejecutar varias veces
-           el script dbg.py para inspeccionar mÃºltiples fotografÃ­as.
-           + SerÃ­a mÃ¡s fÃ¡cil de adaptar al atributo que pienso agregar a ObjectInspected
-           llamado photo_number, para saber el nÃºmero de fotografÃ­a en que se
+    Las 2 opciones que se me han ocurrido (UTILIZAR LA OPCIÓN A, MÁS FÁCIL DE ADAPTAR A CAMBIOS):
+        A) La más óptima a largo plazo: Hacer que debugeo pueda utilizar fotografás múltiples.
+           Será la forma más limpia de hacerlo, aunque requiere más trabajo.
+           + Servirá para que el programa de C# no tenga que ejecutar varias veces
+           el script dbg.py para inspeccionar múltiples fotografás.
+           + Será más fácil de adaptar al atributo que pienso agregar a ObjectInspected
+           llamado photo_number, para saber el número de fotografá en que se
            encuentra el tablero.
-        B) La opciÃ³n menos limpia: aÃ±adir condicionales para que, al ser debugeo,
-           no utilice nÃºmero de fotografÃ­a.
-           - Menos fÃ¡cil de adaptar a cambios en el script de inspecciÃ³n, ya
-           que debugeo no utilizarÃ­a nÃºmero de fotografÃ­as e inspecciÃ³n sÃ­.
-           El objeto ObjectInspected tambiÃ©n deberÃ­a tener una condicional para
-           no asignar nÃºmero de fotografÃ­a si es debugeo. RecibirÃ­a los parÃ¡metros
-           de la funciÃ³n de construcciÃ³n con *args o **kwargs.
+        B) La opción menos limpia: añadir condicionales para que, al ser debugeo,
+           no utilice número de fotografá.
+           - Menos fácil de adaptar a cambios en el script de inspección, ya
+           que debugeo no utilizará número de fotografás e inspección sí.
+           El objeto ObjectInspected también deberá tener una condicional para
+           no asignar número de fotografá si es debugeo. Recibirá los parámetros
+           de la función de construcción con *args o **kwargs.
 
-    TambiÃ©n podrÃ­a quitar el argumento 'photo_number' al incluir el atributo
+    También podrá quitar el argumento 'photo_number' al incluir el atributo
     photo_number en el objeto board.
     """
 
@@ -212,10 +209,10 @@ def inspect_inspection_points_for_debug(first_inspection_point, last_inspection_
     elif stage == "inspection":
         images_path = "C:/Dexill/Inspector/Alpha-Premium/x64/inspections/bad_windows_results/"
 
-    # se le resta 1 a la posiciÃ³n de los puntos de inspecciÃ³n para obtener su Ã­Â­ndice en la lista
+    # se le resta 1 a la posición de los puntos de inspección para obtener su í­ndice en la lista
     first_inspection_point -= 1
     last_inspection_point -= 1
-    # la funciÃ³n range toma desde first hasta last-1, asÃ­Â­ que hay que sumarle 1
+    # la función range toma desde first hasta last-1, así­ que hay que sumarle 1
     inspection_points = inspection_points[first_inspection_point:last_inspection_point+1]
 
     for inspection_point in inspection_points:
@@ -231,29 +228,29 @@ def inspect_inspection_points_for_debug(first_inspection_point, last_inspection_
 
         fails, window_results, window_status, resulting_images = inspect_point(inspection_image_filt, inspection_point)
 
-        # Escribir imÃ¡genes sin filtrar de puntos de inspecciÃ³n malos si se activÃ³ el modo de revisiÃ³n bajo
+        # Escribir imágenes sin filtrar de puntos de inspección malos si se activó el modo de revisión bajo
         if(window_status == "bad" and check_mode == "check:low"):
             imwrite(
                 "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
 
-        # Escribir imÃ¡genes filtradas de puntos de inspecciÃ³n malos si se activÃ³ el modo de revisiÃ³n avanzado
+        # Escribir imágenes filtradas de puntos de inspección malos si se activó el modo de revisión avanzado
         elif(window_status == "bad" and check_mode == "check:advanced" and resulting_images is not None):
             imwrite(
                 "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
-            # Exportar imÃ¡genes
+            # Exportar imágenes
             operations.export_images_for_debug(resulting_images, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
 
-        # Escribir todas las imÃ¡genes de todos los puntos de inspecciÃ³n buenos y malos con el modo de revisiÃ³n total (solo usado en debugeo)
+        # Escribir todas las imágenes de todos los puntos de inspección buenos y malos con el modo de revisión total (solo usado en debugeo)
         elif (check_mode == "check:total" and resulting_images is not None):
             imwrite(
                 "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
-            # Exportar imÃ¡genes
+            # Exportar imágenes
             operations.export_images_for_debug(resulting_images, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
 
         # El estado del tablero es malo si hubo un defecto y no hubo fallos.
@@ -264,13 +261,13 @@ def inspect_inspection_points_for_debug(first_inspection_point, last_inspection_
         if (window_status == "failed"):
             board.set_status("failed")
 
-        # Agregar resultados al string que se utilizarÃ¡ para escribirlos en el archivo ins_results.io
+        # Agregar resultados al string que se utilizará para escribirlos en el archivo ins_results.io
         board.add_inspection_point_results(inspection_point["name"], inspection_point["light"], window_status, window_results, fails)
 
 
 def inspection_function_blob(inspection_point_image, inspection_point):
     """
-    Las imÃ¡genes a exportar cuando se utiliza blob son:
+    Las imágenes a exportar cuando se utiliza blob son:
     imagen filtrada, imagen binarizada.
     """
     status = ""
@@ -291,7 +288,7 @@ def inspection_function_blob(inspection_point_image, inspection_point):
 
     images_to_export.append(["binary", binary_image])
 
-    # Evaluar el punto de inspecciÃ³n
+    # Evaluar el punto de inspección
     blob_is_correct = evaluate_blob_results(
         blob_area, biggest_blob,
         inspection_point["parameters"]["min_area"],
@@ -308,9 +305,9 @@ def inspection_function_blob(inspection_point_image, inspection_point):
     return fails, window_results, status, images_to_export
 
 def evaluate_blob_results(blob_area, biggest_blob, min_area, max_area, max_allowed_blob_size):
-    # evaluar con mÃ¡ximo tamaÃ±o de blob permitido
+    # evaluar con máximo tamaño de blob permitido
     max_blob_size_passed = evaluate_blob_results_by_blob_size(biggest_blob, max_allowed_blob_size)
-    # evaluar con Ã¡rea total de blobs
+    # evaluar con área total de blobs
     blob_area_passed = evaluate_blob_results_by_blob_area(blob_area, min_area, max_area)
 
     if max_blob_size_passed and blob_area_passed:
@@ -327,10 +324,10 @@ def evaluate_blob_results_by_blob_size(biggest_blob, max_allowed_blob_size):
         return False
 
 def evaluate_blob_results_by_blob_area(blob_area, min_area, max_area):
-    # Evaluar con 3 opciones el Ã¡rea total de blobs:
-    # Si hay Ã¡rea mÃ­Â­nima y mÃ¡xima
-    # Si hay Ã¡rea mÃ­Â­nima
-    # Si hay Ã¡rea mÃ¡xima
+    # Evaluar con 3 opciones el área total de blobs:
+    # Si hay área mí­nima y máxima
+    # Si hay área mí­nima
+    # Si hay área máxima
 
     if min_area and max_area:
         if(blob_area >= min_area and blob_area <= max_area):
@@ -352,7 +349,7 @@ def evaluate_blob_results_by_blob_area(blob_area, min_area, max_area):
 
 def inspection_function_template_matching(inspection_point_image, inspection_point):
     """
-    Las imÃ¡genes a exportar cuando se utiliza template matching son:
+    Las imágenes a exportar cuando se utiliza template matching son:
     imagen filtrada,
     imagen rgb con las coincidencias encontradas marcadas.
     """
@@ -399,7 +396,7 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
             continue
 
 
-        # Evaluar el punto de inspecciÃ³n
+        # Evaluar el punto de inspección
         matches_number = len(matches_locations)
         if(matches_number == inspection_point["parameters"]["required_matches"]):
             correct_matches_number = True
@@ -412,14 +409,14 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
     if not status == "good" and status != "failed":
         status = "bad"
 
-    # Si se encontrÃ³ al menos una coincidencia, exportar imagen con las coincidencias marcadas
+    # Si se encontró al menos una coincidencia, exportar imagen con las coincidencias marcadas
     if matches_number:
         matches_image = inspection_point_image.copy()
-        # Dibujar rectÃ¡ngulos en las coincidencias
+        # Dibujar rectángulos en las coincidencias
         for match_location in matches_locations:
             x = match_location[0]
             y = match_location[1]
-            # Dibujar un rectÃ¡ngulos en la coincidencia
+            # Dibujar un rectángulos en la coincidencia
             rectangle(matches_image, (x, y),
                          (x+template_width, y+template_height),
                          (0, 255, 0), 2)

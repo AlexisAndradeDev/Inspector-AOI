@@ -2,10 +2,7 @@ import cv2
 import math
 import numpy as np
 
-import sys
-# Hacer esto para importar módulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
-import math_functions, excepts
+from inspector_package import math_functions, excepts
 
 def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1, c2_size=3, c2_color=(0,0,255), c2_thickness=1):
     found = img.copy()
@@ -129,26 +126,36 @@ def apply_filters(img, filters):
     return img
 
 # analysis functions
-def detect_shape(contour):
+def get_vertices_from_cnt(cnt):
+    peri = cv2.arcLength(cnt, True)
+    approxPoly = cv2.approxPolyDP(cnt, 0.04 * peri, True)
+    vertices = len(approxPoly)
+    return vertices, approxPoly
+
+def detect_shape(cnt):
+    """Retorna el nombre del polígono según su número de vértices."""
     # Inicializar el nombre de la figura y aproximar el contorno (número de vértices)
     shape = "unidentified"
-    peri = cv2.arcLength(contour, True)
-    vertices = cv2.approxPolyDP(contour, 0.04 * peri, True)
 
-    if len(vertices) == 3:
+    vertices, approxPoly = get_vertices_from_cnt(cnt)
+
+    if vertices == 3:
 	       shape = "triangle"
-
-    elif len(vertices) == 4:
+    elif vertices == 4:
         # Computar la relación de aspecto (relación entre ancho y alto)
-        (x, y, w, h) = cv2.boundingRect(vertices)
+        (x, y, w, h) = cv2.boundingRect(approxPoly)
         ar = w / float(h)
 
         # un cuadrado tendrá una relación de aspecto aproximada a uno,
         # de otra forma será un cuadrado
-        if ar >= 0.95 and ar <= 1.05:
+        if ar >= 0.8 and ar <= 1.2:
             shape = "square"
         else:
             shape = "rectangle"
+    elif vertices == 5:
+        shape = "pentagon"
+    elif vertices == 6:
+        shape = "hexagon"
 
     return shape
 
@@ -173,7 +180,7 @@ def get_contour_area(contour):
     return none_zero_pixels
 
 
-CONTOURS_FILTERS = ["min_area", "max_area", "regular_polygon", "circularity", "min_diameter", "max_diameter"]
+CONTOURS_FILTERS = ["min_area", "max_area", "polygon", "vertices", "circularity", "min_diameter", "max_diameter"]
 def get_valid_contours_filters(filters):
     valid_filters = {} # dict
     invalid_filters = [] # filtros no existentes
@@ -185,17 +192,83 @@ def get_valid_contours_filters(filters):
             invalid_filters.append(filter)
     return valid_filters, invalid_filters
 
-def find_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+def contour_fulfills_filters(cnt, contours_filters):
     """
-    Retorna el primer contorno que cumpla con los filtros de contornos introducidos
-    por el usuario.
-    Puede encontrarse según los siguientes parámetros (contours_filters):
+    Retorna verdadero si el contorno cumple con todos los filtros; retorna
+    falso si no cumple con uno o más.
+
+    Puede filtrarse según los siguientes parámetros (contours_filters):
     1. Área mínima del contorno.
     2. Área máxima del contorno
-    3. Polígono regular: detectar si es un cuadrado, rectángulo o triángulo
+    3. Polígono: selecciona los contornos cuya forma sea parecida al polígono señalado o cuyo número de vértices coincida con el requerido.
     4. Círculo: circularidad mín del contorno.
     5. Círculo: mín diámetro.
     6. Círculo: máx diámetro.
+    """
+    # si no pasa alguno de los filtros, tomará valor False y continuará con el siguiente contorno
+    cnt_is_valid = True
+
+    for filter, parameters in contours_filters.items():
+        if filter not in CONTOURS_FILTERS:
+            continue
+
+        if filter == "min_area":
+            min_area = parameters["min_area"]
+            if not get_contour_area(cnt) >= min_area:
+                cnt_is_valid = False
+                break
+        elif filter == "max_area":
+            max_area = parameters["max_area"]
+            if not get_contour_area(cnt) <= max_area:
+                cnt_is_valid = False
+                break
+        elif filter == "polygon":
+            required_polygon = parameters["required_polygon"]
+            polygon = detect_shape(cnt)
+            if polygon != required_polygon:
+                cnt_is_valid = False
+                break
+        elif filter == "vertices":
+            required_vertices = parameters["required_vertices"]
+            vertices, approxPoly = get_vertices_from_cnt(cnt)
+            if vertices != required_vertices:
+                cnt_is_valid = False
+                break
+        elif filter == "circularity":
+            min_circle_perfection = parameters["min_circularity"]
+            max_circle_perfection = 1.2
+
+            perimeter = cv2.arcLength(cnt, True)
+            area = get_contour_area(cnt)
+
+            if not perimeter:
+                cnt_is_valid = False
+                break
+
+            circularity = math_functions.calculate_circularity(area, perimeter)
+
+            if not min_circle_perfection <= circularity <= max_circle_perfection:
+                cnt_is_valid = False
+                break
+        elif filter == "min_diameter":
+            min_diameter = parameters["min_diameter"]
+            _,_,diameter,_ = cv2.boundingRect(cnt)
+            if not diameter >= min_diameter:
+                cnt_is_valid = False
+                break
+        elif filter == "max_diameter":
+            max_diameter = parameters["max_diameter"]
+            _,_,diameter,_ = cv2.boundingRect(cnt)
+            if not diameter <= max_diameter:
+                cnt_is_valid = False
+                break
+
+    return cnt_is_valid
+
+def find_filtered_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+    """
+    Retorna el primer contorno que cumpla con los filtros de contornos introducidos
+    por el usuario.
     """
 
     contours, binary = find_contours(img,
@@ -208,63 +281,36 @@ def find_contour(img, color_scale, lower_color, upper_color, invert_binary, cont
     contours_filters, _ = get_valid_contours_filters(contours_filters)
 
     for cnt in contours:
-        # si no pasa alguno de los filtros, se cambiará a falso y continuará con el siguiente contorno
-        contour_found = True
-
-        for filter, parameters in contours_filters.items():
-            if filter not in CONTOURS_FILTERS:
-                continue
-
-            if filter == "min_area":
-                min_area = parameters["min_area"]
-                if not get_contour_area(cnt) >= min_area:
-                    contour_found = False
-                    break
-            elif filter == "max_area":
-                max_area = parameters["max_area"]
-                if not get_contour_area(cnt) <= max_area:
-                    contour_found = False
-                    break
-            elif filter == "regular_polygon":
-                required_polygon = parameters["required_polygon"]
-                polygon = detect_shape(cnt)
-                if polygon != required_polygon:
-                    contour_found = False
-                    break
-            elif filter == "circularity":
-                min_circle_perfection = parameters["min_circularity"]
-                max_circle_perfection = 1.2
-
-                perimeter = cv2.arcLength(cnt, True)
-                area = get_contour_area(cnt)
-
-                if not perimeter:
-                    contour_found = False
-                    break
-
-                circularity = math_functions.calculate_circularity(area, perimeter)
-
-                if not min_circle_perfection <= circularity <= max_circle_perfection:
-                    contour_found = False
-                    break
-            elif filter == "min_diameter":
-                min_diameter = parameters["min_diameter"]
-                _,_,diameter,_ = cv2.boundingRect(cnt)
-                if not diameter >= min_diameter:
-                    contour_found = False
-                    break
-            elif filter == "max_diameter":
-                max_diameter = parameters["max_diameter"]
-                _,_,diameter,_ = cv2.boundingRect(cnt)
-                if not diameter <= max_diameter:
-                    contour_found = False
-                    break
-
-        if contour_found:
+        cnt_is_valid = contour_fulfills_filters(cnt, contours_filters)
+        if cnt_is_valid:
             return cnt, binary
 
     if not contour_found:
         return None, binary
+
+def find_filtered_contours(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+    """
+    Retorna todos los contornos que cumplan con los filtros de contornos introducidos
+    por el usuario.
+    """
+
+    contours, binary = find_contours(img,
+        lower_color, upper_color, color_scale, invert_binary)
+
+    if contours is None:
+        return [], binary
+
+    # eliminar de la lista los filtros que no existan
+    contours_filters, _ = get_valid_contours_filters(contours_filters)
+
+    # filtrar los contornos y agregarlos a la lista si los cumplen todos
+    valid_contours = []
+    for cnt in contours:
+        cnt_is_valid = contour_fulfills_filters(cnt, contours_filters)
+        if cnt_is_valid:
+            valid_contours.append(cnt)
+
+    return valid_contours, binary
 
 def find_contours(img, lower, upper, color_scale, invert_binary=False):
     """Retorna todos los contornos, sin filtros."""
@@ -308,7 +354,7 @@ def create_corner_parameters(name, coordinates, lower_color, upper_color,
 def find_corner(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
     images_to_return = [] # imágenes que se retornarán
 
-    corner_contour, binary = find_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
+    corner_contour, binary = find_filtered_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
     images_to_return.append(["binary",binary])
 
     if corner_contour is None:
@@ -341,7 +387,7 @@ def create_centroid_parameters(name, coordinates, lower_color, upper_color,
 def find_centroid(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
     images_to_return = [] # imágenes que se retornarán
 
-    centroid_contour, binary = find_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
+    centroid_contour, binary = find_filtered_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
     images_to_return.append(["binary", binary])
 
     if centroid_contour is None:
