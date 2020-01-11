@@ -87,7 +87,7 @@ def inspect(first_board, last_board, inspection_points, settings):
             # No existe la imagen del tablero
             board.set_status("error", code="IMG_DOESNT_EXIST")
             # resultados del tablero: número, status, código (OPCIONAL, puede o no estar), tiempo de registro, tiempo de inspección
-            board.set_board_results(registration_time=0, inspection_time=0, stage="debug")
+            board.set_board_results()
 
             results += board.get_results() # resultados de los puntos de inspección y resultados del tablero (tiempos, status)
             continue
@@ -100,20 +100,20 @@ def inspect(first_board, last_board, inspection_points, settings):
                 # No existe la imagen del tablero tomada con luz ultravioleta
                 board.set_status("error", code="UV_IMG_DOESNT_EXIST")
                 # resultados del tablero: número, status, tiempo de tiempo de inspección
-                board.set_board_results(registration_time=0, inspection_time=0, stage="debug")
+                board.set_board_results()
 
                 results += board.get_results() # resultados de los puntos de inspección y resultados del tablero (tiempos, status)
                 continue
 
             threads = create_threads(
-                func=ins_func.inspect_inspection_points,
+                func=ins_func.inspect_inspection_points_for_debug,
                 threads_num=settings["threads_num_for_inspection_points"],
                 targets_num=len(inspection_points),
                 func_args=[aligned_board_image,board,inspection_points,"debug","check:total",aligned_board_image_ultraviolet]
             )
         else:
             threads = create_threads(
-                func=ins_func.inspect_inspection_points,
+                func=ins_func.inspect_inspection_points_for_debug,
                 threads_num=settings["threads_num_for_inspection_points"],
                 targets_num=len(inspection_points),
                 func_args=[aligned_board_image,board,inspection_points,"debug","check:total",None]
@@ -129,7 +129,7 @@ def inspect(first_board, last_board, inspection_points, settings):
             board.set_status("error", code="NO_RESULTS")
 
         # resultados del tablero: número, status, código (OPCIONAL, puede o no estar), tiempo de registro, tiempo de inspección
-        board.set_board_results(registration_time=0, inspection_time=inspection_time, stage="debug")
+        board.set_board_results()
 
         results += board.get_results() # resultados de los puntos de inspección y resultados del tablero (tiempos, status)
 
