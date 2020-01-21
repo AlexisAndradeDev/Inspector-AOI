@@ -134,7 +134,7 @@ def inspect_board(results, board, photo_number, board_image, inspection_points, 
         board_image_ultraviolet, _ = cv_func.rotate(board_image_ultraviolet, 180)
 
     # Escribir imagen del tablero alineado con luz blanca
-    imwrite("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/{0}-board-{1}.bmp".format(photo_number, board.get_number()), aligned_board_image)
+    imwrite("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/{0}-board-{1}.bmp".format(photo_number, board.get_board_number()), aligned_board_image)
 
     if settings["uv_inspection"] == "uv_inspection:True":
         # Alinear imagen del tablero con luz ultravioleta con los datos de la imagen de luz blanca
@@ -143,7 +143,7 @@ def inspect_board(results, board, photo_number, board_image, inspection_points, 
         aligned_board_image_ultraviolet = cv_func.translate(aligned_board_image_ultraviolet, x_translation, y_translation)
 
         # Escribir imagen del tablero alineado con luz ultravioleta
-        imwrite("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/{0}-board-{1}-ultraviolet.bmp".format(photo_number, board.get_number()), aligned_board_image_ultraviolet)
+        imwrite("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/{0}-board-{1}-ultraviolet.bmp".format(photo_number, board.get_board_number()), aligned_board_image_ultraviolet)
 
     # Inspeccionar puntos de inspección con multihilos
     if settings["uv_inspection"] == "uv_inspection:True":
@@ -176,10 +176,10 @@ def inspect_board(results, board, photo_number, board_image, inspection_points, 
 def inspect_boards(first_board, last_board, results, photo_number, photo, inspection_points, registration_settings, settings, photo_ultraviolet):
     # la función range toma desde first hasta last-1, así que hay que sumarle 1
     for board_number in range(first_board, last_board+1):
-        board = operations.ObjectInspected(board_number=board_number)
+        board = operations.ObjectInspected(photo_number=photo_number, board_number=board_number)
 
         # Recortar imagen de la región del tablero
-        coordinates = settings["boards_coordinates"][board.get_index()]
+        coordinates = settings["boards_coordinates"][board.get_board_index()]
         board_image = cv_func.crop_image(photo, coordinates)
         if settings["uv_inspection"] == "uv_inspection:True":
             board_image_ultraviolet = cv_func.crop_image(photo_ultraviolet, coordinates)
@@ -202,7 +202,7 @@ def inspect_boards(first_board, last_board, results, photo_number, photo, inspec
 
                 # si está activado el check mode (low, advanced o total), exportar todas las imágenes
                 if settings["check_mode"] != "check:no":
-                    operations.export_images(skip_images, photo_number, board.get_number(), settings["skip_function"]["name"], settings["skip_function"]["light"], images_path=general_settings["images_path"])
+                    operations.export_images(skip_images, photo_number, board.get_board_number(), settings["skip_function"]["name"], settings["skip_function"]["light"], images_path=general_settings["images_path"])
 
                 continue
 
@@ -213,7 +213,7 @@ def inspect_photo(photo_number, photo, inspection_points, registration_settings,
     results = StaticVar("")
 
     if settings["boards_num"] == 1:
-        board = operations.ObjectInspected(board_number=1)
+        board = operations.ObjectInspected(photo_number=photo_number, board_number=1)
         start = timer()
         inspect_board(results, board, photo_number, photo, inspection_points, registration_settings, settings, photo_ultraviolet)
         end = timer()

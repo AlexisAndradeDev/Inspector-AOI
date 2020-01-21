@@ -141,117 +141,27 @@ def inspect_inspection_points(first_inspection_point, last_inspection_point,
         # Escribir imágenes sin filtrar de puntos de inspección malos si se activó el modo de revisión bajo
         if(window_status == "bad" and check_mode == "check:low"):
             imwrite(
-                "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"]),
+                "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_board_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
 
         # Escribir imágenes del proceso de inspección de puntos de inspección malos si se activó el modo de revisión avanzado
         elif(window_status == "bad" and check_mode == "check:advanced" and resulting_images is not None):
             imwrite(
-                "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"]),
+                "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_board_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
             # Exportar imágenes
-            operations.export_images(resulting_images, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
+            operations.export_images(resulting_images, photo_number, board.get_board_number(), inspection_point["name"], inspection_point["light"], images_path)
 
         # Escribir todas las imágenes de todos los puntos de inspección buenos y malos con el modo de revisión total (solo usado en debugeo)
         elif (check_mode == "check:total" and resulting_images is not None):
             imwrite(
-                "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"]),
+                "{0}{1}-{2}-{3}-{4}-rgb.bmp".format(images_path, photo_number, board.get_board_number(), inspection_point["name"], inspection_point["light"]),
                 inspection_image
             )
             # Exportar imágenes
-            operations.export_images(resulting_images, photo_number, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
-
-        # El estado del tablero es malo si hubo un defecto y no hubo fallos.
-        # El estado del tablero es fallido si hubo un fallo al inspeccionar
-        # y no se puede cambiar del estado fallido a otro.
-        if (window_status == "bad" and board.get_status() != "failed"):
-            board.set_status("bad")
-        if (window_status == "failed"):
-            board.set_status("failed")
-
-        # Agregar resultados al string que se utilizará para escribirlos en el archivo ins_results.io
-        board.add_inspection_point_results(inspection_point["name"], inspection_point["light"], window_status, window_results, fails)
-
-def inspect_inspection_points_for_debug(first_inspection_point, last_inspection_point,
-        aligned_board_image, board, inspection_points, stage, check_mode,
-        aligned_board_image_ultraviolet=None,
-    ):
-    """
-    Esta función debe ser eliminada, y hacer que el script de debugeo (dbg.py)
-    pueda utilizar la misma función que el script de inspección (ins.py).
-    El problema es que el script de debugeo exporta las imágenes sin utilizar
-    el número de fotografá, ya que debugeo no utiliza fotografás múltiples.
-
-    Las 2 opciones que se me han ocurrido (UTILIZAR LA OPCIÓN A, MÁS FÁCIL DE ADAPTAR A CAMBIOS):
-        A) La más óptima a largo plazo: Hacer que debugeo pueda utilizar fotografás múltiples.
-           Será la forma más limpia de hacerlo, aunque requiere más trabajo.
-           + Servirá para que el programa de C# no tenga que ejecutar varias veces
-           el script dbg.py para inspeccionar múltiples fotografás.
-           + Será más fácil de adaptar al atributo que pienso agregar a ObjectInspected
-           llamado photo_number, para saber el número de fotografá en que se
-           encuentra el tablero.
-        B) La opción menos limpia: añadir condicionales para que, al ser debugeo,
-           no utilice número de fotografá.
-           - Menos fácil de adaptar a cambios en el script de inspección, ya
-           que debugeo no utilizará número de fotografás e inspección sí.
-           El objeto ObjectInspected también deberá tener una condicional para
-           no asignar número de fotografá si es debugeo. Recibirá los parámetros
-           de la función de construcción con *args o **kwargs.
-
-    También podrá quitar el argumento 'photo_number' al incluir el atributo
-    photo_number en el objeto board.
-    """
-
-    if stage == "debug":
-        images_path = "C:/Dexill/Inspector/Alpha-Premium/x64/pd/"
-    elif stage == "inspection":
-        images_path = "C:/Dexill/Inspector/Alpha-Premium/x64/inspections/bad_windows_results/"
-
-    # se le resta 1 a la posición de los puntos de inspección para obtener su í­ndice en la lista
-    first_inspection_point -= 1
-    last_inspection_point -= 1
-    # la función range toma desde first hasta last-1, así­ que hay que sumarle 1
-    inspection_points = inspection_points[first_inspection_point:last_inspection_point+1]
-
-    for inspection_point in inspection_points:
-        if inspection_point["light"] == "ultraviolet":
-            inspection_image = cv_func.crop_image(aligned_board_image_ultraviolet,inspection_point["coordinates"])
-        else:
-            inspection_image = cv_func.crop_image(aligned_board_image,inspection_point["coordinates"])
-
-        inspection_image_filt = cv_func.apply_filters(
-            inspection_image,
-            inspection_point["filters"]
-            )
-
-        fails, window_results, window_status, resulting_images = inspect_point(inspection_image_filt, inspection_point)
-
-        # Escribir imágenes sin filtrar de puntos de inspección malos si se activó el modo de revisión bajo
-        if(window_status == "bad" and check_mode == "check:low"):
-            imwrite(
-                "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
-                inspection_image
-            )
-
-        # Escribir imágenes filtradas de puntos de inspección malos si se activó el modo de revisión avanzado
-        elif(window_status == "bad" and check_mode == "check:advanced" and resulting_images is not None):
-            imwrite(
-                "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
-                inspection_image
-            )
-            # Exportar imágenes
-            operations.export_images_for_debug(resulting_images, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
-
-        # Escribir todas las imágenes de todos los puntos de inspección buenos y malos con el modo de revisión total (solo usado en debugeo)
-        elif (check_mode == "check:total" and resulting_images is not None):
-            imwrite(
-                "{0}{1}-{2}-{3}-rgb.bmp".format(images_path, board.get_number(), inspection_point["name"], inspection_point["light"]),
-                inspection_image
-            )
-            # Exportar imágenes
-            operations.export_images_for_debug(resulting_images, board.get_number(), inspection_point["name"], inspection_point["light"], images_path)
+            operations.export_images(resulting_images, photo_number, board.get_board_number(), inspection_point["name"], inspection_point["light"], images_path)
 
         # El estado del tablero es malo si hubo un defecto y no hubo fallos.
         # El estado del tablero es fallido si hubo un fallo al inspeccionar

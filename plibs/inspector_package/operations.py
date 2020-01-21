@@ -1,20 +1,23 @@
 from cv2 import imwrite
 
 class ObjectInspected:
-    def __init__(self,board_number):
-        self.number = board_number
+    def __init__(self,photo_number,board_number):
+        self.photo_number = photo_number
+        self.board_number = board_number
         # el índice es igual al número del tablero menos uno, ya que el índice
         # es usado para posiciones en lista, cuya primera posición es 0.
-        self.index = board_number-1
+        self.board_index = board_number-1
         self.status = "good" # iniciar como "bueno" por defecto
         self.inspection_points_results = ""
         self.board_results = ""
         self.results = ""
 
-    def set_number(self, number):
-        self.number = number
-    def set_index(self, number):
-        self.number = number
+    def set_photo_number(self, photo_number):
+        self.photo_number = photo_number
+    def set_board_number(self, board_number):
+        self.board_number = board_number
+    def set_board_index(self, board_number):
+        self.board_number = board_number
     def set_status(self, status, code=None):
         if not code:
             self.status = str(status)
@@ -22,7 +25,7 @@ class ObjectInspected:
             self.status = "{0};{1}".format(str(status), str(code))
     def add_inspection_point_results(self, name, light, status, results, fails):
         inspection_point_results = "{0};{1};{2};{3};{4};{5}$".format(
-            self.number, name, light, status, results, fails
+            self.board_number, name, light, status, results, fails
         )
         self.inspection_points_results += inspection_point_results
 
@@ -30,16 +33,16 @@ class ObjectInspected:
         self.results += inspection_point_results
     def set_board_results(self):
         self.board_results = "&{0};{1}#".format(
-            self.number, self.status
+            self.board_number, self.status
         )
 
         # agregar resultados a los resultados del tablero
         self.results += self.board_results
 
-    def get_index(self):
-        return self.index
-    def get_number(self):
-        return self.number
+    def get_board_index(self):
+        return self.board_index
+    def get_board_number(self):
+        return self.board_number
     def get_status(self):
         return self.status
     def get_inspection_points_results(self):
@@ -72,15 +75,6 @@ def export_images(images, photo_number, board_number, ins_point_name, light, ima
     # Exportar imágenes de un punto de inspección
     for image_name, image in images:
         imwrite("{0}{1}-{2}-{3}-{4}-{5}.bmp".format(images_path, photo_number, board_number, ins_point_name, light, image_name), image)
-
-def export_images_for_debug(images, board_number, ins_point_name, light, images_path):
-    """Esta función debe ser eliminada al adaptar export_images para utilizar
-    el script de debugeo (dbg.py), al solucionar la incompatibilidad causada porque
-    dbg.py no trabaja con fotos múltiples y no tiene photo_number."""
-    # Exportar imágenes del proceso de la función skip
-    for image_name, image in images:
-        # num_de_tablero-nombre_de_punto_de_inspección-luz_usada(ultraviolet/white)-nombre_de_imagen
-        imwrite("{0}{1}-{2}-{3}-{4}.bmp".format(images_path, board_number, ins_point_name, light, image_name), image)
 
 def add_to_images_name(images, str_):
     """
