@@ -3,6 +3,7 @@ import math
 import numpy as np
 
 from inspector_package import math_functions, excepts
+from timeit import default_timer as timer
 
 def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1, c2_size=3, c2_color=(0,0,255), c2_thickness=1):
     found = img.copy()
@@ -285,8 +286,7 @@ def find_filtered_contour(img, color_scale, lower_color, upper_color, invert_bin
         if cnt_is_valid:
             return cnt, binary
 
-    if not contour_found:
-        return None, binary
+    return None, binary
 
 def find_filtered_contours(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
     """
@@ -448,7 +448,7 @@ def find_reference_point(img_, reference_point):
 
     images_to_return.append(["rgb", img])
 
-    # Aplicar filtros secundarios a la imagen
+    # Aplicar filtros secundarios a la imagen    
     img = apply_filters(img, reference_point["filters"])
 
     if reference_point["type"] == "centroid":
@@ -469,7 +469,7 @@ def find_reference_point_in_photo(img, reference_point):
     """Suma las coordenadas del punto de referencia dentro de la ventana,
     más las coordenadas de la esquina superior izquierda de la ventana."""
     [x1,y1,x2,y2] = reference_point["coordinates"]
-    rp_img = img[y1:y2, x1:x2]
+    rp_img = img[y1:y2, x1:x2].copy()
 
     coordinates, images_to_export = find_reference_point(rp_img, reference_point)
     if not coordinates:
