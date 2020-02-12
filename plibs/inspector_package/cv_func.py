@@ -1,14 +1,19 @@
-import sys
-# Hacer esto para importar módulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
-import math_functions, excepts
-
 import cv2
 import math
 import numpy as np
 
-def crop_image(image, coordinates):
+from inspector_package import math_functions, excepts
+
+def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1, c2_size=3, c2_color=(0,0,255), c2_thickness=1):
+    found = img.copy()
+    cv2.circle(found, (x, y), c1_size, c1_color, c1_thickness)
+    cv2.circle(found, (x, y), c2_size, c2_color, c2_thickness)
+    return found
+
+def crop_image(image, coordinates, take_as_origin=[0,0]):
+    oX, oY = take_as_origin
     [x1,y1,x2,y2] = coordinates
+    x1,y1,x2,y2 = x1+oX, y1+oY, x2+oX, y2+oY
     return image[y1:y2,x1:x2].copy()
 
 def open_camera(camera_number, camera_dim_width, camera_dim_height, captures_to_adapt):
@@ -123,27 +128,38 @@ def apply_filters(img, filters):
     return img
 
 # analysis functions
-def find_contours(img, lower, upper, color_scale, invert_binary=False):
-    # retorna los contornos encontrados y la imagen binarizada
-    if color_scale == "hsv":
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        binary_image = cv2.inRange(hsv, lower, upper)
-    elif color_scale == "gray":
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        binary_image = cv2.inRange(gray, lower, upper)
+def get_vertices_from_cnt(cnt):
+    peri = cv2.arcLength(cnt, True)
+    approxPoly = cv2.approxPolyDP(cnt, 0.04 * peri, True)
+    vertices = len(approxPoly)
+    return vertices, approxPoly
 
-    if invert_binary:
-        # invertir binarizado
-        binary_image = cv2.bitwise_not(binary_image)
+def detect_shape(cnt):
+    """Retorna el nombre del polígono según su número de vértices."""
+    # Inicializar el nombre de la figura y aproximar el contorno (número de vértices)
+    shape = "unidentified"
 
+    vertices, approxPoly = get_vertices_from_cnt(cnt)
 
-    # Encontrar contornos
-    try:
-        _, contours, _ = cv2.findContours(binary_image,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-    except:
-         return None, None
+    if vertices == 3:
+	       shape = "triangle"
+    elif vertices == 4:
+        # Computar la relación de aspecto (relación entre ancho y alto)
+        (x, y, w, h) = cv2.boundingRect(approxPoly)
+        ar = w / float(h)
 
-    return contours, binary_image
+        # un cuadrado tendrá una relación de aspecto aproximada a uno,
+        # de otra forma será un cuadrado
+        if ar >= 0.8 and ar <= 1.2:
+            shape = "square"
+        else:
+            shape = "rectangle"
+    elif vertices == 5:
+        shape = "pentagon"
+    elif vertices == 6:
+        shape = "hexagon"
+
+    return shape
 
 def sort_contours(cnts):
     """ Sorts contours max to min. """
@@ -165,40 +181,308 @@ def get_contour_area(contour):
 
     return none_zero_pixels
 
-def calculate_blob_area(img, lower_color, upper_color, color_scale, min_blob_size, max_blob_size, invert_binary=False):
-    contours, binary_image = find_contours(img, lower_color, upper_color, color_scale, invert_binary)
-    if not contours:
-        return 0, 0, binary_image
 
-    # sortear contornos de mayor a menor
-    contours = sort_contours(contours)
-    # área del blob más grande
-    biggest_blob = get_contour_area(contours[0])
+CONTOURS_FILTERS = ["min_area", "max_area", "polygon", "vertices", "circularity", "min_diameter", "max_diameter"]
+def get_valid_contours_filters(filters):
+    valid_filters = {} # dict
+    invalid_filters = [] # filtros no existentes
 
-    # Calcular área de blob contando solo los blobs que estén en el
-    # rango de tamaño indicado por el usuario.
-    #
-    # Evaluar con 4 opciones:
-    # Si hay área mínima y máxima de blob.
-    # Si hay área mínima de blob.
-    # Si hay área máxima de blob.
-    # Si no hay rango de tamaños.
+    for filter, parameters in filters.items():
+        if filter in CONTOURS_FILTERS:
+            valid_filters[filter] = parameters
+        else:
+            invalid_filters.append(filter)
+    return valid_filters, invalid_filters
 
-    if(min_blob_size and max_blob_size):
-        blob_area = choose_blobs_by_min_max_area(
-                        img, contours, min_blob_size, max_blob_size)
-    elif(min_blob_size):
-        blob_area = choose_blobs_by_min_area(
-                        img, contours, min_blob_size)
-    elif(max_blob_size):
-        blob_area = choose_blobs_by_max_area(
-                        img, contours, max_blob_size)
-    # Si no hay rango, solo retornar el área total de todos los blobs
+def contour_fulfills_filters(cnt, contours_filters):
+    """
+    Retorna verdadero si el contorno cumple con todos los filtros; retorna
+    falso si no cumple con uno o más.
+
+    Puede filtrarse según los siguientes parámetros (contours_filters):
+    1. Área mínima del contorno.
+    2. Área máxima del contorno
+    3. Polígono: selecciona los contornos cuya forma sea parecida al polígono señalado o cuyo número de vértices coincida con el requerido.
+    4. Círculo: circularidad mín del contorno.
+    5. Círculo: mín diámetro.
+    6. Círculo: máx diámetro.
+    """
+    # si no pasa alguno de los filtros, tomará valor False y continuará con el siguiente contorno
+    cnt_is_valid = True
+
+    for filter, parameters in contours_filters.items():
+        if filter not in CONTOURS_FILTERS:
+            continue
+
+        if filter == "min_area":
+            min_area = parameters["min_area"]
+            if not get_contour_area(cnt) >= min_area:
+                cnt_is_valid = False
+                break
+        elif filter == "max_area":
+            max_area = parameters["max_area"]
+            if not get_contour_area(cnt) <= max_area:
+                cnt_is_valid = False
+                break
+        elif filter == "polygon":
+            required_polygon = parameters["required_polygon"]
+            polygon = detect_shape(cnt)
+            if polygon != required_polygon:
+                cnt_is_valid = False
+                break
+        elif filter == "vertices":
+            required_vertices = parameters["required_vertices"]
+            vertices, approxPoly = get_vertices_from_cnt(cnt)
+            if vertices != required_vertices:
+                cnt_is_valid = False
+                break
+        elif filter == "circularity":
+            min_circle_perfection = parameters["min_circularity"]
+            max_circle_perfection = 1.2
+
+            perimeter = cv2.arcLength(cnt, True)
+            area = get_contour_area(cnt)
+
+            if not perimeter:
+                cnt_is_valid = False
+                break
+
+            circularity = math_functions.calculate_circularity(area, perimeter)
+
+            if not min_circle_perfection <= circularity <= max_circle_perfection:
+                cnt_is_valid = False
+                break
+        elif filter == "min_diameter":
+            min_diameter = parameters["min_diameter"]
+            _,_,diameter,_ = cv2.boundingRect(cnt)
+            if not diameter >= min_diameter:
+                cnt_is_valid = False
+                break
+        elif filter == "max_diameter":
+            max_diameter = parameters["max_diameter"]
+            _,_,diameter,_ = cv2.boundingRect(cnt)
+            if not diameter <= max_diameter:
+                cnt_is_valid = False
+                break
+
+    return cnt_is_valid
+
+def find_filtered_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+    """
+    Retorna el primer contorno que cumpla con los filtros de contornos introducidos
+    por el usuario.
+    """
+
+    contours, binary = find_contours(img,
+        lower_color, upper_color, color_scale, invert_binary)
+
+    if contours is None:
+        return None, binary
+
+    # eliminar de la lista los filtros que no existan
+    contours_filters, _ = get_valid_contours_filters(contours_filters)
+
+    for cnt in contours:
+        cnt_is_valid = contour_fulfills_filters(cnt, contours_filters)
+        if cnt_is_valid:
+            return cnt, binary
+
+    return None, binary
+
+def find_filtered_contours(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+    """
+    Retorna todos los contornos que cumplan con los filtros de contornos introducidos
+    por el usuario.
+    """
+
+    contours, binary = find_contours(img,
+        lower_color, upper_color, color_scale, invert_binary)
+
+    if contours is None:
+        return [], binary
+
+    # eliminar de la lista los filtros que no existan
+    contours_filters, _ = get_valid_contours_filters(contours_filters)
+
+    # filtrar los contornos y agregarlos a la lista si los cumplen todos
+    valid_contours = []
+    for cnt in contours:
+        cnt_is_valid = contour_fulfills_filters(cnt, contours_filters)
+        if cnt_is_valid:
+            valid_contours.append(cnt)
+
+    return valid_contours, binary
+
+def find_contours(img, lower, upper, color_scale, invert_binary=False):
+    """Retorna todos los contornos, sin filtros."""
+    # retorna los contornos encontrados y la imagen binarizada
+    if color_scale == "hsv":
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        binary_image = cv2.inRange(hsv, lower, upper)
+    elif color_scale == "gray":
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        binary_image = cv2.inRange(gray, lower, upper)
+
+    if invert_binary:
+        # invertir binarizado
+        binary_image = cv2.bitwise_not(binary_image)
+
+
+    # Encontrar contornos
+    try:
+        _, contours, _ = cv2.findContours(binary_image,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    except:
+         return None, None
+
+    return contours, binary_image
+
+
+def create_corner_parameters(name, coordinates, lower_color, upper_color,
+        color_scale, invert_binary=False, filters=[], contours_filters={}
+    ):
+    corner_parameters = {
+        "name":name,
+        "coordinates":coordinates,
+        "lower_color":lower_color,
+        "upper_color":upper_color,
+        "color_scale":color_scale,
+        "invert_binary":invert_binary,
+        "filters":filters,
+        "contours_filters":contours_filters,
+    }
+    return corner_parameters
+
+def find_corner(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+    images_to_return = [] # imágenes que se retornarán
+
+    corner_contour, binary = find_filtered_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
+    images_to_return.append(["binary",binary])
+
+    if corner_contour is None:
+        return None, images_to_return
+
+    # calcular x,y de la esquina superior izquierda del contorno
+    x,y,_,_ = cv2.boundingRect(corner_contour)
+
+    # imagen de la esquina encontrada
+    found = draw_found_circle(img, x, y)
+    images_to_return.append(["found", found])
+
+    return [x,y], images_to_return
+
+def create_centroid_parameters(name, coordinates, lower_color, upper_color,
+        color_scale, invert_binary=False, filters=[], contours_filters={}
+    ):
+    centroid_parameters = {
+        "name":name,
+        "coordinates":coordinates,
+        "lower_color":lower_color,
+        "upper_color":upper_color,
+        "color_scale":color_scale,
+        "invert_binary":invert_binary,
+        "filters":filters,
+        "contours_filters":contours_filters,
+    }
+    return centroid_parameters
+
+def find_centroid(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
+    images_to_return = [] # imágenes que se retornarán
+
+    centroid_contour, binary = find_filtered_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
+    images_to_return.append(["binary", binary])
+
+    if centroid_contour is None:
+        return None, images_to_return
+
+    # Obtener datos sobre el blob
+    M = cv2.moments(centroid_contour)
+    # Obtener x,y del centroide del contorno
+    if M["m00"] != 0:
+        x = int(M["m10"] / M["m00"])
+        y = int(M["m01"] / M["m00"])
     else:
-        blob_area = choose_all_blobs(
-                        img, contours)
+        return None, images_to_return
 
-    return blob_area, biggest_blob, binary_image
+    # imagen del centroide encontrado
+    found = draw_found_circle(img, x, y)
+    images_to_return.append(["found", found])
+
+    return [x,y], images_to_return
+
+def create_reference_point(rp_type, name, coordinates, color_scale, lower_color,
+        upper_color, invert_binary=False, filters=[], contours_filters={}):
+    """
+    Crea un diccionario con los parámetros para encontrar un punto de referencia.
+    Un punto de referencia es aquel cuyas coordenadas son utilizadas para orientarse
+    en el tablero, usándolas para rotarlo o trasladarlo para el registro de la imagen.
+    Los puntos de referencia son centroides o esquinas de contornos.
+    """
+    contours_filters, invalid_filters = get_valid_contours_filters(contours_filters)
+
+    if color_scale == "hsv":
+        # convertir a array de numpy
+        if type(lower_color) is not np.ndarray:
+            lower_color = np.array(lower_color)
+        if type(upper_color) is not np.ndarray:
+            upper_color = np.array(upper_color)
+
+    if rp_type == "corner":
+        # la coordenada será la esquina de un contorno
+        reference_point = create_corner_parameters(
+            name, coordinates, lower_color, upper_color, color_scale,
+            invert_binary, filters, contours_filters
+        )
+
+    elif rp_type == "centroid":
+        # la coordenada será el centroide de un contorno
+        reference_point = create_centroid_parameters(
+            name, coordinates, lower_color, upper_color, color_scale,
+            invert_binary, filters, contours_filters
+        )
+
+    reference_point["type"] = rp_type
+    return reference_point
+
+def find_reference_point(img_, reference_point):
+    img = img_.copy() # no corromper la imagen original
+    images_to_return = []
+
+    images_to_return.append(["rgb", img])
+
+    # Aplicar filtros secundarios a la imagen
+
+    img = apply_filters(img, reference_point["filters"])
+
+    if reference_point["type"] == "centroid":
+        coordinates, resulting_images = find_centroid(img, reference_point["color_scale"],
+            reference_point["lower_color"], reference_point["upper_color"],
+            reference_point["invert_binary"], reference_point["contours_filters"])
+
+    elif reference_point["type"] == "corner":
+        coordinates, resulting_images = find_corner(img, reference_point["color_scale"],
+            reference_point["lower_color"], reference_point["upper_color"],
+            reference_point["invert_binary"], reference_point["contours_filters"])
+
+    images_to_return += resulting_images
+
+    return coordinates, images_to_return
+
+def find_reference_point_in_photo(img, reference_point):
+    """Suma las coordenadas del punto de referencia dentro de la ventana,
+    más las coordenadas de la esquina superior izquierda de la ventana."""
+    [x1,y1,x2,y2] = reference_point["coordinates"]
+    rp_img = img[y1:y2, x1:x2].copy()
+
+    coordinates, images_to_export = find_reference_point(rp_img, reference_point)
+    if not coordinates:
+        return None, images_to_export
+
+    # Coordenadas reales en el tablero
+    [x,y] = coordinates
+    coordinates = (x+x1,y+y1)
+
+    return coordinates, images_to_export
+
 
 def choose_blobs_by_min_max_area(img, contours, min_blob_size, max_blob_size):
     total_area = 0
@@ -245,6 +529,41 @@ def choose_all_blobs(img, contours):
         total_area += area
 
     return total_area
+
+def calculate_blob_area(img, lower_color, upper_color, color_scale, min_blob_size, max_blob_size, invert_binary=False):
+    contours, binary_image = find_contours(img, lower_color, upper_color, color_scale, invert_binary)
+    if not contours:
+        return 0, 0, binary_image
+
+    # sortear contornos de mayor a menor
+    contours = sort_contours(contours)
+    # área del blob más grande
+    biggest_blob = get_contour_area(contours[0])
+
+    # Calcular área de blob contando solo los blobs que estén en el
+    # rango de tamaño indicado por el usuario.
+    #
+    # Evaluar con 4 opciones:
+    # Si hay área mínima y máxima de blob.
+    # Si hay área mínima de blob.
+    # Si hay área máxima de blob.
+    # Si no hay rango de tamaños.
+
+    if(min_blob_size and max_blob_size):
+        blob_area = choose_blobs_by_min_max_area(
+                        img, contours, min_blob_size, max_blob_size)
+    elif(min_blob_size):
+        blob_area = choose_blobs_by_min_area(
+                        img, contours, min_blob_size)
+    elif(max_blob_size):
+        blob_area = choose_blobs_by_max_area(
+                        img, contours, max_blob_size)
+    # Si no hay rango, solo retornar el área total de todos los blobs
+    else:
+        blob_area = choose_all_blobs(
+                        img, contours)
+
+    return blob_area, biggest_blob, binary_image
 
 def find_matches(img, template, min_calification, required_matches, color_scale, color_scale_for_binary=None, color_range=None, invert_binary=False):
     # Dimensiones del template

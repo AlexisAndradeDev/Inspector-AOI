@@ -1,0 +1,6 @@
+Este archivo debe ser eliminado al descargar esta carpeta.
+
+La carpeta inspector_package debe ser copiada a la dirección:
+\AppData\Local\Programs\Python\Python*VERSION*\Lib\inspector_package
+
+(sustituir *VERSION* por el número de versión de Python, ejemplo: C:\Users\alexi\AppData\Local\Programs\Python\Python37\Lib\inspector_package)
