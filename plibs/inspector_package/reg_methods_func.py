@@ -1,10 +1,6 @@
 import cv2
 
-import sys
-# Hacer esto para importar módulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
-import math_functions, cv_func
-
+from inspector_package import math_functions, cv_func, operations
 
 class Fiducial:
     """
@@ -23,9 +19,10 @@ class Fiducial:
         self.max_circle_perfection = max_circle_perfection
         self.filters = filters
 
-def find_fiducial(photo, fiducial):
-    # lista de imágenes que se retornará para ser exportada
-    images_to_export = []
+
+def find_circular_fiducial(photo, fiducial):
+    # lista de imágenes que se retornará
+    images_to_return = []
     # Recortar el área en que se buscará el fiducial
     x1,y1,x2,y2 = fiducial.window
     searching_area_img = photo[y1:y2, x1:x2]
@@ -33,15 +30,15 @@ def find_fiducial(photo, fiducial):
     # Aplicarle filtros secundarios (como blurs)
     searching_area_img_filtered = cv_func.apply_filters(searching_area_img, fiducial.filters)
 
-    # Agregar imagen sin filtrar y filtrada del área de búsqueda a images_to_export
-    images_to_export.append(["rgb{0}".format(fiducial.number), searching_area_img])
-    images_to_export.append(["filtered{0}".format(fiducial.number), searching_area_img_filtered])
+    # Agregar imagen sin filtrar y filtrada del área de búsqueda a images_to_return
+    images_to_return.append(["rgb{0}".format(fiducial.number), searching_area_img])
+    images_to_return.append(["filtered{0}".format(fiducial.number), searching_area_img_filtered])
 
     # Encontrar contornos
     try:
         _,contours,_ = cv2.findContours(searching_area_img_filtered, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     except:
-        return ("CONTOURS_NOT_FOUND_FID_{0}".format(fiducial.number)), None, None, images_to_export
+        return ("CONTOURS_NOT_FOUND_FID_{0}".format(fiducial.number)), None, None, images_to_return
 
     # Encontrar contorno que cumpla con los requisitos de circularidad y diámetro
     circle = None
@@ -59,18 +56,18 @@ def find_fiducial(photo, fiducial):
                 break
 
     if circle is None:
-        return ("APPROPRIATE_CIRCLE_FID_{0}".format(fiducial.number)), None, None, images_to_export
+        return ("APPROPRIATE_CIRCLE_FID_{0}".format(fiducial.number)), None, None, images_to_return
 
     (x, y), circle_radius = cv2.minEnclosingCircle(circle)
     circle_center = (round(x), round(y))
     circle_radius = round(circle_radius)
-    images_to_export.append(["found{0}".format(fiducial.number), cv2.circle(
+    images_to_return.append(["found{0}".format(fiducial.number), cv2.circle(
             cv2.circle(searching_area_img.copy(), circle_center, circle_radius, (0, 255, 0), 1),
             circle_center, 1, (0, 255, 0), 1)])
 
-    return None, circle_center, circle_radius, images_to_export
+    return None, circle_center, circle_radius, images_to_return
 
-def align_board_image(photo, fiducial_1, fiducial_2, objective_angle, objective_x, objective_y, return_rotation_and_translation=False):
+def register_with_two_circular_fiducials(photo, fiducial_1, fiducial_2, objective_angle, objective_x, objective_y):
     """Rotates and translates the image to align the windows in the correct place."""
     # lista de imágenes que se retornará para ser exportada
     images_to_export = []
@@ -78,28 +75,24 @@ def align_board_image(photo, fiducial_1, fiducial_2, objective_angle, objective_
     w_original = photo.shape[1]
     h_original = photo.shape[0]
     # Detectar centro del fiducial 1
-    fail_code, circle_center, circle_radius, resulting_images = find_fiducial(photo, fiducial_1)
+    fail_code, circle_center, circle_radius, resulting_images = find_circular_fiducial(photo, fiducial_1)
     images_to_export += resulting_images
     if fail_code:
-        if return_rotation_and_translation:
-            return fail_code, images_to_export, None, None, None
-        else: return fail_code, images_to_export, None
+        return fail_code, images_to_export, None, None, None
 
     fiducial_1_center = (circle_center[0] + fiducial_1.window[0], circle_center[1] + fiducial_1.window[1])
     fiducial_1_radius = circle_radius
 
     # Detectar centro del fiducial 2
-    fail_code, circle_center, circle_radius, resulting_images = find_fiducial(photo, fiducial_2)
+    fail_code, circle_center, circle_radius, resulting_images = find_circular_fiducial(photo, fiducial_2)
     images_to_export += resulting_images
     if fail_code:
-        if return_rotation_and_translation:
-            return fail_code, images_to_export, None, None, None
-        else: return fail_code, images_to_export, None
+        return fail_code, images_to_export, None, None, None
 
     fiducial_2_center = (circle_center[0] + fiducial_2.window[0], circle_center[1] + fiducial_2.window[1])
     fiducial_2_radius = circle_radius
 
-    # Ángulo entre los 2 fiduciales
+    # ángulo entre los 2 fiduciales
     angle = math_functions.calculate_angle(fiducial_1_center, fiducial_2_center)
     # Rotar la imagen para alinearla con las ventanas
     rotation = angle - objective_angle
@@ -117,6 +110,91 @@ def align_board_image(photo, fiducial_1, fiducial_2, objective_angle, objective_
 
     images_to_export += [["board_aligned", photo]]
 
-    if return_rotation_and_translation:
-        return fail_code, images_to_export, photo, rotation, [x_diference, y_diference]
-    else: return fail_code, images_to_export, photo
+    return fail_code, images_to_export, photo, rotation, [x_diference, y_diference]
+
+def register_with_rotation_points_and_translation_point(photo, rotation_iterations, rotation_point1, rotation_point2, translation_point, objective_angle, objective_x, objective_y):
+    """
+    Rota y traslada la imagen del tablero para alinearla con las ventanas de inspección.
+    Retorna las imágenes de la última iteración de rotación y la imagen del tablero alineado.
+    Lo logra con el siguiente algoritmo:
+        1. for (iteraciones deseadas):
+            1. Localizar el punto de rotación 1 (se localiza encontrando el centroide de un contorno).
+            2. Localizar el punto de rotación 2.
+            3. Calcular el ángulo entre los 2 puntos de rotación.
+            4. Rotar al ángulo objetivo con: ángulo entre puntos de rotación - ángulo objetivo
+        2. Encontrar punto de traslación (como la esquina del tablero o el centroide de un triángulo).
+        3. Trasladar el tablero con la diferencia entre las coordenadas objetivas y el punto de traslación.
+    """
+
+    # número de grados que se ha rotado el tablero sumando todas las iteraciones
+    total_rotation = 0
+    for _ in range(rotation_iterations):
+        # limpiar lista de imágenes que se retornará para ser exportada
+        images_to_export = []
+
+        # Encontrar punto de rotación 1
+        rotation_point1_coordinates, resulting_images = cv_func.find_reference_point_in_photo(photo, rotation_point1)
+        # agregar nombre del punto de rotación a las imágenes
+        resulting_images = operations.add_to_images_name(resulting_images, "rp1")
+        images_to_export += resulting_images
+
+        if not rotation_point1_coordinates:
+            fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point1["name"])
+            return fail_code, images_to_export, None, None, None
+
+        # Encontrar punto de rotación 2
+        rotation_point2_coordinates, resulting_images = cv_func.find_reference_point_in_photo(photo, rotation_point2)
+        # agregar nombre del punto de rotación a las imágenes
+        resulting_images = operations.add_to_images_name(resulting_images, "rp2")
+        images_to_export += resulting_images
+
+        if not rotation_point2_coordinates:
+            fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point2["name"])
+            return fail_code, images_to_export, None, None, None
+
+
+        # ángulo entre los 2 puntos de rotación
+        angle_between_rotation_points = math_functions.calculate_angle(rotation_point1_coordinates, rotation_point2_coordinates)
+
+        # Rotar la imagen
+        rotation = angle_between_rotation_points - objective_angle
+        photo, trMat = cv_func.rotate(photo, rotation)
+
+        total_rotation += rotation
+
+
+    # Encontrar punto de traslación
+    translation_point_coordinates, resulting_images = cv_func.find_reference_point_in_photo(photo, translation_point)
+    # agregar nombre del punto de traslación a las imágenes
+    resulting_images = operations.add_to_images_name(resulting_images, "tp")
+    images_to_export += resulting_images
+
+    if not translation_point_coordinates:
+        fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(translation_point["name"])
+        return fail_code, images_to_export, None, None, None
+
+    # Se traslada la diferencia entre las coordenadas donde deberá ubicarse el fiducial 1 menos las coordenadas encontradas
+    x_diference = objective_x - translation_point_coordinates[0]
+    y_diference = objective_y - translation_point_coordinates[1]
+    photo = cv_func.translate(photo, x_diference, y_diference)
+
+    images_to_export += [["board_aligned", photo]]
+
+    return None, images_to_export, photo, total_rotation, [x_diference, y_diference]
+
+def align_board_image(board_image, registration_settings):
+    if registration_settings["method"] == "circular_fiducials":
+        fail, images_to_export, aligned_board_image, rotation, translation = register_with_two_circular_fiducials(
+            board_image, registration_settings["fiducial_1"], registration_settings["fiducial_2"],
+            registration_settings["objective_angle"], registration_settings["objective_x"],
+            registration_settings["objective_y"]
+        )
+    elif registration_settings["method"] == "rotation_points_and_translation_point":
+        fail, images_to_export, aligned_board_image, rotation, translation = register_with_rotation_points_and_translation_point(
+            board_image, registration_settings["rotation_iterations"],
+            registration_settings["rotation_point1"], registration_settings["rotation_point2"],
+            registration_settings["translation_point"], registration_settings["objective_angle"],
+            registration_settings["objective_x"], registration_settings["objective_y"]
+        )
+
+    return fail, images_to_export, aligned_board_image, rotation, translation

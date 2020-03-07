@@ -5,10 +5,7 @@ Script para registrar (alinear) imágenes de tableros desalineados.
 Hecho por: Martín Alexis Martínez Andrade.
 """
 
-import sys
-# Hacer esto para importar módulos y paquetes externos
-sys.path.append('C:/Dexill/Inspector/Alpha-Premium/x64/plibs/inspector_package/')
-import math_functions, cv_func, reg_methods_func
+from inspector_package import math_functions, cv_func, reg_methods_func
 
 import threading
 import codecs
@@ -77,7 +74,7 @@ def create_threads(func, threads_num, targets_num, func_args):
     return threads
 
 
-def register_boards(first_photo, last_photo, fiducial_1, fiducial_2, settings):
+def register_boards(first_photo, last_photo, registration_settings, settings):
     global results, all_images
 
     # Resultados de los tableros registrados por este hilo
@@ -96,7 +93,7 @@ def register_boards(first_photo, last_photo, fiducial_1, fiducial_2, settings):
             # si no existe la foto, escribir el status de los tableros de la foto
             # como "failed" y el código de error IMG_DOESNT_EXIST
             for board_number in range(first_board, last_board+1):
-                results_of_this_thread += "{0}-{1}-{2}#".format(board_number, "failed", "IMG_DOESNT_EXIST")
+                results_of_this_thread += "{0};{1};{2}#".format(board_number, "failed", "IMG_DOESNT_EXIST")
             continue
 
         # leer imagen con luz UV en caso de usarse
@@ -107,7 +104,7 @@ def register_boards(first_photo, last_photo, fiducial_1, fiducial_2, settings):
                 # si no existe la foto UV, escribir el status de los tableros de la foto
                 # como "failed" y el código de error UV_IMG_DOESNT_EXIST
                 for board_number in range(first_board, last_board+1):
-                    results_of_this_thread += "{0}-{1}-{2}#".format(board_number, "failed", "UV_IMG_DOESNT_EXIST")
+                    results_of_this_thread += "{0};{1};{2}#".format(board_number, "failed", "UV_IMG_DOESNT_EXIST")
                 continue
 
 
@@ -124,13 +121,15 @@ def register_boards(first_photo, last_photo, fiducial_1, fiducial_2, settings):
                 board_image_ultraviolet = photo_ultraviolet[y1:y2, x1:x2].copy()
 
             # Alinear imagen del tablero con luz blanca
-            fail_code, resulting_images, _, rotation, translation = reg_methods_func.align_board_image(board_image, fiducial_1, fiducial_2, target_angle, target_x, target_y, return_rotation_and_translation=True)
+            fail_code, resulting_images, _, rotation, translation = reg_methods_func.align_board_image(
+                board_image, registration_settings
+            )
             # Agregar imágenes a la lista para exportarlas
             all_images.append(["{0}-{1}".format(board_number, "white"), resulting_images])
 
             if fail_code:
                 # Agregar error a los resultados de los tableros de esta foto
-                results_of_this_thread += "{0}-{1}-{2}#".format(board_number, "failed", fail_code)
+                results_of_this_thread += "{0};{1};{2}#".format(board_number, "failed", fail_code)
                 continue
 
             if settings["uv_inspection"] == "uv_inspection:True":
@@ -143,7 +142,7 @@ def register_boards(first_photo, last_photo, fiducial_1, fiducial_2, settings):
                 all_images.append(["{0}-{1}".format(board_number, "ultraviolet"), resulting_images])
 
             # Agregar resultados del tablero a los resultados de este hilo
-            results_of_this_thread += "{0}-{1}#".format(board_number, "ok")
+            results_of_this_thread += "{0};{1}#".format(board_number, "ok")
 
     # Agregar resultados de este hilo a los resultados de todos los tableros
     results += results_of_this_thread
@@ -160,7 +159,7 @@ def export_resulting_images(first_board, last_board, all_images):
         for image_name, image in images_to_export:
             imwrite("C:/Dexill/Inspector/Alpha-Premium/x64/pd/{0}-{1}.bmp".format(board_name, image_name), image)
 
-def start_boards_registration(fiducial_1, fiducial_2, settings):
+def start_boards_registration(registration_settings, settings):
     global results, all_images
 
     # Inspeccionar los tableros con multihilos
@@ -168,7 +167,7 @@ def start_boards_registration(fiducial_1, fiducial_2, settings):
         func=register_boards,
         threads_num=settings["threads_number_for_photos"],
         targets_num=settings["photos_num"],
-        func_args=[fiducial_1, fiducial_2, settings],
+        func_args=[registration_settings, settings],
     )
 
     # Correr multihilos
@@ -217,22 +216,81 @@ if __name__ == '__main__':
     }
 
 
-    # Datos del registro del tablero
-    [fiducials_windows, min_diameters, max_diameters, min_circle_perfections,
-    max_circle_perfections, target_angle, [target_x, target_y],
-    fiducials_filters] = registration_data
-    # Crear 2 objetos con los datos de los fiduciales 1 y 2
-    fiducial_1 = reg_methods_func.Fiducial(
-                          1, fiducials_windows[0], min_diameters[0],
-                          max_diameters[0], min_circle_perfections[0],
-                          max_circle_perfections[0], fiducials_filters[0])
-    fiducial_2 = reg_methods_func.Fiducial(
-                          2, fiducials_windows[1], min_diameters[1],
-                          max_diameters[1], min_circle_perfections[1],
-                          max_circle_perfections[1], fiducials_filters[1])
+    # Datos de registro del tablero (alineación de imagen)
+    [registration_method, method_data] = registration_data
+
+    if registration_method == "circular_fiducials":
+        [fiducials_windows, min_diameters, max_diameters, min_circle_perfections,
+        max_circle_perfections, objective_angle, [objective_x, objective_y],
+        fiducials_filters] = method_data
+
+        # Crear 2 objetos con los datos de los fiduciales 1 y 2
+        fiducial_1 = reg_methods_func.Fiducial(
+            1, fiducials_windows[0], min_diameters[0],
+            max_diameters[0], min_circle_perfections[0],
+            max_circle_perfections[0], fiducials_filters[0])
+
+        fiducial_2 = reg_methods_func.Fiducial(
+            2, fiducials_windows[1], min_diameters[1],
+            max_diameters[1], min_circle_perfections[1],
+            max_circle_perfections[1], fiducials_filters[1])
+
+        registration_settings = {
+            "method":"circular_fiducials",
+            "fiducial_1":fiducial_1,
+            "fiducial_2":fiducial_2,
+            "objective_x":objective_x,
+            "objective_y":objective_y,
+            "objective_angle":objective_angle,
+        }
+
+    if registration_method == "rotation_points_and_translation_point":
+        [rotation_point1_data, rotation_point2_data, translation_point_data,
+        objective_angle, [objective_x, objective_y], rotation_iterations] = method_data
+
+        # Punto de rotación 1
+        [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
+        filters, contours_filters] = rotation_point1_data
+
+        rotation_point1 = cv_func.create_reference_point(
+            rp_type=rp_type, name="ROTATION_POINT1", coordinates=coordinates,
+            color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
+            invert_binary=invert_binary, filters=filters, contours_filters=contours_filters,
+        )
+
+        # Punto de rotación 2
+        [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
+        filters, contours_filters] = rotation_point2_data
+
+        rotation_point2 = cv_func.create_reference_point(
+            rp_type=rp_type, name="ROTATION_POINT2", coordinates=coordinates,
+            color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
+            invert_binary=invert_binary, filters=filters, contours_filters=contours_filters,
+        )
+
+        # Punto de traslación
+        [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
+        filters, contours_filters] = translation_point_data
+
+        translation_point = cv_func.create_reference_point(
+            rp_type=rp_type, name="TRANSLATION_POINT", coordinates=coordinates,
+            color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
+            invert_binary=invert_binary, filters=filters, contours_filters=contours_filters,
+        )
+
+        registration_settings = {
+            "method":"rotation_points_and_translation_point",
+            "rotation_point1":rotation_point1,
+            "rotation_point2":rotation_point2,
+            "translation_point":translation_point,
+            "objective_x":objective_x,
+            "objective_y":objective_y,
+            "objective_angle":objective_angle,
+            "rotation_iterations":rotation_iterations,
+        }
 
 
     # Iniciar el registro de los tableros
     results = "" # crear variable global para resultados
     all_images = [] # lista con todas las imágenes a exportar
-    start_boards_registration(fiducial_1, fiducial_2, settings)
+    start_boards_registration(registration_settings, settings)
