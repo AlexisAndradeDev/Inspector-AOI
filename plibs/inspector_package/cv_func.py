@@ -3,7 +3,6 @@ import math
 import numpy as np
 
 from inspector_package import math_functions, excepts
-from timeit import default_timer as timer
 
 def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1, c2_size=3, c2_color=(0,0,255), c2_thickness=1):
     found = img.copy()
@@ -11,10 +10,8 @@ def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1
     cv2.circle(found, (x, y), c2_size, c2_color, c2_thickness)
     return found
 
-def crop_image(image, coordinates, take_as_origin=[0,0]):
-    oX, oY = take_as_origin
+def crop_image(image, coordinates):
     [x1,y1,x2,y2] = coordinates
-    x1,y1,x2,y2 = x1+oX, y1+oY, x2+oX, y2+oY
     return image[y1:y2,x1:x2].copy()
 
 def open_camera(camera_number, camera_dim_width, camera_dim_height, captures_to_adapt):
@@ -61,7 +58,7 @@ def rotate(image, angleInDegrees):
     rot[0, 2] += ((b_w / 2) - img_c[0])
     rot[1, 2] += ((b_h / 2) - img_c[1])
 
-    outImg = cv2.warpAffine(image, rot, (b_w, b_h), flags=cv2.INTER_LINEAR)
+    outImg = cv2.warpAffine(image, rot, (b_w, b_h), flags=cv2.INTER_NEAREST)
     return outImg, rot
 
 def translate(img, x, y):
@@ -69,7 +66,7 @@ def translate(img, x, y):
     cols = img.shape[1]
 
     M = np.float32([[1, 0, x],[0, 1, y]])
-    dst = cv2.warpAffine(img,M,(cols,rows), flags=cv2.INTER_LINEAR)
+    dst = cv2.warpAffine(img,M,(cols,rows), flags=cv2.INTER_NEAREST)
 
     return dst
 
@@ -450,7 +447,8 @@ def find_reference_point(img_, reference_point):
 
     images_to_return.append(["rgb", img])
 
-    # Aplicar filtros secundarios a la imagen    
+    # Aplicar filtros secundarios a la imagen
+
     img = apply_filters(img, reference_point["filters"])
 
     if reference_point["type"] == "centroid":

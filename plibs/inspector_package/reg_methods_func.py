@@ -2,6 +2,7 @@ import cv2
 
 from inspector_package import math_functions, cv_func, operations
 
+
 class Fiducial:
     """
     Objeto con los datos de un fiducial.
