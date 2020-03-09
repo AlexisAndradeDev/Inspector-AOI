@@ -3,6 +3,7 @@ import math
 import numpy as np
 
 from inspector_package import math_functions, excepts
+from timeit import default_timer as timer
 
 def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1, c2_size=3, c2_color=(0,0,255), c2_thickness=1):
     found = img.copy()
@@ -449,8 +450,7 @@ def find_reference_point(img_, reference_point):
 
     images_to_return.append(["rgb", img])
 
-    # Aplicar filtros secundarios a la imagen
-
+    # Aplicar filtros secundarios a la imagen    
     img = apply_filters(img, reference_point["filters"])
 
     if reference_point["type"] == "centroid":
