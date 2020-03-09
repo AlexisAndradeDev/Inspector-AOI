@@ -163,8 +163,10 @@ def inspect_boards(first_board, last_board, photo, inspection_points, registrati
                 board.set_board_results(registration_time=registration_time, inspection_time=0, stage="inspection")
                 results += board.get_board_results()
                 continue
-            # si pasó, rotar 180° la imagen con luz UV tambien
-            board_image_ultraviolet, _ = cv_func.rotate(board_image_ultraviolet, 180)
+
+            if settings["uv_inspection"] == "uv_inspection:True":
+                # si pasó, rotar 180° la imagen con luz UV tambien
+                board_image_ultraviolet, _ = cv_func.rotate(board_image_ultraviolet, 180)
 
         # Escribir imagen del tablero alineado con luz blanca
         imwrite("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/board-{0}.bmp".format(board.get_number()), aligned_board_image)

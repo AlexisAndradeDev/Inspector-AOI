@@ -187,8 +187,6 @@ def inspection_function_blob(inspection_point_image, inspection_point):
         inspection_point["parameters"]["lower_color"],
         inspection_point["parameters"]["upper_color"],
         inspection_point["parameters"]["color_scale"],
-        inspection_point["parameters"]["min_blob_size"],
-        inspection_point["parameters"]["max_blob_size"],
         inspection_point["parameters"]["invert_binary"],
     )
 

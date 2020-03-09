@@ -9,6 +9,10 @@ def elements_per_partition(number_of_elements, number_of_partitions):
     b = [list(c)[-1] for c in mit.divide(number_of_partitions, range(1, number_of_elements+1))]
     return list(zip(a, b))
 
+def sum_lists(list1, list2):
+    new_list = [list1[0]+list2[0], list1[1]+list2[1]]
+    return new_list
+
 def split_list(list, number_of_partitions):
     elements_per_partition_ = elements_per_partition(number_of_elements=len(list), number_of_partitions=number_of_partitions)
 
