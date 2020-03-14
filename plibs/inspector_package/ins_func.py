@@ -5,7 +5,7 @@ from numpy import array
 
 TEMPLATE_MATCHING = "m"
 BLOB = "b"
-TRANSITION = "t"
+UNIQUE_TRANSITION = "ut"
 
 
 def create_inspection_point(inspection_point_data):
@@ -33,11 +33,14 @@ def create_inspection_points(data):
 
 def get_inspection_function_parameters(inspection_point, parameters_data):
     # blob
-    if (inspection_point["inspection_function"] == "b"):
+    if (inspection_point["inspection_function"] == BLOB):
         parameters = get_blob_parameters(inspection_point, parameters_data)
     # template matching
-    elif (inspection_point["inspection_function"] == "m"):
+    elif (inspection_point["inspection_function"] == TEMPLATE_MATCHING):
         parameters = get_template_matching_parameters(inspection_point, parameters_data)
+    # unique transition
+    elif (inspection_point["inspection_function"] == UNIQUE_TRANSITION):
+        parameters = get_unique_transition_parameters(inspection_point, parameters_data)
     return parameters
 
 def get_blob_parameters(inspection_point, parameters_data):
@@ -90,6 +93,15 @@ def get_sub_templates(number_of_sub_templates, template_path, filters):
         sub_templates.append([sub_template_img, i])
     return sub_templates
 
+def get_unique_transition_parameters(inspection_point, parameters_data):
+    parameters = {
+        "searching_orientation":parameters_data[0],
+        "min_difference":parameters_data[1],
+        "brightness_difference_type":parameters_data[2],
+        "group_size":parameters_data[3],
+    }
+    return parameters
+
 
 def inspect_point(inspection_image_filt, inspection_point):
     if (inspection_point["inspection_function"] == BLOB):
@@ -99,6 +111,10 @@ def inspect_point(inspection_image_filt, inspection_point):
     elif (inspection_point["inspection_function"] == TEMPLATE_MATCHING):
         fails, window_results, window_status, resulting_images = \
             inspection_function_template_matching(inspection_image_filt, inspection_point)
+
+    elif (inspection_point["inspection_function"] == UNIQUE_TRANSITION):
+        fails, window_results, window_status, resulting_images = \
+            inspection_function_unique_transition(inspection_image_filt, inspection_point)
 
     else:
         return ["INAVLID_INSPECTION_FUNCTION"], None, None, None
@@ -327,4 +343,44 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
 
         images_to_export += [["matches", matches_image]]
 
+    return fails, window_results, status, images_to_export
+
+def inspection_function_unique_transition(inspection_image, algorithm):
+    """
+    Encuentra una única transición en X o en Y.
+    Las imágenes a exportar cuando se utiliza transition son:
+        Imagen filtrada, imagen con la transición dibujada.
+    Retorna como resultados de algoritmo:
+        Coordenada de la transición, diferencia de brillo en la transición
+    """
+    location = "not_available"
+    status = "good" # inicializar como good
+    fails = []
+    images_to_export = []
+
+    images_to_export += [["filtered", inspection_image]]
+
+
+    # encontrar transición
+    coordinate, brightness_difference = cv_func.find_transition(
+        inspection_image, algorithm["parameters"]["searching_orientation"],
+        algorithm["parameters"]["min_difference"],
+        algorithm["parameters"]["brightness_difference_type"],
+        algorithm["parameters"]["group_size"],
+    )
+
+    if not coordinate:
+        status = "bad"
+        window_results = [None, None]
+        return fails, window_results, status, images_to_export
+
+
+    # dibujar transición
+    axis = cv_func.get_transition_axis(algorithm["parameters"]["searching_orientation"])
+    transition_drawn = cv_func.draw_transition(inspection_image, coordinate, axis)
+
+    images_to_export += [["transition_drawn", transition_drawn]]
+
+
+    window_results = [coordinate, brightness_difference]
     return fails, window_results, status, images_to_export

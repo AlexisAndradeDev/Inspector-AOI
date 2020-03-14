@@ -3,10 +3,14 @@ import math
 import more_itertools as mit
 from cv2 import getRotationMatrix2D
 
-def elements_per_partition(number_of_elements, number_of_partitions):
+def elements_per_partition(number_of_elements, number_of_partitions, get_as_indexes=False):
     """Return a list of equally divided intervals."""
-    a = [list(c)[0] for c in mit.divide(number_of_partitions, range(1, number_of_elements+1))]
-    b = [list(c)[-1] for c in mit.divide(number_of_partitions, range(1, number_of_elements+1))]
+    if get_as_indexes:
+        a = [list(c)[0] for c in mit.divide(number_of_partitions, range(0, number_of_elements))]
+        b = [list(c)[-1] for c in mit.divide(number_of_partitions, range(0, number_of_elements))]
+    else:
+        a = [list(c)[0] for c in mit.divide(number_of_partitions, range(1, number_of_elements+1))]
+        b = [list(c)[-1] for c in mit.divide(number_of_partitions, range(1, number_of_elements+1))]
     return list(zip(a, b))
 
 def sum_lists(list1, list2):

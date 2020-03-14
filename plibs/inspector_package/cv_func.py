@@ -676,6 +676,187 @@ def find_matches(img, template, min_calification, required_matches, color_scale,
 
     return matches_locations, best_match, color_converted_img
 
+def find_transition(img, orientation, min_difference, brightness_difference_type, group_size):
+    coordinate = None
+    if orientation == "left_to_right":
+        coordinate, brightness_difference = find_transition_left_to_right(img, min_difference, brightness_difference_type, group_size)
+    elif orientation == "right_to_left":
+        coordinate, brightness_difference = find_transition_right_to_left(img, min_difference, brightness_difference_type, group_size)
+    elif orientation == "up_to_down":
+        coordinate, brightness_difference = find_transition_up_to_down(img, min_difference, brightness_difference_type, group_size)
+    elif orientation == "down_to_up":
+        coordinate, brightness_difference = find_transition_down_to_up(img, min_difference, brightness_difference_type, group_size)
+    return coordinate, brightness_difference
+
+def find_transition_left_to_right(img, min_difference, brightness_difference_type, group_size):
+    [rows, columns, _] = img.shape
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # obtener los rangos de los grupos de columnas
+    groups_ranges = math_functions.elements_per_partition(
+        number_of_elements=columns, number_of_partitions=math.ceil(columns/group_size), get_as_indexes=True
+    )
+
+    # iterar por cada grupo
+    for group_range in groups_ranges:
+        first_column = group_range[0]
+        last_column = group_range[-1]
+        columns = img[0:rows, first_column:last_column]
+
+        brightness = int(math_functions.average_array(columns))
+
+        # la primer columna no puede calcular diferencia con una anterior
+        if first_column > 0:
+            difference = brightness_difference(brightness, prev_brightness, brightness_difference_type)
+            if difference >= min_difference:
+                x = first_column
+                return x, difference
+
+        prev_brightness = brightness
+
+    # Si no se encontró una transición
+    return None, None
+
+def find_transition_right_to_left(img, min_difference, brightness_difference_type, group_size):
+    [rows, columns, _] = img.shape
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # obtener los rangos de los grupos de columnas
+    groups_ranges = math_functions.elements_per_partition(
+        number_of_elements=columns, number_of_partitions=math.ceil(columns/group_size), get_as_indexes=True
+    )
+
+    # iterar por cada grupo
+    for group_range in groups_ranges[::-1]:
+        first_column = group_range[0]
+        last_column = group_range[-1]
+        columns = img[0:rows, first_column:last_column]
+
+        brightness = int(math_functions.average_array(columns))
+
+        # la última columna no puede calcular diferencia con una anterior
+        if last_column < columns:
+            difference = brightness_difference(brightness, prev_brightness, brightness_difference_type)
+            if difference >= min_difference:
+                x = last_column
+                return x, difference
+
+        prev_brightness = brightness
+
+    # Si no se encontró una transición
+    return None, None
+
+def find_transition_up_to_down(img, min_difference, brightness_difference_type, group_size):
+    [rows, columns, _] = img.shape
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # obtener los rangos de los grupos de filas
+    groups_ranges = math_functions.elements_per_partition(
+        number_of_elements=rows, number_of_partitions=math.ceil(rows/group_size), get_as_indexes=True
+    )
+
+    # iterar por cada grupo
+    for group_range in groups_ranges:
+        first_row = group_range[0]
+        last_row = group_range[-1]
+        rows = img[first_row:last_row, 0:columns]
+
+        brightness = int(math_functions.average_array(rows))
+
+        # la primer fila no puede calcular diferencia con una anterior
+        if first_row > 0:
+            difference = brightness_difference(brightness, prev_brightness, brightness_difference_type)
+            if difference >= min_difference:
+                y = first_row
+                return y, difference
+
+        prev_brightness = brightness
+
+    # Si no se encontró una transición
+    return None, None
+
+def find_transition_down_to_up(img, min_difference, brightness_difference_type, group_size):
+    [rows, columns, _] = img.shape
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # obtener los rangos de los grupos de filas
+    groups_ranges = math_functions.elements_per_partition(
+        number_of_elements=rows, number_of_partitions=math.ceil(rows/group_size), get_as_indexes=True
+    )
+
+    # iterar por cada grupo
+    for group_range in groups_ranges[::-1]:
+        first_row = group_range[0]
+        last_row = group_range[-1]
+        rows = img[first_row:last_row, 0:columns]
+
+        brightness = int(math_functions.average_array(rows))
+
+        # la última fila no puede calcular diferencia con una anterior
+        if last_row < rows:
+            difference = brightness_difference(brightness, prev_brightness, brightness_difference_type)
+            if difference >= min_difference:
+                y = last_row
+                return y, difference
+
+        prev_brightness = brightness
+
+    # Si no se encontró una transición
+    return None, None
+
+def get_transition_searching_orientation(transition_data):
+    if transition_data["side"] == "up":
+        if transition_data["searching_orientation"] == "inside":
+            orientation = "up_to_down"
+        if transition_data["searching_orientation"] == "outside":
+            orientation = "down_to_up"
+    if transition_data["side"] == "down":
+        if transition_data["searching_orientation"] == "inside":
+            orientation = "down_to_up"
+        if transition_data["searching_orientation"] == "outside":
+            orientation = "up_to_down"
+    if transition_data["side"] == "left":
+        if transition_data["searching_orientation"] == "inside":
+            orientation = "left_to_right"
+        if transition_data["searching_orientation"] == "outside":
+            orientation = "right_to_left"
+    if transition_data["side"] == "right":
+        if transition_data["searching_orientation"] == "inside":
+            orientation = "right_to_left"
+        if transition_data["searching_orientation"] == "outside":
+            orientation = "left_to_right"
+    return orientation
+
+def get_transition_axis(searching_orientation):
+    if searching_orientation == "up_to_down":
+        axis = "y"
+    if searching_orientation == "down_to_up":
+        axis = "y"
+    if searching_orientation == "left_to_right":
+        axis = "x"
+    if searching_orientation == "right_to_left":
+        axis = "x"
+    return axis
+
+def brightness_difference(brightness, prev_brightness, brightness_difference_type):
+    if brightness_difference_type == "dark_to_bright":
+        difference = brightness - prev_brightness
+    elif brightness_difference_type == "bright_to_dark":
+        difference = prev_brightness - brightness
+
+    return difference
+
+def draw_transition(image, coordinate, axis):
+    drawn = image.copy()
+    [h, w] = drawn.shape[:2]
+
+    if axis == "x":
+        cv2.rectangle(drawn, (coordinate, 0), (coordinate, w), (0, 255, 255), 1)
+    if axis == "y":
+        cv2.rectangle(drawn, (0, coordinate), (w, coordinate), (0, 255, 255), 1)
+
+    return drawn
+
 """
 --> Optimizar velocidad de filtrado de múltiples coincidencias en Template Matching, o
     decirle al usuario que puede crear múltiples puntos de inspección para cada coincidencia
