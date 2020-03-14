@@ -1,0 +1,23 @@
+Encuentra una única transición en X o en Y.
+Las imágenes a exportar cuando se utiliza transition son:
+    Imagen filtrada, imagen con la transición dibujada.
+Retorna como resultados de algoritmo:
+    Coordenada de la transición, diferencia de brillo en la transición
+
+Se indica con 'ut'.
+
+ESTRUCTURA:
+["orientacion_de_busqueda", diferencia_de_brillo_minima, "tipo_de_diferencia", tamano_del_grupo]
+
+donde:
+
+orientacion_de_busqueda: "up_to_down", "down_to_up", "left_to_right", "right_to_left"
+diferencia_de_brillo_minima: para encontrar la transición.
+tipo_de_diferencia: "bright_to_dark" o "dark_to_bright". Buscar de brillo a oscuro, o de oscuro a brillo.
+tamano_del_grupo: número de filas o columnas que se promediarán para calcular el brillo de cada grupo. Por ejemplo:
+    Una imagen de 28 de alto y 30 de ancho.
+    Tamaño de grupo de 4.
+    La imagen se dividirá en 7 grupos de filas (si la orientacion_de_busqueda es "up_to_down" o "down_to_up").
+    La fila 1 tiene 40 de brillo, la 2 tiene 41, la 3 tiene 43 y la 4 tiene 44. El promedio de brillo del       grupo es «42».
+    Las filas 5, 6, 7 y 8 tienen un promedio de «45».
+    La diferencia de brillo se calculará con el brillo de cada grupo.
