@@ -72,6 +72,49 @@ def translate(img, x, y):
 
     return dst
 
+def find_nearest_above(my_array, target):
+    diff = my_array - target
+    mask = np.ma.less_equal(diff, -1)
+    # We need to mask the negative differences
+    # since we are looking for values above
+    if np.all(mask):
+        c = np.abs(diff).argmin()
+        return c # returns min index of the nearest if target is greater than any value
+    masked_diff = np.ma.masked_array(diff, mask)
+    return masked_diff.argmin()
+
+def hist_match(input_img, template_img):
+    """Iguala el histograma de input_img con el de template_img, para hacer
+    más parecidos los colores y el brillo de input_img al de template_img."""
+
+    oldshape = input_img.shape
+    input_img = input_img.ravel()
+    template_img = template_img.ravel()
+
+    # get the set of unique pixel values and their corresponding indices and counts
+    s_values, bin_idx, s_counts = np.unique(input_img, return_inverse=True,return_counts=True)
+    t_values, t_counts = np.unique(template_img, return_counts=True)
+
+    # Calculate s_k for input_img image
+    s_quantiles = np.cumsum(s_counts).astype(np.float64)
+    s_quantiles /= s_quantiles[-1]
+
+    # Calculate s_k for template_img image
+    t_quantiles = np.cumsum(t_counts).astype(np.float64)
+    t_quantiles /= t_quantiles[-1]
+
+    # Round the values
+    sour = np.around(s_quantiles*255)
+    temp = np.around(t_quantiles*255)
+
+    # Map the rounded values
+    b=[]
+    for data in sour[:]:
+        b.append(find_nearest_above(temp,data))
+    b= np.array(b,dtype='uint8')
+
+    return b[bin_idx].reshape(oldshape)
+
 def apply_filters(img, filters):
     if not filters:
         return img
@@ -124,6 +167,10 @@ def apply_filters(img, filters):
             img = cv2.Canny(img, filter[1], filter[2])
         elif filter[0] == "gray":
             img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        elif filter[0] == "histMatch":
+            template_img_path = filter[1]
+            template_img = cv2.imread(template_img_path)
+            img = hist_match(img, template_img)
 
     return img
 
