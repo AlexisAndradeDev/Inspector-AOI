@@ -12,14 +12,26 @@ num_de_tablero;nombre_del_punto_de_inspeccion;luz_utilizada(white/ultraviolet);b
 ---------------------------------
 
 ---------------------------------
+
 Si es template matching, el punto de inspeccion tendrá los siguientes elementos:
-num_de_tablero;nombre_del_punto_de_inspeccion;luz_utilizada;bad/good/failed;[num_de_coincidencias, calificacion de la mejor coincidencia encontrada];[fallos]$
-Ejemplo: 1;resistencia1-presencia;white;bad;[0, 0.23921145498752594];[]$
+
+num_de_tablero;nombre_del_punto_de_inspeccion;luz_utilizada;bad/good/failed;[resultados_de_cada_template];[fallos]$
+
+resultados_de_cada_template:
+[[num_coincidencias_template1, mejor_calificación], [num_coincidencias_template2, mejor_calificación], [num_coincidencias_templateN, mejor_calificación]]
+
+Ejemplo: 1;resistencia1-presencia;white;bad;[[0, 0.23921145498752594], [0,0.53432134], [0,0.432451]];[]$
+
+
 
 Si es blob, el punto de inspeccion tendrá los siguientes elementos:
+
 num_de_tablero;nombre_del_punto_de_inspeccion;luz_utilizada;bad/good/failed;[area_total_de_blob, area_del_blob_mas_grande];[fallos]
+
 Ejemplo: 2;resistencia1-soldadura_izquierda;white;bad;[948, 465];[]$
+
 ---------------------------------
+
 
 Al final de los resultados de un tablero, se encuentra el numero del tablero, status (bad/failed/good), 
 tiempo de registro y tiempo de inspeccion, señalado por un & al inicio.

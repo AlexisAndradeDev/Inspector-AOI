@@ -280,13 +280,16 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
 
     images_to_export += [["filtered", inspection_point_image]]
 
-    best_match = 0
-    matches_number = 0
+    # listas con los resultados de cada template
+    best_match_per_template = [] # mejor coincidencia de cada una
+    matches_number_per_template = [] # núm de coincidencias de cada una
     correct_matches_number = False
     for sub_template,min_calification in zip(
             inspection_point["parameters"]["sub_templates"],
             inspection_point["parameters"]["min_califications"]
         ):
+        best_match = 0
+        matches_number = 0
 
         sub_template_image, sub_template_index = sub_template
 
@@ -311,19 +314,24 @@ def inspection_function_template_matching(inspection_point_image, inspection_poi
             )
             images_to_export += [["color_converted", color_converted_img]]
         except Exception as fail:
+            best_match_per_template.append(None)
+            matches_number_per_template.append(None)
             status = "failed"
             fails.append(str(fail))
             continue
 
+        # agregar a las listas de resultados de cada template
+        best_match_per_template.append(best_match) # mejor match de cada template
+        matches_number = len(matches_locations)
+        matches_number_per_template.append(matches_number) # número de matches de cada template
 
         # Evaluar el punto de inspección
-        matches_number = len(matches_locations)
         if(matches_number == inspection_point["parameters"]["required_matches"]):
             correct_matches_number = True
             status = "good"
             break
 
-    window_results = [matches_number, best_match]
+    window_results = [matches_number_per_template, best_match_per_template]
 
     # Si no se encontraron las coincidencia necesarias con ninguna subtemplate
     if not status == "good" and status != "failed":
