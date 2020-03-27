@@ -10,6 +10,12 @@ def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1
     cv2.circle(found, (x, y), c2_size, c2_color, c2_thickness)
     return found
 
+def draw_point(img, coordinates, color=[0, 0, 255]):
+    drawn = img.copy()
+    x, y = coordinates
+    drawn[y, x] = color
+    return drawn
+
 def crop_image(image, coordinates, take_as_origin=[0,0]):
     oX, oY = take_as_origin
     [x1,y1,x2,y2] = coordinates
@@ -171,6 +177,7 @@ def apply_filters(img, filters):
             template_img_path = filter[1]
             template_img = cv2.imread(template_img_path)
             img = hist_match(img, template_img)
+
 
     return img
 
@@ -723,6 +730,72 @@ def find_matches(img, template, min_calification, required_matches, color_scale,
 
     return matches_locations, best_match, color_converted_img
 
+
+def find_transitions(image, transitions_data):
+    transitions = {}
+    for transition_data in transitions_data.values():
+        brightness_difference = 0
+        transition_image = crop_image(image, transition_data["coordinates"])
+
+        transition_searching_orientation = get_transition_searching_orientation(transition_data)
+
+        transition_coordinate, brightness_difference = find_transition(
+            transition_image, transition_searching_orientation, transition_data["min_difference"],
+            transition_data["brightness_difference_type"], transition_data["group_size"],
+        )
+        if transition_coordinate is None:
+            continue
+
+        if transition_data["side"] == "up" or transition_data["side"] == "down":
+            coordinate_axis = "y"
+            # «y1» de la ventana de transición + coordenada de la transición
+            transition_coordinate_in_algorithm_window = \
+                transition_data["coordinates"][1] + transition_coordinate
+        elif transition_data["side"] == "left" or transition_data["side"] == "right":
+            coordinate_axis = "x"
+            # «x1» de la ventana de transición + coordenada de la transición
+            transition_coordinate_in_algorithm_window = \
+                transition_data["coordinates"][0] + transition_coordinate
+
+        transition = {
+            "name": transition_data["name"],
+            "side": transition_data["side"],
+            "axis": coordinate_axis,
+            "coordinate":transition_coordinate_in_algorithm_window,
+            "brightness_difference":brightness_difference,
+        }
+        transitions[transition["name"]] = transition
+
+    transitions_number = len(transitions)
+    return transitions_number, transitions
+
+def draw_transitions(image, transitions):
+    drawn = image.copy() # no corromper la original
+    [h, w] = drawn.shape[:2]
+
+    for transition in transitions.values():
+        drawn = draw_transition(drawn, transition["coordinate"], transition["axis"])
+
+    return drawn
+
+def calculate_transitions_intersection(transition1, transition2):
+    """Retorna (x,y) del punto de intersección de ambas transiciones."""
+    if (transition1["axis"] == "y" and transition2["axis"] == "x"):
+        # transition1 en y
+        y = transition1["coordinate"]
+        # transition2 en x
+        x = transition2["coordinate"]
+    if (transition1["axis"] == "x" and transition2["axis"] == "y"):
+        # transition1 en x
+        x = transition1["coordinate"]
+        # transition2 en y
+        y = transition2["coordinate"]
+    return [x,y]
+
+def calculate_distance_between_across_transitions(across1, across2):
+    distance = abs(across1["coordinate"] - across2["coordinate"])
+    return distance
+
 def find_transition(img, orientation, min_difference, brightness_difference_type, group_size):
     coordinate = None
     if orientation == "left_to_right":
@@ -903,6 +976,22 @@ def draw_transition(image, coordinate, axis):
         cv2.rectangle(drawn, (0, coordinate), (w, coordinate), (0, 255, 255), 1)
 
     return drawn
+
+def calculate_pixels_in_gray_range_with_histogram(gray_image, lower_gray, upper_gray):
+    hist = cv2.calcHist([gray_image],[0],None,[256],[0,256])
+    levels_in_range_with_frequency = hist[lower_gray:upper_gray]
+    pixels_in_range = int(np.sum(levels_in_range_with_frequency))
+    return pixels_in_range, hist
+
+def calculate_area_percentage_with_histogram(gray_image, lower_gray, upper_gray, return_hist_im=False):
+    h, w = gray_image.shape
+    image_pixels_number = w*h
+
+    pixels_in_range, hist = calculate_pixels_in_gray_range_with_histogram(gray_image, lower_gray, upper_gray)
+
+    area_percentage = (pixels_in_range / image_pixels_number) * 100
+
+    return area_percentage, hist
 
 """
 --> Optimizar velocidad de filtrado de múltiples coincidencias en Template Matching, o
