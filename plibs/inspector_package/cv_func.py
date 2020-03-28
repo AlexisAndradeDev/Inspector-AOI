@@ -809,19 +809,19 @@ def find_transition(img, orientation, min_difference, brightness_difference_type
     return coordinate, brightness_difference
 
 def find_transition_left_to_right(img, min_difference, brightness_difference_type, group_size):
-    [rows, columns, _] = img.shape
+    [height, width, _] = img.shape
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # obtener los rangos de los grupos de columnas
     groups_ranges = math_functions.elements_per_partition(
-        number_of_elements=columns, number_of_partitions=math.ceil(columns/group_size), get_as_indexes=True
+        number_of_elements=width, number_of_partitions=math.ceil(width/group_size), get_as_indexes=True
     )
 
     # iterar por cada grupo
     for group_range in groups_ranges:
         first_column = group_range[0]
         last_column = group_range[-1]
-        columns = img[0:rows, first_column:last_column]
+        columns = img[0:height, first_column:last_column+1]
 
         brightness = int(math_functions.average_array(columns))
 
@@ -838,24 +838,24 @@ def find_transition_left_to_right(img, min_difference, brightness_difference_typ
     return None, None
 
 def find_transition_right_to_left(img, min_difference, brightness_difference_type, group_size):
-    [rows, columns, _] = img.shape
+    [height, width, _] = img.shape
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # obtener los rangos de los grupos de columnas
     groups_ranges = math_functions.elements_per_partition(
-        number_of_elements=columns, number_of_partitions=math.ceil(columns/group_size), get_as_indexes=True
+        number_of_elements=width, number_of_partitions=math.ceil(width/group_size), get_as_indexes=True
     )
 
     # iterar por cada grupo
     for group_range in groups_ranges[::-1]:
         first_column = group_range[0]
         last_column = group_range[-1]
-        columns = img[0:rows, first_column:last_column]
+        columns = img[0:height, first_column:last_column+1]
 
         brightness = int(math_functions.average_array(columns))
 
         # la última columna no puede calcular diferencia con una anterior
-        if last_column < columns:
+        if last_column < width-1:
             difference = brightness_difference(brightness, prev_brightness, brightness_difference_type)
             if difference >= min_difference:
                 x = last_column
@@ -867,19 +867,19 @@ def find_transition_right_to_left(img, min_difference, brightness_difference_typ
     return None, None
 
 def find_transition_up_to_down(img, min_difference, brightness_difference_type, group_size):
-    [rows, columns, _] = img.shape
+    [height, width, _] = img.shape
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # obtener los rangos de los grupos de filas
     groups_ranges = math_functions.elements_per_partition(
-        number_of_elements=rows, number_of_partitions=math.ceil(rows/group_size), get_as_indexes=True
+        number_of_elements=height, number_of_partitions=math.ceil(height/group_size), get_as_indexes=True
     )
 
     # iterar por cada grupo
     for group_range in groups_ranges:
         first_row = group_range[0]
         last_row = group_range[-1]
-        rows = img[first_row:last_row, 0:columns]
+        rows = img[first_row:last_row+1, 0:width]
 
         brightness = int(math_functions.average_array(rows))
 
@@ -896,24 +896,24 @@ def find_transition_up_to_down(img, min_difference, brightness_difference_type, 
     return None, None
 
 def find_transition_down_to_up(img, min_difference, brightness_difference_type, group_size):
-    [rows, columns, _] = img.shape
+    [height, width, _] = img.shape
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # obtener los rangos de los grupos de filas
     groups_ranges = math_functions.elements_per_partition(
-        number_of_elements=rows, number_of_partitions=math.ceil(rows/group_size), get_as_indexes=True
+        number_of_elements=height, number_of_partitions=math.ceil(height/group_size), get_as_indexes=True
     )
 
     # iterar por cada grupo
     for group_range in groups_ranges[::-1]:
         first_row = group_range[0]
         last_row = group_range[-1]
-        rows = img[first_row:last_row, 0:columns]
+        rows = img[first_row:last_row+1, 0:width]
 
         brightness = int(math_functions.average_array(rows))
 
         # la última fila no puede calcular diferencia con una anterior
-        if last_row < rows:
+        if last_row < height-1:
             difference = brightness_difference(brightness, prev_brightness, brightness_difference_type)
             if difference >= min_difference:
                 y = last_row

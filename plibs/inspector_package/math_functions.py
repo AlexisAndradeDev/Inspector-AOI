@@ -102,8 +102,24 @@ def average_array(array):
     pixels_value_sum = np.sum(array)
     cnt = count_array_items(array)
     average = pixels_value_sum * 1. / cnt
+    if np.isnan(average):
+        average = np.nan_to_num(average)
     return average
+
+def average_list(list_):
+    elements_sum_value = sum(list_)
+    average = elements_sum_value / len(list_)
+    return average
+
+def sort_array_elements_low_to_high(arr):
+    gray_levels = arr.ravel()
+    return sorted(gray_levels)
 
 def calculate_circularity(area, perimeter):
     circularity = 4*math.pi*(area/(perimeter*perimeter))
     return circularity
+
+def average_coordinates(coordinates1, coordinates2):
+    x_average = int(round((coordinates1[0] + coordinates2[0])/2))
+    y_average = int(round((coordinates1[0] + coordinates2[0])/2))
+    return [x_average, y_average]
