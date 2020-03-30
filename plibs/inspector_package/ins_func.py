@@ -602,6 +602,7 @@ def inspection_function_template_matching(inspection_image, algorithm):
         sub_template_image, sub_template_index = sub_template
 
         if sub_template_image is None:
+            status = "failed"
             fail = "TEMPLATE_DOESNT_EXIST-{0}".format(sub_template_index+1)
             fails.append(fail)
             continue
