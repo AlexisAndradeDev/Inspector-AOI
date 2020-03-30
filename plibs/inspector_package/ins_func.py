@@ -172,18 +172,22 @@ def get_transitions_data(transitions_data):
 
 def create_algorithm(algorithm_data):
     algorithm = {
-        "necessary_status":algorithm_data[0],
-        "algorithm_to_take_as_origin":algorithm_data[1],
-        "light":algorithm_data[2], # white / ultraviolet
-        "name":algorithm_data[3],
-        "coordinates":algorithm_data[4],
-        "inspection_function":algorithm_data[5],
-        "filters":algorithm_data[7],
+        "ignore_bad_status":algorithm_data[0],
+        "needed_status_to_be_good":algorithm_data[1],
+        "take_as_origin":algorithm_data[3],
+        "light":algorithm_data[4], # white / ultraviolet
+        "name":algorithm_data[5],
+        "coordinates":algorithm_data[6],
+        "inspection_function":algorithm_data[7],
+        "filters":algorithm_data[9],
     }
+
+    chain_data = algorithm_data[2]
+    [algorithm["chained_to"], algorithm["needed_status_of_chained_to_execute"]] = chain_data
 
     # parámetros de la función de inspección del punto (áreas de blob, templates de
     # template matching, etc.)
-    parameters_data = algorithm_data[6]
+    parameters_data = algorithm_data[8]
     algorithm["parameters"] = get_inspection_function_parameters(algorithm, parameters_data)
 
     return algorithm
@@ -277,7 +281,7 @@ def execute_algorithm(inspection_image_filt, algorithm):
 
     return fails, location, results, status, resulting_images
 
-def calculate_location_found_inside_algorithm_in_photo(inspection_point, algorithm, location):
+def calculate_location_inside_algorithm_in_photo(inspection_point, algorithm, location):
     """Localización encontrada con un algoritmo (que toma el origen de la
     ventana del algoritmo) tomando como origen el (0,0) de la foto."""
 
@@ -301,41 +305,63 @@ def calculate_location_found_inside_algorithm_in_photo(inspection_point, algorit
     return location["coordinates"]
 
 def inspect_inspection_points(image, image_ultraviolet, inspection_points, check_mode="check:no"):
-    inspection_points_status = "good"
-    inspection_points_results = []
-    inspection_points_results_string = ""
-    images_to_export = []
+    inspection_points_results = {
+        "results":[], "string":"", "status":"good", "images":[],
+    }
 
     for inspection_point in inspection_points:
-        inspection_point_status = "good"
-        inspection_point_results = []
-        algorithms_results = {}
-        algorithms_results_string = ""
-        algorithms_locations = {}
-        inspection_images = []
+        inspection_point_results = {
+            "status":"good", "results":[],
+        }
+        algorithms_results = {
+            "results":{}, "algorithms_status":{}, "locations":{}, "string":"", "images":[],
+        }
 
         for algorithm in inspection_point["algorithms"]:
-            # coordenadas del origen de las coordenadas del algoritmo
-            if algorithm["algorithm_to_take_as_origin"] == "$inspection_point":
+            algorithm_results = {
+                "results":[], "string":"", "status":"", "location":{}, "images":[], "fails":[]
+            }
+
+            # verificar si se ejecutará o no el algoritmo, dependiendo de la cadena
+            if (algorithm["chained_to"] != None and
+                    not algorithms_results["algorithms_status"][algorithm["chained_to"]] == algorithm["needed_status_of_chained_to_execute"]):
+
+                # abortar inspección del algoritmo y marcarlo "not_executed"
+                # no agregarlo al string de resultados
+
+                algorithm_results = results_management.get_algorithm_results(
+                    algorithm_results=algorithm_results, algorithm=algorithm,
+                    results=[], status="not_executed", fails=[],
+                    location="not_available", images=[]
+                )
+
+                algorithms_results = results_management.add_algorithm_results_to_algorithms_results(
+                    algorithm, algorithm_results, algorithms_results, add_string=False
+                )
+
+                continue
+
+
+            # determinar el origen de las coordenadas del algoritmo
+            if algorithm["take_as_origin"] == "$inspection_point":
+                # tomar el punto de inspección
                 origin = inspection_point["coordinates"]
             else:
-                origin = algorithms_locations[algorithm["algorithm_to_take_as_origin"]]
-
-                # si el algoritmo que se desea tomar como origen no
-                # almacenó una localización, salir de la inspección del punto
+                # tomar otro algoritmo
+                origin = algorithms_results["locations"][algorithm["take_as_origin"]]
                 if origin == "not_available":
-                    # agregar resultados del algoritmo como si fuera "failed"
-                    # y un código de fallo a los resultados de los algoritmos
-                    algorithm_results_string = results_management.create_algorithm_results(
-                        name=algorithm["name"], light=algorithm["light"], status="failed",
-                        results=[],
-                        fails=["FAILCODE1_ALGORITHM_TO_TAKE_AS_ORIGIN_DOESNT_HAVE_COORDINATES"],
+                    # abortar inspección del algoritmo y marcarlo "failed"
+
+                    algorithm_results = results_management.get_algorithm_results(
+                        algorithm_results=algorithm_results, algorithm=algorithm,
+                        results=[], status="failed",
+                        fails=["ALGO_TO_TAKE_AS_ORIGIN_DOESNT_HAVE_COORDINATES"],
+                        location="not_available", images=[],
                     )
-                    # al diccionario de datos de resultados
-                    algorithms_results[algorithm["name"]] = []
-                    # al string de resultados
-                    algorithms_results_string += algorithm_results_string
+                    algorithms_results = results_management.add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, algorithms_results)
+
                     break
+
 
             if algorithm["light"] == "ultraviolet":
                 inspection_image = cv_func.crop_image(image_ultraviolet,algorithm["coordinates"],
@@ -350,97 +376,92 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
             )
 
             # ejecutar algoritmo
-            fails, location, algorithm_results, algorithm_status, resulting_images = \
+            [fails, location, results, status, resulting_images] = \
                 execute_algorithm(inspection_image_filt, algorithm)
+
             if location != "not_available":
-                # guardar localización tomando como origen el (0,0) de la foto del tablero
-                location = calculate_location_found_inside_algorithm_in_photo(
-                    inspection_point, algorithm, location
+                # guardar localización tomando como origen el (0,0) del tablero
+                location = calculate_location_inside_algorithm_in_photo(
+                    inspection_point, algorithm, location,
                 )
 
-            inspection_images.append([algorithm["name"], algorithm["light"], resulting_images])
+
+            algorithm_results = results_management.get_algorithm_results(
+                algorithm_results=algorithm_results, algorithm=algorithm,
+                results=results, status=status, fails=fails, location=location,
+                images=resulting_images
+            )
+
+            algorithms_results = results_management.add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, algorithms_results)
+
 
             # cambiar el status del punto de inspección si es necesario
-            inspection_point_status = results_management.evaluate_status(
-                algorithm_status, inspection_point_status
+            inspection_point_results["status"] = results_management.evaluate_inspection_point_status(
+            algorithm_results["status"], inspection_point_results["status"], algorithm,
             )
-
-            # agregar resultados del algoritmo a los resultados de los algoritmos
-            algorithm_results_string = results_management.create_algorithm_results(
-                algorithm["name"], algorithm["light"], algorithm_status, algorithm_results, fails,
-            )
-            # al diccionario de datos de resultados
-            algorithms_results[algorithm["name"]] = algorithm_results
-            # al string de resultados
-            algorithms_results_string += algorithm_results_string
-            # localización de los algoritmos
-            algorithms_locations[algorithm["name"]] = location
-
-            # dejar de inspeccionar el punto de inspección si su estatus no es
-            # el necesario para continuar, si es "any" el necesario, no importará el estatus
-            # y continuará con el siguiente algoritmo
-            if algorithm_status != algorithm["necessary_status"] and algorithm["necessary_status"] != "any":
-                break
 
 
         # cambiar el status de los puntos de inspección si es necesario
-        inspection_points_status = results_management.evaluate_status(
-            inspection_point_status, inspection_points_status
+        inspection_points_results["status"] = results_management.evaluate_status(
+            inspection_point_results["status"], inspection_points_results["status"]
         )
 
         # agregar resultados del punto de inspección a los resultados de todos los puntos
-        inspection_points_results += inspection_point_results
+        inspection_points_results["results"] += inspection_point_results["results"]
 
-        inspection_points_results = results_management.create_inspection_point_results(
-            algorithms_results_string, inspection_point["name"], inspection_point_status
+        inspection_point_results["string"] = results_management.create_inspection_point_results_string(
+            algorithms_results["string"], inspection_point["name"], inspection_point_results["status"]
         )
-        inspection_points_results_string += inspection_points_results
+        inspection_points_results["string"] += inspection_point_results["string"]
 
         # exportar imágenes si: a) check:yes y el status del punto es malo, o
         # b) check:total
-        if ((check_mode == "check:yes" and inspection_point_status == "bad") or
+        if ((check_mode == "check:yes" and inspection_point_results["status"] == "bad") or
                 check_mode == "check:total"):
             # agregar imágenes del punto de inspección imágenes de todos los puntos
-            images_to_export.append([inspection_point["name"], inspection_images])
+            inspection_points_results["images"].append([inspection_point["name"], algorithms_results["images"]])
 
-    return inspection_points_status, inspection_points_results, inspection_points_results_string, images_to_export
+    return inspection_points_results
 
 def execute_reference_algorithm(reference_algorithm, inspection_points_results, inspection_point_status):
+    reference_algorithm_results = {"status":"", "results":[]}
     if reference_algorithm["function"] == "classification":
         # algoritmo de clasificación sólo retorna status de las referencia
-        reference_algorithm_status = inspection_point_status
-        reference_algorithm_results = [reference_algorithm_status]
+        reference_algorithm_results["status"] = inspection_point_status
+        reference_algorithm_results["results"] = [reference_algorithm_results["status"]]
     else:
-        reference_algorithm_status, reference_algorithm_results = "failed", []
-    return reference_algorithm_status, reference_algorithm_results
+        reference_algorithm_results["status"], reference_algorithm_results["results"] = "failed", []
+    return reference_algorithm_results
 
 def inspect_reference(image, board, reference, check_mode, images_path , image_ultraviolet=None):
-    inspection_points_status, inspection_points_results, inspection_points_results_string, images_to_export = \
-        inspect_inspection_points(image, image_ultraviolet, reference["inspection_points"], check_mode)
+    reference_results = {}
 
-    operations.export_reference_images(images_to_export, board.get_number(), reference["name"], images_path)
+    inspection_points_results = inspect_inspection_points(image, image_ultraviolet, reference["inspection_points"], check_mode)
+
+    operations.export_reference_images(inspection_points_results["images"], board.get_number(), reference["name"], images_path)
 
     # si no falló ningún punto de inspección, ejecutar el algoritmo de la referencia
-    if inspection_points_status == "good":
-        reference_algorithm_status, reference_algorithm_results = \
-            execute_reference_algorithm(reference["reference_algorithm"], inspection_points_results, inspection_points_status)
-        reference_status = reference_algorithm_status
+    if inspection_points_results["status"] == "good":
+        reference_algorithm_results = \
+            execute_reference_algorithm(reference["reference_algorithm"], inspection_points_results["results"], inspection_points_results["status"])
+        reference_results["status"] = reference_algorithm_results["status"]
     else:
-        reference_algorithm_status, reference_algorithm_results = "", []
-        reference_status = inspection_points_status
+        reference_algorithm_results = {"status":"", "results":[]}
+        reference_algorithm_results["status"], reference_algorithm_results["results"] = "", []
+        reference_results["status"] = inspection_points_results["status"]
 
     # cambiar el status del tablero si es necesario
-    board.evaluate_status(reference_status)
+    board.evaluate_status(reference_results["status"])
 
     # resultados del algoritmo de la referencia
-    reference_algorithm_results_string = "[{0}${1}]".format(reference_algorithm_status,
-        reference_algorithm_results)
+    reference_algorithm_results["string"] = "[{0}${1}]".format(reference_algorithm_results["status"],
+        reference_algorithm_results["results"])
 
     # resultados de la referencia
-    reference_results_string = results_management.create_reference_results(
-        inspection_points_results_string, reference["name"], reference_status, reference_algorithm_results_string
+    reference_results["string"] = results_management.create_reference_results_string(
+        inspection_points_results["string"], reference["name"], reference_results["status"], reference_algorithm_results["string"]
     )
-    return reference_results_string
+    return reference_results["string"]
 
 def inspect_references(first_reference, last_reference,
         image, board, references, stage, check_mode, image_ultraviolet=None,
@@ -991,3 +1012,9 @@ def evaluate_histogram_results(area_percentage, average_gray, average_lowest_gra
         return True
     else:
         return False
+
+"""
+Hacer que, cuando una cadena se rompa, no compruebe si se debe ejecutar uno por uno los algoritmos.
+Es decir, si hay 4 algoritmos encadenados en secuencia, si falla el 2do, que el 3ro y el 4to
+ni siquiera entren a un 'if' para comprobar si deben ejecutarse.
+"""

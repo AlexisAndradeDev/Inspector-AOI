@@ -49,19 +49,19 @@ class ObjectInspected:
         return self.results
 
 
-def create_algorithm_results(name, light, status, results, fails):
+def create_algorithm_results_string(name, light, status, results, fails):
     algorithm_results = "{0};{1};{2};{3};{4}$".format(
         name, light, status, results, fails
     )
     return algorithm_results
 
-def create_inspection_point_results(algorithms_results, name, status):
+def create_inspection_point_results_string(algorithms_results, name, status):
     inspection_point_results = "{0}&&&{1};{2}%".format(
         algorithms_results, name, status
     )
     return inspection_point_results
 
-def create_reference_results(inspection_points_results, name, status, reference_algorithm_results):
+def create_reference_results_string(inspection_points_results, name, status, reference_algorithm_results):
     reference_results = "{0}&&{1};{2};{3}#".format(
         inspection_points_results, name, status, reference_algorithm_results
     )
@@ -70,9 +70,72 @@ def create_reference_results(inspection_points_results, name, status, reference_
 def evaluate_status(status, object_status):
     """El estado del objeto es malo si hubo un defecto y no hubo fallos.
     El estado del objeto es fallido si hubo un fallo al inspeccionar.
-    No se puede cambiar del estado fallido a otro."""
+    No se puede cambiar del estado fallido a otro.
+
+    * IMPORTANTE ---> NO FUNCIONA PARA PUNTOS DE INSPECCIÓN <--- IMPORTANTE"""
+
     if status == "bad" and object_status != "failed":
         object_status = "bad"
     if status == "failed":
         object_status = "failed"
     return object_status
+
+def evaluate_inspection_point_status(algorithm_status, inspection_point_status, algorithm):
+    """Determina el status de un punto de inspección."""
+    # transformar status del algoritmo solo para simplificar la evaluación del IP,
+    # no modificarlo fuera de esta función
+    if algorithm_status == algorithm["needed_status_to_be_good"]:
+        algorithm_status = "good"
+    algorithm_status = evaluate_status(algorithm_status, algorithm_status)
+
+    if algorithm["ignore_bad_status"] and algorithm_status == "bad":
+        # si se ignorará el status de algoritmo "bad" y el status de éste es "bad", el algoritmo será "good"
+        algorithm_status = "good"
+
+    inspection_point_status = evaluate_status(algorithm_status, inspection_point_status)
+
+    return inspection_point_status
+
+
+def add_algorithm_results_string_to_algorithms_results(algorithm, algorithm_results, algorithms_results):
+    algorithms_results[algorithm["name"]] = algorithm_results
+    algorithms_results["string"] += algorithm_results["string"]
+    algorithms_results["locations"][algorithm["name"]] = algorithm_results["location"]
+    return algorithms_results
+
+def add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, algorithms_results,
+        add_string=True):
+
+    # añadir string de resultados
+    if add_string:
+        algorithms_results = add_algorithm_results_string_to_algorithms_results(algorithm, algorithm_results, algorithms_results)
+
+    # añadir lista de resultados
+    algorithms_results["results"][algorithm["name"]] = algorithm_results["results"]
+
+    # añadir status del algoritmo
+    algorithms_results["algorithms_status"][algorithm["name"]] = algorithm_results["status"]
+
+    # añadir localización del algoritmo
+    algorithms_results["locations"][algorithm["name"]] = algorithm_results["location"]
+
+    # añadir imágenes del algoritmo
+    if algorithm_results["images"]:
+        algorithms_results["images"].append(
+            [algorithm["name"], algorithm["light"], algorithm_results["images"]],
+        )
+
+    return algorithms_results
+
+def get_algorithm_results(algorithm_results, algorithm, results, status, fails, location, images):
+    # crear string de resultados
+    algorithm_results["string"] = create_algorithm_results_string(
+        algorithm["name"], algorithm["light"], status, results, fails,
+    )
+
+    algorithm_results["status"] = status
+    algorithm_results["fails"] = fails
+    algorithm_results["location"] = location
+    algorithm_results["images"] = images
+
+    return algorithm_results

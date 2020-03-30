@@ -48,7 +48,7 @@ def inspect_boards(first_board, last_board, results, references, registration_se
                     board.set_status("skip")
 
                     # agregar resultados de la función skip con &%&
-                    skip_function_results = results_management.create_algorithm_results(
+                    skip_function_results = results_management.create_algorithm_results_string(
                         settings["skip_function"]["name"], settings["skip_function"]["light"],
                         skip_status, skip_results, skip_fails
                     )
