@@ -360,6 +360,11 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
                     )
                     algorithms_results = results_management.add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, algorithms_results)
 
+                    # cambiar el status del punto de inspección si es necesario
+                    inspection_point_results["status"] = results_management.evaluate_inspection_point_status(
+                    algorithm_results["status"], inspection_point_results["status"], algorithm,
+                    )
+
                     break
 
 
