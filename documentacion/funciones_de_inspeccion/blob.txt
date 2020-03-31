@@ -1,3 +1,6 @@
+Se indica con 'b'
+
+
 ESTRUCTURA DE DATOS:
 
 [invertir_binarizado, 'gray/hsv', [mín color, máx color], min_tamaño_de_blob, máx_tamaño_de_blob, mín_área_total, máx_área_total, máx_tamaño_de_un_blob_permitido]
