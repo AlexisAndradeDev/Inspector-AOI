@@ -878,7 +878,7 @@ def inspection_function_histogram(inspection_image, algorithm):
     images_to_export += [["gray", gray_image]]
 
 
-    if algorithm["parameters"]["min_area_percentage"] and algorithm["parameters"]["max_area_percentage"]:
+    if algorithm["parameters"]["min_area_percentage"] or algorithm["parameters"]["max_area_percentage"]:
         # calcular porcentaje de área que está entre el rango de gris
         area_percentage, hist = cv_func.calculate_area_percentage_with_histogram(
             gray_image,
