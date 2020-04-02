@@ -887,7 +887,7 @@ def inspection_function_histogram(inspection_image, algorithm):
 
 
     if algorithm["parameters"]["min_average_gray"] or algorithm["parameters"]["max_average_gray"]:
-        # calcular nivel de gris promedio (contando sólo los pixeles que están en el rango de gris)
+        # calcular nivel de gris promedio
         average_gray = math_functions.average_array(gray_image)
 
 
