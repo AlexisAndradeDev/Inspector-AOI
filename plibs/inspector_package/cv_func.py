@@ -979,7 +979,7 @@ def draw_transition(image, coordinate, axis):
 
 def calculate_pixels_in_gray_range_with_histogram(gray_image, lower_gray, upper_gray):
     hist = cv2.calcHist([gray_image],[0],None,[256],[0,256])
-    levels_in_range_with_frequency = hist[lower_gray:upper_gray]
+    levels_in_range_with_frequency = hist[lower_gray:upper_gray+1]
     pixels_in_range = int(np.sum(levels_in_range_with_frequency))
     return pixels_in_range, hist
 
