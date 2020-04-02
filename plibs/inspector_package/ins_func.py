@@ -900,7 +900,7 @@ def inspection_function_histogram(inspection_image, algorithm):
 
         if algorithm["parameters"]["average_of_lowest_gray_levels_number"]:
             # N más bajos
-            lowest_gray_levels = sorted_gray_levels[:algorithm["parameters"]["average_of_lowest_gray_levels_number"]]
+            lowest_gray_levels = sorted_gray_levels[:algorithm["parameters"]["average_of_lowest_gray_levels_number"]+1]
             average_lowest_gray = math_functions.average_list(lowest_gray_levels)
 
         if algorithm["parameters"]["average_of_highest_gray_levels_number"]:
