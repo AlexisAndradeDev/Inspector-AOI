@@ -1,0 +1,91 @@
+Se indica con 'h'
+
+
+
+EXPLICACIÓN
+
+Para calcular el porcentaje de área se utiliza la fórmula:
+    porcentaje_de_area = (numero_de_pixeles_en_el_rango / número_de_pixeles_en_la_imagen) * 100
+
+Para calcular el promedio de gray levels, se aplica la fórmula:
+    promedio = suma_de_todos_los_gray_levels / número_de_pixeles
+
+Para calcular el promedio de gray levels más bajos, se utiliza el procedimiento:
+    Utilizar los N gray levels más bajos, siendo N un parámetro establecido por el usuario.
+    
+    Por ejemplo, se quiere utilizar los 5 gray levels más bajos:
+        Si se tienen 10 gray levels: 5, 7, 12, 20, 23, 24, 25, 28, 30, 32
+        se utilizarán los 5 más bajos:
+            5, 7, 12, 20, 23
+        y se calculará el promedio:
+            promedio = (5+7+12+20+23) / 5
+
+Para calcular el promedio de gray levels más altos, se utiliza el procedimiento:
+    Utilizar los N gray levels más altos, siendo N un parámetro establecido por el usuario.
+    
+    Por ejemplo, se quiere utilizar los 5 gray levels más altos:
+        Si se tienen 10 gray levels: 5, 7, 12, 20, 23, 24, 25, 28, 30, 32
+        se utilizarán los 5 más altos:
+            24, 25, 28, 30, 32
+        y se calculará el promedio:
+            promedio = (24+25+28+30+32) / 5
+
+
+
+
+ESTRUCTURA DE DATOS
+
+[ 
+[min_gray_in_range, max_gray_in_range], 
+
+[minimo_porcentaje_de_area, maximo_porcentaje_de_area], 
+
+[minimo_gray_promedio, maximo_gray_promedio], 
+
+numero_de_gray_levels_para_promedio_de_grays_mas_bajos,
+minimo_promedio_de_grays_mas_bajos,
+
+numero_de_gray_levels_para_promedio_de_grays_mas_altos,
+maximo_promedio_de_grays_mas_altos,
+
+minimo_gray_mas_bajo, maximo_gray_mas_alto
+]
+
+donde:
+
+min_gray_in_range: es el mínimo gray level que debe tener un pixel para ser contado en el porcentaje de área.
+    Si no se quiere utilizar, se debe asignar el número 0.
+max_gray_in_range: es el máximo gray level que debe tener un pixel para ser contado en el porcentaje de área.
+    Es decir, si, por ejemplo, se tiene un mínimo de 50 y máximo de 200:
+        Un pixel que tenga un gray level de 220 no sumará al número de pixeles en el rango.
+        Un pixel que tenga un gray level de 100 sumará al número de pixeles en el rango.
+    Si no se quiere utilizar, se debe asignar el número 255.
+
+minimo_porcentaje_de_area: si el porcentaje de área no es igual o mayor al mínimo, la función de inspección será 'bad'.
+    Si no se quiere utilizar, asignar None
+maximo_porcentaje_de_area: si el porcentaje de área no es igual o menor al máximo, la función de inspección será 'bad'.
+    Si no se quiere utilizar, asignar None
+
+minimo_gray_promedio: si el promedio de gray levels no es igual o mayor al mínimo, dará como resultado 'bad'.
+    Si no se quiere utilizar, asignar None
+maximo_gray_promedio: si el promedio de gray levels no es igual o menor al máximo, dará como resultado 'bad'.
+    Si no se quiere utilizar, asignar None
+
+numero_de_gray_levels_para_promedio_de_grays_mas_bajos:
+    Es el número de gray levels que se utilizarán para calcular el 'promedio de gray levels más bajos'.
+    Si no se quiere utilizar, asignar None
+minimo_promedio_de_grays_mas_bajos: si el 'promedio de gray levels más bajos' no es mayor o igual al mínimo, dará como resultado 'bad'.
+    Si no se quiere utilizar, asignar None
+
+numero_de_gray_levels_para_promedio_de_grays_mas_altos:
+    Es el número de gray levels que se utilizarán para calcular el 'promedio de gray levels más altos'.
+    Si no se quiere utilizar, asignar None
+maximo_promedio_de_grays_mas_altos: si el 'promedio de gray levels más altos' no es menor o igual al máximo, dará como resultado 'bad'.
+    Si no se quiere utilizar, asignar None
+
+minimo_gray_mas_bajo: si el gray level más bajo de la imagen no es igual o mayor a este valor, dará como resultado 'bad'.
+    Si no se quiere utilizar, asignar None
+
+maximo_gray_mas_alto: si el gray level más alto de la imagen no es igual o menor a este valor, dará como resultado 'bad'.
+    Si no se quiere utilizar, asignar None
+
