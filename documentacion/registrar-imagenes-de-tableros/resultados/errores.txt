@@ -1,3 +1,5 @@
+Los errores se escriben al final del archivo regallbrds_results.do con el signo '%' antes del código.
+
 Si no se produjeron resultados, el archivo regallbrds_results.do estará vacío, 
 conteniendo solamente el código NO_RESULTS
 
