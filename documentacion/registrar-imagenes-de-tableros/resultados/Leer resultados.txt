@@ -5,16 +5,20 @@ Se escriben con la estructura:
 Por ejemplo:
 	1;ok#
 	2;ok#
-	3;failed;CONTOURS_NOT_FOUND_FID_1#
+	3;failed;codigo_de_fallo#
 	4;ok#
-	5;failed;CONTOURS_NOT_FOUND_FID_2#
+	5;failed;codigo_de_fallo#
 	6;ok#
 	7;ok#
-	8;failed;APPROPRIATE_CIRCLE_FID_1#
-	9;failed;IMG_DOESNT_EXIST#
-	10;failed;IMG_DOESNT_EXIST#
-	11;failed;IMG_DOESNT_EXIST#
-	12;failed;IMG_DOESNT_EXIST#
+	8;failed;codigo_de_fallo#
+	9;failed;codigo_de_fallo#
+	10;failed;codigo_de_fallo#
+	11;failed;codigo_de_fallo#
+	12;failed;codigo_de_fallo#
 
-Los errores se encuentran con la estructura:
+Los fallos se encuentran con la estructura:
 	num_tablero;failed;codigo_de_fallo
+	
+	
+	
+Los códigos de fallos se encuentran en este mismo directorio, en el archivo fallos.txt
