@@ -12,7 +12,7 @@ num_de_tableros, num_de_multihilos (para inspeccionar tableros), num_de_multihil
 [datos de la función de skip]
 ],
 
-[datos_del_metodo_de_registro],
+[datos_de_registro],
 
 [datos_de_referencias],
 
