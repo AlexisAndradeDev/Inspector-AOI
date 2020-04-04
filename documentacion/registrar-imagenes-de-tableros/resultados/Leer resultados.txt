@@ -21,4 +21,4 @@ Los fallos se encuentran con la estructura:
 	
 	
 	
-Los códigos de fallos se encuentran en este mismo directorio, en el archivo fallos.txt
+Los códigos de fallos se encuentran en documentacion/codigos-de-fallos-y-errores/fallos/codigos.txt
