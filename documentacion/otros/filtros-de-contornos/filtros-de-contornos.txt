@@ -1,0 +1,46 @@
+INFORMACIÓN SOBRE LOS FILTROS DE CONTORNOS
+
+La estructura es:
+{"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}}
+
+
+"min_area": selecciona los contornos que superen un área mínima.
+Estructura:
+    "min_area":{"min_area":num_área}
+
+
+"max_area": selecciona los contornos que sean menores que un área máxima.
+Estructura:
+    "max_area":{"max_area":num_área}
+
+
+"polygon": selecciona los contornos cuya forma sea parecida al polígono señalado según su número de vértices (en algunos polígonos se toman
+en cuenta otros parámetros, como la relación de aspecto entre el ancho y alto de la figura para decidir si es un cuadrado o un rectángulo).
+Estructura:
+    "polygon":{"required_polygon":"nombre_del_polígono"}
+    Los posibles nombres de polígonos son:
+        "triangle"
+        "square": el cociente de la división ancho/alto del contorno se encuentra entre 0.8 y 1.2.
+        "rectangle": el cociente de la divisón ancho/alto del contorno es menor a 0.8 o mayor a 1.2.
+        "pentagon"
+        "hexagon"
+    
+
+"vertices": selecciona los contornos cuyo número de vértices coincida con el señalado por el usuario.
+Estructura:
+    "vertices":{"required_vertices":número_de_vértices}
+    
+
+"circularity": selecciona los contornos que superen la circularidad mínima del contorno.
+Estructura:
+    "circularity":{"min_circularity":circularidad_en_decimal_menor_o_igual_que_0.999}
+    
+
+"min_diameter": selecciona los contornos que superen un diámetro mínimo.
+Estructura:
+    "min_diameter":{"min_diameter":número}
+
+
+"max_diameter": selecciona los contornos que sean menores que un diámetro máximo.
+Estructura:
+    "max_diameter":{"max_diameter":número}
