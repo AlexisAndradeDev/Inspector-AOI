@@ -97,16 +97,12 @@ def evaluate_inspection_point_status(algorithm_status, inspection_point_status, 
     return inspection_point_status
 
 
-def add_algorithm_results_string_to_algorithms_results(algorithm, algorithm_results, algorithms_results):
-    algorithms_results["string"] += algorithm_results["string"]
-    return algorithms_results
-
 def add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, algorithms_results,
         add_string=True):
 
     # añadir string de resultados
     if add_string:
-        algorithms_results = add_algorithm_results_string_to_algorithms_results(algorithm, algorithm_results, algorithms_results)
+        algorithms_results["string"] += algorithm_results["string"]
 
     # añadir lista de resultados
     algorithms_results["results"][algorithm["name"]] = algorithm_results["results"]
