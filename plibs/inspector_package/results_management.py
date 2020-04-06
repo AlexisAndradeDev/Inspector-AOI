@@ -5,7 +5,7 @@ class ObjectInspected:
         # es usado para posiciones en lista, cuya primera posición es 0.
         self.index = board_number-1
         self.status = "good" # iniciar como "bueno" por defecto
-        self.code = "" # inicializar código de error o de fallo
+        self.code = None # inicializar código de error o de fallo
         self.references_results = ""
 
     def set_number(self, number):
@@ -39,14 +39,9 @@ class ObjectInspected:
         if status != "not_entered":
             self.set_status(status) # por si no se utilizó el método set_status antes
 
-        if not self.code:
-            self.results = "{0}&{1};{2}%%".format(
-                self.references_results, self.number, self.status,
-            )
-        else:
-            self.results = "{0}&{1};{2};{3}%%".format(
-                self.references_results, self.number, self.status, self.code,
-            )
+        self.results = "{0}&{1};{2};{3}%%".format(
+            self.references_results, self.number, self.status, self.code,
+        )
     def get_results(self):
         """
         Resultados de las referencias y generales del tablero.
@@ -103,9 +98,7 @@ def evaluate_inspection_point_status(algorithm_status, inspection_point_status, 
 
 
 def add_algorithm_results_string_to_algorithms_results(algorithm, algorithm_results, algorithms_results):
-    algorithms_results[algorithm["name"]] = algorithm_results
     algorithms_results["string"] += algorithm_results["string"]
-    algorithms_results["locations"][algorithm["name"]] = algorithm_results["location"]
     return algorithms_results
 
 def add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, algorithms_results,
