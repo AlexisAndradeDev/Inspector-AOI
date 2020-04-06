@@ -5,6 +5,7 @@ class ObjectInspected:
         # es usado para posiciones en lista, cuya primera posición es 0.
         self.index = board_number-1
         self.status = "good" # iniciar como "bueno" por defecto
+        self.code = "" # inicializar código de error o de fallo
         self.references_results = ""
 
     def set_number(self, number):
@@ -17,10 +18,9 @@ class ObjectInspected:
         return self.index
 
     def set_status(self, status, code=None):
-        if not code:
-            self.status = str(status)
-        else:
-            self.status = "{0};{1}".format(str(status), str(code))
+        self.status = str(status)
+        if code:
+            self.code = str(code)
     def get_status(self):
         return self.status
     def evaluate_status(self, reference_status):
@@ -39,9 +39,14 @@ class ObjectInspected:
         if status != "not_entered":
             self.set_status(status) # por si no se utilizó el método set_status antes
 
-        self.results = "{0}&{1};{2}%%".format(
-            self.references_results, self.number, self.status
-        )
+        if not self.code:
+            self.results = "{0}&{1};{2}%%".format(
+                self.references_results, self.number, self.status,
+            )
+        else:
+            self.results = "{0}&{1};{2};{3}%%".format(
+                self.references_results, self.number, self.status, self.code,
+            )
     def get_results(self):
         """
         Resultados de las referencias y generales del tablero.

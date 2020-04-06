@@ -355,7 +355,7 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
                     algorithm_results = results_management.get_algorithm_results(
                         algorithm_results=algorithm_results, algorithm=algorithm,
                         results=[], status="failed",
-                        fails=["ALGO_TO_TAKE_AS_ORIGIN_DOESNT_HAVE_COORDINATES"],
+                        fails=["ALGO_TO_TAKE_AS_ORIGIN_DOESNT_HAVE_COORDINATES"], # !FAIL
                         location="not_available", images=[],
                     )
                     algorithms_results = results_management.add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, algorithms_results)
@@ -603,7 +603,7 @@ def inspection_function_template_matching(inspection_image, algorithm):
 
         if sub_template_image is None:
             status = "failed"
-            fail = "TEMPLATE_DOESNT_EXIST-{0}".format(sub_template_index+1)
+            fail = "TEMPLATE_DOESNT_EXIST-{0}".format(sub_template_index+1) # !FAIL
             fails.append(fail)
             continue
 
@@ -622,6 +622,19 @@ def inspection_function_template_matching(inspection_image, algorithm):
                 algorithm["parameters"]["invert_binary"],
             )
             images_to_export += [["color_converted", color_converted_img]]
+        except excepts.MT_ERROR:
+            best_match_per_template.append(None)
+            matches_number_per_template.append(None)
+            status = "failed"
+            fail = "MT_ERROR-{}".format(sub_template_index+1) # !FAIL
+            fails.append(fail)
+        except excepts.UNKNOWN_CF_ERROR:
+            best_match_per_template.append(None)
+            matches_number_per_template.append(None)
+            status = "failed"
+            fail = "UNKNOWN_CF_ERROR-{}".format(sub_template_index+1) # !FAIL
+            fails.append(fail)
+
         except Exception as fail:
             best_match_per_template.append(None)
             matches_number_per_template.append(None)
@@ -791,7 +804,7 @@ def calculate_location_for_transitions(required_transitions, transitions):
             required_transitions, transitions
         )
         if fail:
-            return fail, None
+            return fail, "not_available"
 
         if required_transitions_is_one_across_and_along(required_transitions):
             intersection = intersections
@@ -830,16 +843,14 @@ def calculate_transitions_intersections(required_transitions, transitions):
     intersections = None
 
     if required_transitions == ["across1", "along"]:
-        intersection = cv_func.calculate_transitions_intersection(transitions["along"], transitions["across1"])
-        if intersection == None:
-            fail = "TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED"
-        return intersection
+        intersections = cv_func.calculate_transitions_intersection(transitions["along"], transitions["across1"])
+        if intersections == None:
+            fail = "TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED" # !FAIL
 
     elif required_transitions == ["across2", "along"]:
-        intersection = cv_func.calculate_transitions_intersection(transitions["along"], transitions["across2"])
-        if intersection == None:
-            fail = "TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED"
-        return intersection
+        intersections = cv_func.calculate_transitions_intersection(transitions["along"], transitions["across2"])
+        if intersections == None:
+            fail = "TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED" # !FAIL
 
     elif required_transitions == ["across1", "across2", "along"]:
         # calcular centro entre los across y el along
@@ -847,11 +858,11 @@ def calculate_transitions_intersections(required_transitions, transitions):
         intersection2 = cv_func.calculate_transitions_intersection(transitions["along"], transitions["across2"])
 
         if intersection1 == None or intersection2 == None:
-            fail = "TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED"
+            fail = "TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED" # !FAIL
 
         intersections = [intersection1, intersection2]
-        return fail, intersections
-    fail = "TRANSITIONS_NAMES_CAN_NOT_INTERSECT"
+    else:
+        fail = "TRANSITIONS_NAMES_CAN_NOT_INTERSECT" # !FAIL
     return fail, intersections
 
 

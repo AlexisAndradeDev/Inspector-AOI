@@ -785,11 +785,13 @@ def calculate_transitions_intersection(transition1, transition2):
         y = transition1["coordinate"]
         # transition2 en x
         x = transition2["coordinate"]
-    if (transition1["axis"] == "x" and transition2["axis"] == "y"):
+    elif (transition1["axis"] == "x" and transition2["axis"] == "y"):
         # transition1 en x
         x = transition1["coordinate"]
         # transition2 en y
         y = transition2["coordinate"]
+    else:
+        return None
     return [x,y]
 
 def calculate_distance_between_across_transitions(across1, across2):

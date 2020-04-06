@@ -15,9 +15,6 @@ def use_skip_function(board_image, skip_function):
 
     fails, location, results, status, resulting_images = ins_func.execute_algorithm(inspection_image_filt, skip_function)
 
-    # añadir la imagen sin filtrar a la lista de imágenes
-    resulting_images.insert(0, ["rgb", inspection_image])
-
     if status != "good":
         # skippear
         return True, status, results, resulting_images, fails
@@ -121,9 +118,23 @@ def inspect_boards(first_board, last_board, results, references, registration_se
         # debugeo lee las imágenes de los tableros ya alineadas, no registra
         elif stage == "debug":
             photo = imread(r"C:/Dexill/Inspector/Alpha-Premium/x64/pd/{0}-white-board_aligned.bmp".format(board_number))
+            if not photo:
+                board.set_status("failed", code="IMG_DOESNT_EXIST") # !GENERAL_FAIL
+                board.add_references_results(references_results="")
+                board.set_results()
+                results.val += board.get_results()
+                continue
+
             aligned_board_image = photo
             if settings["uv_inspection"] == "uv_inspection:True":
                 photo_ultraviolet = imread(r"C:/Dexill/Inspector/Alpha-Premium/x64/pd/{0}-ultraviolet-board_aligned.bmp".format(board_number))
+                if not photo_ultraviolet:
+                    board.set_status("failed", code="UV_IMG_DOESNT_EXIST") # !GENERAL_FAIL
+                    board.add_references_results(references_results="")
+                    board.set_results()
+                    results.val += board.get_results()
+                    continue
+
                 aligned_board_image_ultraviolet = photo_ultraviolet
 
 
@@ -149,7 +160,7 @@ def inspect_boards(first_board, last_board, results, references, registration_se
 
         if not board.get_results():
             # si no se obtuvo resultados de ninguna referencia
-            board.set_status("error", code="NO_RESULTS")
+            board.set_status("error", code="NO_RESULTS") # !ERROR
 
         # agregar resultados del tablero
         results.val += board.get_results()
@@ -190,7 +201,7 @@ def start_inspection_loop(references, registration_settings, settings, stage):
                     results = inspect(references, registration_settings, settings, stage, photo=photo)
 
                 if not results.val:
-                    results.val = "NO_RESULTS"
+                    results.val = "%NO_RESULTS" # !FATAL_ERROR
                 operations.write_results(results.val, stage)
                 results.val = "" # vaciar los resultados
 
@@ -200,7 +211,7 @@ def start_inspection_loop(references, registration_settings, settings, stage):
     elif stage == "debug":
         results = inspect(references, registration_settings, settings, stage)
         if not results.val:
-            results.val = "NO_RESULTS"
+            results.val = "%NO_RESULTS" # !FATAL_ERROR
         operations.write_results(results.val, stage)
         results.val = "" # vaciar los resultados
 

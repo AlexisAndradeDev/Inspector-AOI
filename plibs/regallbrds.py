@@ -18,12 +18,6 @@ def read_file(path):
         f.close()
     return data
 
-def write_file_error(text):
-    """Escribe errores del sistema (error de sintaxis, apertura de cámara)"""
-    file = codecs.open("C:/Dexill/Inspector/Alpha-Premium/x64/pd/regallbrds_error.do", "a", encoding='utf8')
-    file.write(text)
-    file.close()
-
 def write_results(text):
     """Escribe los detalles de los puntos de inspección."""
     file = codecs.open("C:/Dexill/Inspector/Alpha-Premium/x64/pd/regallbrds_results.do", "w", encoding='utf8')
@@ -91,9 +85,9 @@ def register_boards(first_photo, last_photo, registration_settings, settings):
         photo = imread(photo_path)
         if photo is None:
             # si no existe la foto, escribir el status de los tableros de la foto
-            # como "failed" y el código de error IMG_DOESNT_EXIST
+            # como "failed" y el código de fallo IMG_DOESNT_EXIST
             for board_number in range(first_board, last_board+1):
-                results_of_this_thread += "{0};{1};{2}#".format(board_number, "failed", "IMG_DOESNT_EXIST")
+                results_of_this_thread += "{0};{1};{2}#".format(board_number, "failed", "IMG_DOESNT_EXIST") # !GENERAL_FAIL
             continue
 
         # leer imagen con luz UV en caso de usarse
@@ -102,9 +96,9 @@ def register_boards(first_photo, last_photo, registration_settings, settings):
             photo_ultraviolet = imread(photo_path)
             if photo_ultraviolet is None:
                 # si no existe la foto UV, escribir el status de los tableros de la foto
-                # como "failed" y el código de error UV_IMG_DOESNT_EXIST
+                # como "failed" y el código de fallo UV_IMG_DOESNT_EXIST
                 for board_number in range(first_board, last_board+1):
-                    results_of_this_thread += "{0};{1};{2}#".format(board_number, "failed", "UV_IMG_DOESNT_EXIST")
+                    results_of_this_thread += "{0};{1};{2}#".format(board_number, "failed", "UV_IMG_DOESNT_EXIST") # !GENERAL_FAIL
                 continue
 
 
@@ -128,8 +122,8 @@ def register_boards(first_photo, last_photo, registration_settings, settings):
             all_images.append(["{0}-{1}".format(board_number, "white"), resulting_images])
 
             if fail_code:
-                # Agregar error a los resultados de los tableros de esta foto
-                results_of_this_thread += "{0};{1};{2}#".format(board_number, "failed", fail_code)
+                # Agregar fallo a los resultados de los tableros de esta foto
+                results_of_this_thread += "{0};{1};{2}#".format(board_number, "registration_failed", fail_code) # !REGISTRATION_FAIL
                 continue
 
             if settings["uv_inspection"] == "uv_inspection:True":
@@ -162,7 +156,7 @@ def export_resulting_images(first_board, last_board, all_images):
 def start_boards_registration(registration_settings, settings):
     global results, all_images
 
-    # Inspeccionar los tableros con multihilos
+    # registrar los tableros con multihilos
     threads = create_threads(
         func=register_boards,
         threads_num=settings["threads_number_for_photos"],
@@ -172,11 +166,14 @@ def start_boards_registration(registration_settings, settings):
 
     # Correr multihilos
     run_threads(threads)
-    if not results:
-        write_file_error("NO_RESULTS")
-        sys.exit()
 
-    if all_images:
+    if not results:
+        results = "%NO_RESULTS" # !FATAL_ERROR
+
+    elif not all_images:
+        results = "%NO_RESULTING_IMAGES" # !FATAL_ERROR
+
+    else:
         # Exportar imágenes con multihilos
         threads = create_threads(
         func=export_resulting_images,
@@ -187,8 +184,7 @@ def start_boards_registration(registration_settings, settings):
 
         # Correr multihilos
         run_threads(threads)
-    else:
-        write_file_error("NO_RESULTING_IMAGES")
+
 
     # Escribir archivo de resultados al final
     write_results(results)

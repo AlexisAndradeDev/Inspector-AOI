@@ -39,7 +39,7 @@ def find_circular_fiducial(photo, fiducial):
     try:
         _,contours,_ = cv2.findContours(searching_area_img_filtered, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     except:
-        return ("CONTOURS_NOT_FOUND_FID_{0}".format(fiducial.number)), None, None, images_to_return
+        return ("CONTOURS_NOT_FOUND_FID_{0}".format(fiducial.number)), None, None, images_to_return # !REGISTRATION_FAIL
 
     # Encontrar contorno que cumpla con los requisitos de circularidad y diámetro
     circle = None
@@ -57,7 +57,7 @@ def find_circular_fiducial(photo, fiducial):
                 break
 
     if circle is None:
-        return ("APPROPRIATE_CIRCLE_FID_{0}".format(fiducial.number)), None, None, images_to_return
+        return ("APPROPRIATE_CIRCLE_FID_{0}".format(fiducial.number)), None, None, images_to_return # !REGISTRATION_FAIL
 
     (x, y), circle_radius = cv2.minEnclosingCircle(circle)
     circle_center = (round(x), round(y))
@@ -75,20 +75,21 @@ def register_with_two_circular_fiducials(photo, fiducial_1, fiducial_2, objectiv
     # dimensiones originales de la foto
     w_original = photo.shape[1]
     h_original = photo.shape[0]
+
     # Detectar centro del fiducial 1
-    fail_code, circle_center, circle_radius, resulting_images = find_circular_fiducial(photo, fiducial_1)
+    fail, circle_center, circle_radius, resulting_images = find_circular_fiducial(photo, fiducial_1)
     images_to_export += resulting_images
-    if fail_code:
-        return fail_code, images_to_export, None, None, None
+    if fail:
+        return fail, images_to_export, None, None, None
 
     fiducial_1_center = (circle_center[0] + fiducial_1.window[0], circle_center[1] + fiducial_1.window[1])
     fiducial_1_radius = circle_radius
 
     # Detectar centro del fiducial 2
-    fail_code, circle_center, circle_radius, resulting_images = find_circular_fiducial(photo, fiducial_2)
+    fail, circle_center, circle_radius, resulting_images = find_circular_fiducial(photo, fiducial_2)
     images_to_export += resulting_images
-    if fail_code:
-        return fail_code, images_to_export, None, None, None
+    if fail:
+        return fail, images_to_export, None, None, None
 
     fiducial_2_center = (circle_center[0] + fiducial_2.window[0], circle_center[1] + fiducial_2.window[1])
     fiducial_2_radius = circle_radius
@@ -111,7 +112,7 @@ def register_with_two_circular_fiducials(photo, fiducial_1, fiducial_2, objectiv
 
     images_to_export += [["board_aligned", photo]]
 
-    return fail_code, images_to_export, photo, rotation, [x_diference, y_diference]
+    return fail, images_to_export, photo, rotation, [x_diference, y_diference]
 
 def register_with_rotation_points_and_translation_point(photo, rotation_iterations, rotation_point1, rotation_point2, translation_point, objective_angle, objective_x, objective_y):
     """
@@ -140,8 +141,8 @@ def register_with_rotation_points_and_translation_point(photo, rotation_iteratio
         images_to_export += resulting_images
 
         if not rotation_point1_coordinates:
-            fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point1["name"])
-            return fail_code, images_to_export, None, None, None
+            fail = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point1["name"]) # !REGISTRATION_FAIL
+            return fail, images_to_export, None, None, None
 
         # Encontrar punto de rotación 2
         rotation_point2_coordinates, resulting_images = cv_func.find_reference_point_in_photo(photo, rotation_point2)
@@ -150,8 +151,8 @@ def register_with_rotation_points_and_translation_point(photo, rotation_iteratio
         images_to_export += resulting_images
 
         if not rotation_point2_coordinates:
-            fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point2["name"])
-            return fail_code, images_to_export, None, None, None
+            fail = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point2["name"]) # !REGISTRATION_FAIL
+            return fail, images_to_export, None, None, None
 
 
         # ángulo entre los 2 puntos de rotación
@@ -171,8 +172,8 @@ def register_with_rotation_points_and_translation_point(photo, rotation_iteratio
     images_to_export += resulting_images
 
     if not translation_point_coordinates:
-        fail_code = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(translation_point["name"])
-        return fail_code, images_to_export, None, None, None
+        fail = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(translation_point["name"]) # !REGISTRATION_FAIL
+        return fail, images_to_export, None, None, None
 
     # Se traslada la diferencia entre las coordenadas donde deberá ubicarse el fiducial 1 menos las coordenadas encontradas
     x_diference = objective_x - translation_point_coordinates[0]
