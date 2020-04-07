@@ -61,6 +61,10 @@ def create_inspection_point_results_string(algorithms_results, name, status):
     )
     return inspection_point_results
 
+def create_reference_algorithm_results_string(status, results):
+    reference_algorithm_results = "[{0}${1}]".format(status, results)
+    return reference_algorithm_results
+
 def create_reference_results_string(inspection_points_results, name, status, reference_algorithm_results):
     reference_results = "{0}&&{1};{2};{3}#".format(
         inspection_points_results, name, status, reference_algorithm_results

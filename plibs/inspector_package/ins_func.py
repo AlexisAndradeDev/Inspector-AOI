@@ -9,6 +9,7 @@ UNIQUE_TRANSITION = "ut"
 TRANSITIONS = "t"
 HISTOGRAM = "h"
 
+CLASSIFICATION = "classification"
 
 def get_inspection_function_parameters(algorithm, parameters_data):
     # blob
@@ -277,7 +278,7 @@ def execute_algorithm(inspection_image_filt, algorithm):
             inspection_function_histogram(inspection_image_filt, algorithm)
 
     else:
-        return ["INVALID_INSPECTION_FUNCTION"], None, None, None, None
+        return ["INVALID_INSPECTION_FUNCTION"], "not_available", [], "failed", []
 
     return fails, location, results, status, resulting_images
 
@@ -428,39 +429,60 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
 
     return inspection_points_results
 
-def execute_reference_algorithm(reference_algorithm, inspection_points_results, inspection_point_status):
-    reference_algorithm_results = {"status":"", "results":[]}
-    if reference_algorithm["function"] == "classification":
-        # algoritmo de clasificación sólo retorna status de las referencia
-        reference_algorithm_results["status"] = inspection_point_status
-        reference_algorithm_results["results"] = [reference_algorithm_results["status"]]
+
+def reference_algorithm_classification(inspection_points_results):
+    # sólo retorna el status de los puntos de inspección
+    fails = []
+    results = [inspection_points_results["status"]]
+    status = inspection_points_results["status"]
+    return fails, results, status
+
+def execute_reference_algorithm(reference_algorithm, inspection_points_results):
+    if (reference_algorithm["function"] == CLASSIFICATION):
+        fails, results, status = reference_algorithm_classification(inspection_points_results)
+
     else:
-        reference_algorithm_results["status"], reference_algorithm_results["results"] = "failed", []
-    return reference_algorithm_results
+        fails, results, status = ["INVALID_INSPECTION_FUNCTION"], [], "failed"
+
+    return fails, results, status
+
 
 def inspect_reference(image, board, reference, check_mode, images_path , image_ultraviolet=None):
-    reference_results = {}
+    reference_results = {"string":"", "status":"good"}
 
     inspection_points_results = inspect_inspection_points(image, image_ultraviolet, reference["inspection_points"], check_mode)
 
+    # cambiar el status de la referencia si es necesario
+    reference_results["status"] = results_management.evaluate_status(
+        inspection_points_results["status"], reference_results["status"]
+    )
+
     operations.export_reference_images(inspection_points_results["images"], board.get_number(), reference["name"], images_path)
 
-    # si no falló ningún punto de inspección, ejecutar el algoritmo de la referencia
-    if inspection_points_results["status"] == "good":
-        reference_algorithm_results = \
-            execute_reference_algorithm(reference["reference_algorithm"], inspection_points_results["results"], inspection_points_results["status"])
-        reference_results["status"] = reference_algorithm_results["status"]
-    else:
-        reference_algorithm_results = {"status":"", "results":[]}
-        reference_algorithm_results["status"], reference_algorithm_results["results"] = "", []
-        reference_results["status"] = inspection_points_results["status"]
+
+    reference_algorithm_results = { "status":"", "results":[], "fails":[] }
+
+    # ejecutar el algoritmo de la referencia
+    reference_algorithm_results["fails"], \
+    reference_algorithm_results["results"], \
+    reference_algorithm_results["status"], = \
+        execute_reference_algorithm(
+            reference["reference_algorithm"], inspection_points_results
+        )
+
+    # cambiar el status de la referencia si es necesario
+    reference_results["status"] = results_management.evaluate_status(
+        reference_algorithm_results["status"], reference_results["status"]
+    )
 
     # cambiar el status del tablero si es necesario
     board.evaluate_status(reference_results["status"])
 
+
     # resultados del algoritmo de la referencia
-    reference_algorithm_results["string"] = "[{0}${1}]".format(reference_algorithm_results["status"],
-        reference_algorithm_results["results"])
+    reference_algorithm_results["string"] = results_management.create_reference_algorithm_results_string(
+        reference_algorithm_results["status"], reference_algorithm_results["results"]
+    )
 
     # resultados de la referencia
     reference_results["string"] = results_management.create_reference_results_string(
