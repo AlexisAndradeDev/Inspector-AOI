@@ -1,0 +1,4 @@
+[status, [resultados_del_algoritmo]]
+
+[good, [resultados]]
+[failed, [resultados]]
