@@ -1,4 +1,4 @@
-[status, [resultados_del_algoritmo]]
+[status$[resultados_del_algoritmo]]
 
-[good, [resultados]]
-[failed, [resultados]]
+[good$[resultados]]
+[failed$[resultados]]
