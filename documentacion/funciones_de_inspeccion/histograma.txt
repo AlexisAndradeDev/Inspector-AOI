@@ -89,3 +89,10 @@ minimo_gray_mas_bajo: si el gray level más bajo de la imagen no es igual o mayo
 maximo_gray_mas_alto: si el gray level más alto de la imagen no es igual o menor a este valor, dará como resultado 'bad'.
     Si no se quiere utilizar, asignar None
 
+
+ESTRUCTURA DE RESULTADOS
+
+[porcentaje de área, nivel de gris promedio,
+promedio de los N niveles de gris más bajos,
+promedio de los N niveles de gris más altos,
+nivel de gris más bajo, nivel de gris más alto]
