@@ -1,0 +1,4 @@
+&&&nombre_del_punto_de_inspeccion;status%
+
+ejemplo:
+    &&&soldadura_superior;good%
