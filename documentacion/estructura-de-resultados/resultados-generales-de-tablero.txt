@@ -1,11 +1,14 @@
 RESULTADOS GENERALES DE TABLERO
 
 
-&numero_de_tablero;status;codigo_de_error
+&numero_de_tablero;status;codigo_de_error%%
 
 Si no hay código de error, tomará valor de None
 Por ejemplo:
-    &5;good;None
+    &5;good;None%%
 
 Si hay un código de error:
-    &7;error;CODIGO_DE_ERROR
+    &7;error;CODIGO_DE_ERROR%%
+
+
+Los símbolos « %% » se utilizan como separador para los resultados de cada tablero.
