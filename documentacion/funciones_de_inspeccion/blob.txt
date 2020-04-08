@@ -17,3 +17,10 @@ ESTRUCTURA DE DATOS:
 # HSV invertido
 [True, 'hsv', [[0, 0, 23], [180, 255, 255]], 500, None, 2000, None, None]
 
+
+IMPORTANTE: «min_tamaño_de_blob» y «máx_tamaño_de_blob» NO funcionan actualmente. Es un error que se corregirá en una versión futura. Por el momento, asignar None a ambos.
+
+
+ESTRUCTURA DE RESULTADOS
+
+[área_de_blob_total, blob_más_grande]
