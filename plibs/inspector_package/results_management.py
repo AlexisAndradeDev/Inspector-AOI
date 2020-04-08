@@ -62,7 +62,9 @@ def create_inspection_point_results_string(algorithms_results, name, status):
     return inspection_point_results
 
 def create_reference_algorithm_results_string(status, results):
-    reference_algorithm_results = "[{0}${1}]".format(status, results)
+    results_str = str(results)
+    results_str = results_str.replace(r"'", "") # eliminar las comillas, por ejemplo ['good'] --> [good]
+    reference_algorithm_results = "[{0}${1}]".format(status, results_str)
     return reference_algorithm_results
 
 def create_reference_results_string(inspection_points_results, name, status, reference_algorithm_results):
@@ -84,17 +86,24 @@ def evaluate_status(status, object_status):
         object_status = "failed"
     return object_status
 
+def evaluate_algorithm_status(inspection_function_status, algorithm):
+    if inspection_function_status == algorithm["needed_status_to_be_good"]:
+        algorithm_status = "good"
+    else:
+        if inspection_function_status == "bad" or inspection_function_status == "good":
+            # si no es el status necesario, y no es un status especial (como failed),
+            # calificarlo como "bad"
+            algorithm_status = "bad"
+        else:
+            algorithm_status = inspection_function_status
+    return algorithm_status
+
 def evaluate_inspection_point_status(algorithm_status, inspection_point_status, algorithm):
     """Determina el status de un punto de inspección."""
-    # transformar status del algoritmo solo para simplificar la evaluación del IP,
-    # no modificarlo fuera de esta función
-    if algorithm_status == algorithm["needed_status_to_be_good"]:
-        algorithm_status = "good"
-    algorithm_status = evaluate_status(algorithm_status, algorithm_status)
 
     if algorithm["ignore_bad_status"] and algorithm_status == "bad":
-        # si se ignorará el status de algoritmo "bad" y el status de éste es "bad", el algoritmo será "good"
-        algorithm_status = "good"
+        # si se ignorará el status de algoritmo "bad" y el status de éste es "bad", omitir
+        return inspection_point_status
 
     inspection_point_status = evaluate_status(algorithm_status, inspection_point_status)
 
@@ -102,7 +111,8 @@ def evaluate_inspection_point_status(algorithm_status, inspection_point_status, 
 
 
 def add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, algorithms_results,
-        add_string=True):
+        add_string=True
+    ):
 
     # añadir string de resultados
     if add_string:

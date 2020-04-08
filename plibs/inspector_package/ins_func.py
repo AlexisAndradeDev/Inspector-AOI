@@ -382,7 +382,7 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
             )
 
             # ejecutar algoritmo
-            [fails, location, results, status, resulting_images] = \
+            [fails, location, results, inspection_function_status, resulting_images] = \
                 execute_algorithm(inspection_image_filt, algorithm)
 
             if location != "not_available":
@@ -391,6 +391,7 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
                     inspection_point, algorithm, location,
                 )
 
+            status = results_management.evaluate_algorithm_status(inspection_function_status, algorithm)
 
             algorithm_results = results_management.get_algorithm_results(
                 algorithm_results=algorithm_results, algorithm=algorithm,
