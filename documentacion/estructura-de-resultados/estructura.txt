@@ -1,5 +1,8 @@
 Al final de los resultados, se encuentra el tiempo total de inspección con la estructura:
     $&$tiempo_total
+    
+
+ESTRUCTURA:
 
             resultados_de_algoritmo
             resultados_de_algoritmo
