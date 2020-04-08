@@ -1,4 +1,4 @@
-[status$[resultados_del_algoritmo]]
+[status$[resultados_de_la_funcion]]
 
 [good$[resultados]]
 [failed$[resultados]]
