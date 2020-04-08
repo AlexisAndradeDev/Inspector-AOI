@@ -42,3 +42,10 @@ Ejemplo:
 
 Ejemplo:
 [["binary", True, "gray", [147,255]],'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['GaussianBlur', 5]] ],
+
+
+ESTRUCTURA DE RESULTADOS
+
+[número_de_coincidencias_por_template, mejor_calificación_por_template]
+ejemplo:
+    [[0, 1, 1, 2], [0.4, 0.76, 0.81, 0.92]]
