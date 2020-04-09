@@ -1,1 +1,1 @@
-[['filtro_secundario1', parametro1, parametro2, ...], ['filtro_secundario2', parametro1, parametro2, ...]]
+[['filtro_secundario1', parametro1, parametro2, ...], ['filtro_secundario2', parametro1, parametro2, ...], ...]
