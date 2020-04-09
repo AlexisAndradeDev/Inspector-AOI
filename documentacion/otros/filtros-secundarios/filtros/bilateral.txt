@@ -1,1 +1,4 @@
 Se indica con 'bilateral'.
+
+1er parámetro: tamaño de kernel. Es la intensidad del difuminado, entre mayor es, más difuminada se verá la imagen. Debe ser un número impar.
+2do parámetro: define también la intensidad del difuminado. Para más información, visitar la documentación oficial de OpenCV: https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga9d7064d478c95d60003cf839430737ed
