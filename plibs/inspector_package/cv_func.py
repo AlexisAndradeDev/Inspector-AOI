@@ -169,10 +169,6 @@ def apply_filters(img, filters):
             [lower, upper] = threshold_range
             thresholded = cv2.inRange(hsv, np.array(lower), np.array(upper))
             img = cv2.bitwise_and(img, img, mask = 255 - thresholded)
-        elif filter[0] == "canny":
-            img = cv2.Canny(img, filter[1], filter[2])
-        elif filter[0] == "gray":
-            img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
         elif filter[0] == "histMatch":
             template_img_path = filter[1]
             template_img = cv2.imread(template_img_path)
