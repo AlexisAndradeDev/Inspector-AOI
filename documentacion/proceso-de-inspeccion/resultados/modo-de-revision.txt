@@ -1,4 +1,4 @@
-Al activarlo, las imágenes del proceso de inspección de los algoritmos cuyo estatus fue "bad" serán guardadas en: inspections/bad_windows_results/
+Al activarlo ('check:yes' en el archivo de datos), las imágenes del proceso de inspección de los algoritmos cuyo estatus fue "bad" serán guardadas en: inspections/bad_windows_results/
 
 El formato del nombre de las imágenes es: 
     num_de_tablero-referencia-punto_de_inspeccion-algoritmo-luz_utilizada-nombre_de_la_imagen.bmp
