@@ -138,37 +138,26 @@ def apply_filters(img, filters):
             filter_area_size = filter[1]
             bilateralFilter_param2 = filter[2]
             img = cv2.bilateralFilter(img, filter_area_size, bilateralFilter_param2, bilateralFilter_param2)
-        elif filter[0] == "binary":
-            # Convertir imagen de fiducial a HSV
-            hsv = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
-            # Aplicar threshold para encontrar los colores para encontrar el fiducial
-            threshold_range = filter[1]
-            [lower, upper] = threshold_range
-            img = cv2.inRange(hsv, np.array(lower), np.array(upper))
-        elif filter[0] == "reverseBinary":
-            # Convertir imagen de fiducial a HSV
-            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            # Aplicar threshold para encontrar los colores para encontrar el fiducial
-            threshold_range = filter[1]
-            [lower, upper] = threshold_range
-            img = cv2.inRange(hsv, np.array(lower), np.array(upper))
-            img = cv2.bitwise_not(img)
         elif filter[0] == "bitwise":
-            # Convertir imagen de fiducial a HSV
-            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            # Aplicar threshold para encontrar los colores para encontrar el fiducial
-            threshold_range = filter[1]
-            [lower, upper] = threshold_range
-            thresholded = cv2.inRange(hsv, np.array(lower), np.array(upper))
-            img = cv2.bitwise_and(img, img, mask = thresholded)
-        elif filter[0] == "reverseBitwise":
-            # Convertir imagen de fiducial a HSV
-            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            # Aplicar threshold para encontrar los colores para encontrar el fiducial
-            threshold_range = filter[1]
-            [lower, upper] = threshold_range
-            thresholded = cv2.inRange(hsv, np.array(lower), np.array(upper))
-            img = cv2.bitwise_and(img, img, mask = 255 - thresholded)
+            color_scale = filter[1]
+            color_range = filter[2]
+            invert_binary = filter[3]
+
+            if color_scale == "hsv":
+                hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                [lower, upper] = color_range
+                binary = cv2.inRange(hsv, np.array(lower), np.array(upper))
+
+            elif color_scale == "gray":
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                [lower, upper] = color_range
+                binary = cv2.inRange(gray, lower, upper)
+
+            if invert_binary:
+                img = cv2.bitwise_and(img, img, mask = 255 - binary)
+            else:
+                img = cv2.bitwise_and(img, img, mask = binary)
+
         elif filter[0] == "histMatch":
             template_img_path = filter[1]
             template_img = cv2.imread(template_img_path)
