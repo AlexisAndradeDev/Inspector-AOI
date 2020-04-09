@@ -125,7 +125,7 @@ def apply_filters(img, filters):
     if not filters:
         return img
     for filter in filters:
-        if filter[0] == "GaussianBlur":
+        if filter[0] == "gaussianBlur":
             filter_area_size = filter[1]
             img = cv2.GaussianBlur(img, (filter_area_size, filter_area_size), 0)
         elif filter[0] == "blur":
