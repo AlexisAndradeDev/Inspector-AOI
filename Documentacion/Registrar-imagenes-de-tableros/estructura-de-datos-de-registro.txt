@@ -1,0 +1,13 @@
+ESTRUCTURA DE DATOS DE REGISTRO
+
+[
+
+"nombre del método de registro",
+
+[parámetros]
+
+]
+
+
+Los nombres de los métodos de registro y sus parámetros se encuentran en este
+mismo directorio, dentro de la carpeta metodos-de-registro
