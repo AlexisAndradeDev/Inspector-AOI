@@ -1,0 +1,28 @@
+Para ejecutar el script regallbrds.py, antes debe existir un archivo regallbrds_dt.di en la ruta x64/pd/
+
+Este archivo debe contener los datos de registro. La documentacion del archivo regallbrds_dt.di se encuentra en este mismo directorio, en el archivo estructura-de-datos.txt
+
+
+En el archivo regallbrds_dt.di se escribe la dirección de la carpeta que contiene las imágenes de los tableros desalineados.
+En la dirección se deben encontrar las imágenes con el formato de nombre: 
+	numero_de_foto.bmp
+
+Ejemplo:
+	1.bmp
+	2.bmp
+	3.bmp
+	4.bmp
+	5.bmp
+
+
+Si se va a usar luz ultravioleta, deben existir también imágenes con el formato de nombre:
+    numerodefoto-ultraviolet.bmp
+Ejemplo:
+    1-ultraviolet.bmp
+    2-ultraviolet.bmp
+    3-ultraviolet.bmp
+    4-ultraviolet.bmp
+    5-ultraviolet.bmp
+
+
+Para iniciar el registro, ahora solo hará falta ejecutar el script regallbrds.py y exportará las imágenes resultantes en C:/Dexill/Inspector/Alpha-Premium/x64/pd/

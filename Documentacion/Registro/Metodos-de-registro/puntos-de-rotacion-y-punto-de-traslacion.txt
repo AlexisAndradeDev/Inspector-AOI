@@ -1,0 +1,33 @@
+El nombre del método es "rotation_points_and_translation_point"
+
+
+[
+["centroid/corner", [x1,y1,x2,y2], "hsv/gray", [hsv minimo]/gray minimo, [hsv máximo]/gray máximo, invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ],
+["centroid/corner", [x1,y1,x2,y2], "hsv/gray", [hsv minimo]/gray minimo, [hsv máximo]/gray máximo, invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ],
+["centroid/corner", [x1,y1,x2,y2], "hsv/gray", [hsv minimo]/gray minimo, [hsv máximo]/gray máximo, invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ],
+angulo deseado entre los 2 puntos de rotación,
+[coordenadas a las que se debe trasladar el punto de traslación despues de rotar],
+número_de_iteraciones_de_rotación
+]
+
+
+
+EJEMPLO:
+
+[
+"rotation_points_and_translation_point",
+
+[
+["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+["centroid", [930, 940, 930+308, 940+251], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+90,
+[1094, 611],
+1
+]
+
+]
+
+
+
+Los filtros de contornos se encuentran en Otros/Filtros-de-contornos/
