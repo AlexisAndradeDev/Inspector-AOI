@@ -1,0 +1,5 @@
+Antes de ejecutar el script de inspección de Python, se debe tener el archivo dt.ii en la ruta /x64/inspections/data/ con los datos de inspeccion. La documentación de como escribir este archivo se encuentra en este mismo directorio, en el archivo estructura-de-datos.txt
+
+
+Primero, se debe correr el script ins.py, estará en bucle esperando y empezará el procesamiento del tablero cuando se creen los archivos .bmp de la 
+fotografía de los tableros con luz blanca (photo.bmp) y con luz negra (photo-ultraviolet.bmp), que serán eliminadas por el script una vez leídas.
