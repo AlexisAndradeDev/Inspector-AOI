@@ -70,13 +70,10 @@ def create_threads(func, threads_num, targets_num, func_args):
     return threads
 
 
-def export_registration_images(images, images_path):
-    # Cada "images" tiene el número del tablero y tipo de luz en la primera posición
-    # La segunda posición contiene la lista de imágenes que se exportarán
-    board_name = images[0]
-    for images_to_export in images[1]:
+def export_registration_images(images, board_name, light, images_path):
+    for images_to_export in images:
         image_name, image = images_to_export
-        imwrite("{0}{1}-{2}.bmp".format(images_path, board_name, image_name), image)
+        imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, board_name, light, image_name), image)
 
 def export_algorithm_images(images, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):
     # exportar imágenes de un algoritmo
