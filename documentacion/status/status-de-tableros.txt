@@ -1,0 +1,17 @@
+good: no hubo fallos, errores y todas las referencias tuvieron status 'good'.
+
+bad: una referencia o más tuvieron status 'bad'.
+
+failed: ocurre si una referencia tiene status 'failed'.
+
+skip: la función de skip no pasó, y por lo tanto, se omitió el tablero.
+    acerca de la función skip: documentacion/otros/funcion-de-skip/funcion-de-skip.txt
+
+general_failed: ocurre por fallos que afectan a todo el tablero como que la imagen del tablero no exista.
+    codigos de fallos: documentacion/codigos-de-fallos-y-errores/general-fails.txt
+
+registration_failed: ocurrió un fallo al registrar el tablero.
+    codigos de fallos: documentacion/codigos-de-fallos-y-errores/registration-fails.txt
+
+error: ocurre si hay un error que impide la realización de toda la inspección del tablero o de una parte importante de ella.
+    codigos de fallos: documentacion/codigos-de-fallos-y-errores/errors.txt

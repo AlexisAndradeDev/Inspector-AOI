@@ -1,0 +1,24 @@
+Los resultados de los tableros se encuentran en C:/Dexill/Inspector/Alpha-Premium/x64/pd/regallbrds_results.do
+Se escriben con la estructura:
+	num_tablero;status#
+
+Por ejemplo:
+	1;ok#
+	2;ok#
+	3;failed;codigo_de_fallo#
+	4;ok#
+	5;failed;codigo_de_fallo#
+	6;ok#
+	7;ok#
+	8;failed;codigo_de_fallo#
+	9;failed;codigo_de_fallo#
+	10;failed;codigo_de_fallo#
+	11;failed;codigo_de_fallo#
+	12;failed;codigo_de_fallo#
+
+Los fallos se encuentran con la estructura:
+	num_tablero;failed;codigo_de_fallo
+	
+	
+	
+Los códigos de fallos se encuentran en documentacion/codigos-de-fallos-y-errores/fallos/codigos.txt

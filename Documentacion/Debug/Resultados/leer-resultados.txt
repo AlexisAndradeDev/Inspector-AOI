@@ -1,0 +1,4 @@
+En la ruta /x64/pd/, se encontrara dbg_results.do con los resultados de los tableros.
+
+La documentación acerca de la estructura de resultados de las referencias se encuentra en:
+    Documentacion/Estructuras-comunes/Referencias/Resultados/

@@ -1,0 +1,3 @@
+Se indica con 'medianBlur'.
+
+1er parámetro: tamaño de kernel. Es la intensidad del difuminado, entre mayor es, más difuminada se verá la imagen. Debe ser un número impar.

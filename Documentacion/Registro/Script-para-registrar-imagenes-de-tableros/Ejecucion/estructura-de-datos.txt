@@ -1,0 +1,23 @@
+[
+
+['uv_inspection:True/False', 'Ruta de las imagenes de los tableros desalineados terminando en /', num_de_fotos, num_de_tableros_por_foto, num_de_multihilos, [[region del tablero 1], [region del tablero 2], [region del tablero 3], [region del tablero 4]] ],
+
+[datos de registro],
+
+]
+
+
+
+Ejemplo para alinear MCI-01 con 4 tableros en cada foto (2 puntos de rotación y 1 punto de traslación):
+
+[
+
+['uv_inspection:True', 'D:/Backup/Dexill/PyV/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/', 1, 4, 2, [[0, 0, 2450, 2056], [2450, 0, 4920, 2056], [0, 2056, 2450, 4112], [2450, 2056, 4920, 4112]] ],
+
+[datos de registro],
+
+]
+
+
+
+La documentación sobre el registro se encuentra en Documentacion/Registrar-imagenes-de-tableros/

@@ -1,0 +1,5 @@
+[status$[resultados_de_la_funcion_del_algoritmo_de_parte]]
+
+Ejemplo:
+    [good$[resultados]]
+    [failed$[resultados]]

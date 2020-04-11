@@ -1,0 +1,17 @@
+Al activarlo ('check:yes' en el archivo de datos), las imágenes del proceso de inspección de los algoritmos cuyo estatus fue "bad" serán guardadas en: inspections/bad_windows_results/
+
+El formato del nombre de las imágenes es: 
+    num_de_tablero-referencia-punto_de_inspeccion-algoritmo-luz_utilizada-nombre_de_la_imagen.bmp
+
+Ejemplo:
+    1-[metal_film_resistor,r6]-cuerpo_de_resistencia-presencia-white-filtered.bmp
+    1-[metal_film_resistor,r6]-cuerpo_de_resistencia-presencia-white-matches.bmp
+    2-skip_function-skip_function-skip-white-color_converted.bmp
+
+
+Si una función de skip no pasó y se activa el modo de revisión, las imágenes de la función skip se escriben como si fuera un algoritmo 'skip', de un punto de inspección llamado 'skip_function', que a su vez está dentro de una referencia llamada 'skip_function':
+    ...skip_function-skip_function-skip...
+
+
+Los nombres de las imágenes (nombre_de_la_imagen) que exporta cada función de inspección se encuentran en:
+    documentacion/funciones_de_inspeccion/

@@ -1,0 +1,7 @@
+Antes de ejecutar el script de inspección de Python, se debe tener el archivo data.ii en la ruta C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/ con los 
+datos de inspeccion. La documentación de como escribir este archivo se encuentra en:
+    documentacion/estructura-de-datos-de-entrada/
+
+
+Primero, se debe correr el script ins.py, estará en bucle esperando y empezará el procesamiento del tablero cuando se creen los archivos .bmp de la 
+fotografía de los tableros con luz blanca (photo.bmp) y con luz negra (photo-ultraviolet.bmp), que serán eliminadas por el script una vez leídas.

@@ -1,88 +1,97 @@
-from cv2 import imwrite
+import os
+import copy
+import codecs
+import threading
+from inspector_package import math_functions
+from cv2 import imread, imwrite
 
-class ObjectInspected:
-    def __init__(self,board_number):
-        self.number = board_number
-        # el í­ndice es igual al número del tablero menos uno, ya que el índice
-        # es usado para posiciones en lista, cuya primera posición es 0.
-        self.index = board_number-1
-        self.status = "good" # iniciar como "bueno" por defecto
-        self.inspection_points_results = ""
-        self.board_results = ""
-        self.results = ""
+class StaticVar:
+    def __init__(self, val):
+        self.val = val
 
-    def set_number(self, number):
-        self.number = number
-    def set_index(self, number):
-        self.number = number
-    def set_status(self, status, code=None):
-        if not code:
-            self.status = str(status)
-        else:
-            self.status = "{0};{1}".format(str(status), str(code))
-    def add_inspection_point_results(self, name, light, status, results, fails):
-        inspection_point_results = "{0};{1};{2};{3};{4};{5}$".format(
-            self.number, name, light, status, results, fails
-        )
-        self.inspection_points_results += inspection_point_results
+def read_file(path):
+    with open(path) as f:
+        data = f.read()
+        f.close()
+    return data
 
-        # agregar resultados del punto a los resultados del tablero
-        self.results += inspection_point_results
-    def set_board_results(self, registration_time, inspection_time, stage):
-        """
-        El parámetro << stage >> se refiere a la etapa en la que se está: debugeo o inspección.
-        Si se está en debugeo, el tiempo de registro no se escribe ya que no se registra el tablero en debugeo.
-        Si se está en inspección, se escribe el tiempo de registro e inspección.
-        """
-        if stage == "inspection":
-            self.board_results = "&{0};{1};{2};{3}#".format(
-                self.number, self.status, registration_time, inspection_time
-            )
-        if stage == "debug":
-            self.board_results = "&{0};{1};{2}#".format(
-                self.number, self.status, inspection_time
-            )
+def force_read_image(path):
+    img = imread(path)
+    while img is None:
+        # si no se almacenó correctamente la imagen, volver a intentarlo
+        img = imread(path)
+    return img
 
-        # agregar resultados a los resultados del tablero
-        self.results += self.board_results
+def file_exists(path):
+    # Retorna verdadera si existe el archivo
+    return os.path.isfile(path)
 
-    def get_index(self):
-        return self.index
-    def get_number(self):
-        return self.number
-    def get_status(self):
-        return self.status
-    def get_inspection_points_results(self):
-        """
-        Resultados de cada punto de inspección:
-            * Número de tablero
-            * Nombre del punto
-            * Status del punto (good, bad, failed)
-            * Resultados de la función de inspección (área de blob, calificación de tm)
-            * Fallos del punto (si no hubo, es una lista vací­a [] )
-        """
-        return self.inspection_points_results
-    def get_board_results(self):
-        """
-        Resultados del tablero:
-            * Número de tablero
-            * Status del tablero (good, bad, failed, skip, registration_failed, error)
-            * (SI SE ESTÁ EN LA ETAPA DE INSPECCIÓN): Tiempo de registro
-            * Tiempo de inspección
-        """
-        return self.board_results
-    def get_results(self):
-        """
-        Resultados de los puntos de inspección y del tablero combinados.
-        """
-        return self.results
+def run_threads(threads):
+    # Correr los procesos de los hilos
+    [thread.start() for thread in threads]
+    # Matar los procesos que vayan terminando
+    [thread.join() for thread in threads]
+
+def create_threads(func, threads_num, targets_num, func_args):
+    """
+    Retorna una lista de multihilos.
+    Si hay menos targets que número de hilos que se desean crear, se asignará un hilo cada target.
+
+    func: Función que utilizarán los multihilos.
+    func_args: Argumentos que necesita la función func
+    Targets: Son los elementos que procesará la función, por ejemplo:
+        Los tableros son procesados por la función inspect_boards.
+        Los puntos de inspección son procesados por la función inspect_inspection_points.
+    """
+    # Si hay menos targets que número de hilos que se desean crear, se asignará un hilo cada target.
+    if targets_num < threads_num:
+        targets_per_thread = math_functions.elements_per_partition(
+        number_of_elements=targets_num,
+        number_of_partitions=targets_num)
+    else:
+        targets_per_thread = math_functions.elements_per_partition(
+            number_of_elements=targets_num,
+            number_of_partitions=threads_num)
+
+    threads = []
+    for thread_targets in targets_per_thread:
+        last_target = thread_targets[1]
+        func_args.insert(0, last_target) # añadir el índice del último target como argumento para func
+        first_target = thread_targets[0]
+        func_args.insert(0, first_target) # añadir el índice del primer target como argumento para func
+
+        thread = threading.Thread(target=func,args=copy.copy(func_args))
+        threads.append(thread)
+
+        # eliminar first_target y last_target de la lista de argumentos
+        del func_args[0]
+        del func_args[0]
+
+    return threads
 
 
-def export_images(images, board_number, ins_point_name, light, images_path):
-    # Exportar imágenes del proceso de la función skip
+def export_registration_images(images, board_name, light, images_path):
+    for images_to_export in images:
+        image_name, image = images_to_export
+        imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, board_name, light, image_name), image)
+
+def export_algorithm_images(images, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):
+    # exportar imágenes de un algoritmo
     for image_name, image in images:
-        # num_de_tablero-nombre_de_punto_de_inspección-luz_usada(ultraviolet/white)-nombre_de_imagen
-        imwrite("{0}{1}-{2}-{3}-{4}.bmp".format(images_path, board_number, ins_point_name, light, image_name), image)
+        imwrite("{0}{1}-{2}-{3}-{4}-{5}-{6}.bmp".format(images_path, board_number, reference_name, inspection_point_name, algorithm_name, light, image_name), image)
+
+def export_reference_images(images_to_export, board_number, reference_name, images_path):
+    if images_to_export is None:
+        return
+    # exportar imágenes de una referencia
+    # iterar por cada punto de inspección
+    for inspection_point_images in images_to_export:
+        ip_name, ip_images = inspection_point_images
+        # iterar por cada algoritmo
+        for algorithm_images in ip_images:
+            algorithm_name, algorithm_light, algorithm_images = algorithm_images
+            export_algorithm_images(algorithm_images, board_number, reference_name, ip_name, algorithm_name, algorithm_light, images_path)
+
 
 def add_to_images_name(images, str_):
     """
@@ -97,3 +106,13 @@ def add_to_images_name(images, str_):
         images[image_index][0] = new_name
 
     return images
+
+def write_results(results, stage):
+    """Escribe los resultados de los tableros."""
+    if stage == "inspection":
+        path = "C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/results.io"
+    elif stage == "debug":
+        path = "C:/Dexill/Inspector/Alpha-Premium/x64/pd/dbg_results.do"
+    file = codecs.open(path, "w", encoding='utf8')
+    file.write(str(results))
+    file.close()

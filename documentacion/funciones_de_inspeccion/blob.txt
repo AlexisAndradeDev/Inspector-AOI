@@ -1,0 +1,26 @@
+Se indica con 'b'
+
+
+ESTRUCTURA DE DATOS:
+
+[invertir_binarizado, 'gray/hsv', [mín color, máx color], min_tamaño_de_blob, máx_tamaño_de_blob, mín_área_total, máx_área_total, máx_tamaño_de_un_blob_permitido]
+
+# gray
+[False, 'gray', [21, 255], 500, None, 2000, None, None]
+
+# gray invertido
+[True, 'gray', [21, 255], 500, None, 2000, None, None]
+
+# HSV
+[False, 'hsv', [[0, 0, 23], [180, 255, 255]], 500, None, 2000, None, None]
+
+# HSV invertido
+[True, 'hsv', [[0, 0, 23], [180, 255, 255]], 500, None, 2000, None, None]
+
+
+IMPORTANTE: «min_tamaño_de_blob» y «máx_tamaño_de_blob» NO funcionan actualmente. Es un error que se corregirá en una versión futura. Por el momento, asignar None a ambos.
+
+
+ESTRUCTURA DE RESULTADOS
+
+[área_de_blob_total, blob_más_grande]

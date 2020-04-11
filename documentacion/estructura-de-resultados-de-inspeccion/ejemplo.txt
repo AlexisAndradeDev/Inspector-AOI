@@ -1,0 +1,94 @@
+                         presencia;white;bad;[[0], [0.21198917925357819]];[]$
+                &&&cuerpo_de_resistencia;bad%
+        &&[metal_film_resistor,r1];bad;[bad$[bad]]#
+                         presencia;white;good;[[1], [0.8765625357627869]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r2];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.997596025466919]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r3];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9371778964996338]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r4];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9403074383735657]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r5];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9525147080421448]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r6];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.8473713397979736]];[]$
+                &&&nÃºmero224;good%
+        &&[smt_resistor224,r1];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9174313545227051]];[]$
+                         presencia-gray;white;good;[[1], [0.9060827493667603]];[]$
+                &&&nÃºmero393;good%
+        &&[smt_resistor393,r1];good;[good$[good]]#
+                         transiciones;white;good;[3, None];[]$
+                         blob-superior;white;good;[1429, 1429];[]$
+                         histograma-superior2;white;good;[75.60846560846561, 86.07195767195768, 44.0, 235.89, 37, 255];[]$
+                &&&soldadura_superior;good%
+        &&[ceramic_capacitor_vertical,r1];good;[good$[good]]#
+&1;bad;None%%
+&2;skip;None%%
+                         presencia;white;bad;[[0], [0.2116013914346695]];[]$
+                &&&cuerpo_de_resistencia;bad%
+        &&[metal_film_resistor,r1];bad;[bad$[bad]]#
+                         presencia;white;good;[[1], [0.8760200142860413]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r2];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9975118637084961]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r3];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9358916878700256]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r4];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9400729537010193]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r5];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9518340229988098]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r6];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.8920508027076721]];[]$
+                &&&nÃºmero224;good%
+        &&[smt_resistor224,r1];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9136823415756226]];[]$
+                         presencia-gray;white;good;[[1], [0.9132822751998901]];[]$
+                &&&nÃºmero393;good%
+        &&[smt_resistor393,r1];good;[good$[good]]#
+                         transiciones;white;good;[3, None];[]$
+                         blob-superior;white;good;[1429, 1429];[]$
+                         histograma-superior2;white;good;[75.60846560846561, 86.03703703703704, 44.0, 235.04, 37, 255];[]$
+                &&&soldadura_superior;good%
+        &&[ceramic_capacitor_vertical,r1];good;[good$[good]]#
+&3;bad;None%%
+                         presencia;white;bad;[[0], [0.21181412041187286]];[]$
+                &&&cuerpo_de_resistencia;bad%
+        &&[metal_film_resistor,r1];bad;[bad$[bad]]#
+                         presencia;white;good;[[1], [0.8754461407661438]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r2];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9974863529205322]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r3];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9352521300315857]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r4];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9395316243171692]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r5];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9513811469078064]];[]$
+                &&&cuerpo_de_resistencia;good%
+        &&[metal_film_resistor,r6];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.8153018951416016]];[]$
+                &&&nÃºmero224;good%
+        &&[smt_resistor224,r1];good;[good$[good]]#
+                         presencia;white;good;[[1], [0.9174737334251404]];[]$
+                         presencia-gray;white;good;[[1], [0.9071664810180664]];[]$
+                &&&nÃºmero393;good%
+        &&[smt_resistor393,r1];good;[good$[good]]#
+                         transiciones;white;good;[3, None];[]$
+                         blob-superior;white;good;[1429, 1429];[]$
+                         histograma-superior2;white;good;[75.60846560846561, 86.07195767195768, 44.0, 235.89, 37, 255];[]$
+                &&&soldadura_superior;good%
+        &&[ceramic_capacitor_vertical,r1];good;[good$[good]]#
+&4;bad;None%%
