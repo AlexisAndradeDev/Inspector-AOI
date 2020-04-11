@@ -1,4 +1,0 @@
-En la ruta C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/, se encontrará results.io con los resultados de los tableros.
-
-La documentación acerca de la estructura de resultados de inspección se encuentra en:
-    documentacion/estructura-de-resultados-de-inspeccion/

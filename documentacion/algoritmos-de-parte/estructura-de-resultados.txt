@@ -1,4 +1,0 @@
-[status$[resultados_de_la_funcion]]
-
-[good$[resultados]]
-[failed$[resultados]]

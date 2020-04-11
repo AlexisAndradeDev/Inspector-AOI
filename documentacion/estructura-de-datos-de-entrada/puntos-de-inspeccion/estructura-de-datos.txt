@@ -1,7 +1,0 @@
-["nombre_de_punto_de_inspección", [x1,y1],
-    [
-        datos_de_algoritmo,
-        datos_de_algoritmo,
-        datos_de_algoritmo,
-    ]
-]

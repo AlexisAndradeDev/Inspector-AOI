@@ -1,8 +1,0 @@
-nombre_de_algoritmo;luz;status;resultados_de_función_de_inspección;fallos$
-
-
-El símbolo « $ » se utiliza como separador para los resultados de cada algoritmo de un punto de inspección.
-
-
-Los resultados escritos por cada función de inspección se encuentran en el directorio:
-    documentacion/funciones_de_inspeccion/
