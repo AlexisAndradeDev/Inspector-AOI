@@ -29,5 +29,31 @@ EJEMPLO:
 ]
 
 
-
 Los filtros de contornos se encuentran en Otros/Filtros-de-contornos/
+
+
+IMÁGENES QUE EXPORTA
+
+    Si se utilizó centroide:
+        - binary: Imagen binarizada.
+        - found: Imagen con el centroide encontrado dibujado.
+
+    Si se utilizó esquina:
+        - binary: Imagen binarizada.
+        - found: Imagen con la esquina encontrada dibujada.
+
+    Se agregará el nombre del punto de referencia:
+        - rp1: punto de rotación 1.
+        - rp2: punto de rotación 2.
+        - tp: punto de traslación.
+
+
+    Por lo tanto, la estructura de los nombres de la imágenes es:
+        imagen-punto_de_referencia
+
+    Ejemplo:
+        binary-rp1
+        binary-tp
+        found-rp2
+        found-tp
+        found-rp1
