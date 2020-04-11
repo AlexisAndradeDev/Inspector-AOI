@@ -485,11 +485,11 @@ def find_reference_point(img_, reference_point):
     img = img_.copy() # no corromper la imagen original
     images_to_return = []
 
-    images_to_return.append(["rgb", img])
 
     # Aplicar filtros secundarios a la imagen
-
     img = apply_filters(img, reference_point["filters"])
+
+    images_to_return.append(["filtered", img])
 
     if reference_point["type"] == "centroid":
         coordinates, resulting_images = find_centroid(img, reference_point["color_scale"],
