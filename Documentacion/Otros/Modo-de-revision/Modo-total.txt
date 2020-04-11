@@ -1,0 +1,3 @@
+Al activarlo, ('check:total', aunque en «debug» se activa automáticamente) las imágenes de todos los algoritmos, sean "good" o "bad", serán escritas.
+
+    * No escribe las imágenes del proceso de registro, sólo de los algoritmos.

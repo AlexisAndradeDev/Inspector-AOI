@@ -1,0 +1,3 @@
+Las imágenes serán guardadas en: 
+    /x64/inspections/bad_windows_results/ en caso de que se esté usando para el proceso de «inspección». 
+    /x64/pd/ si es el proceso de «debug».

@@ -1,0 +1,20 @@
+[
+
+['Ruta de los tableros terminando en /', 'uv_inspection:True/False', número de imágenes, número de multihilos para tableros, número de multihilos para referencias],
+
+[datos_de_referencias],
+
+]
+
+EJEMPLO:
+
+[
+
+['C:/Dexill/Inspector/Alpha-Premium/x64/pd/', "uv_inspection:True", 4, 4, 2],
+
+[datos_de_referencias],
+
+]
+
+
+La documentación acerca de los datos de referencias, se encuentran en la carpeta Documentacion/Estructuras-comunes/Referencias/
