@@ -49,3 +49,9 @@ ESTRUCTURA DE RESULTADOS
 [número_de_coincidencias_por_template, mejor_calificación_por_template]
 ejemplo:
     [[0, 1, 1, 2], [0.4, 0.76, 0.81, 0.92]]
+
+
+IMÁGENES QUE EXPORTA
+
+    - Imagen filtrada
+    - Imagen con las coincidencias encontradas dibujadas

@@ -26,3 +26,9 @@ tamano_del_grupo: número de filas o columnas que se promediarán para calcular 
 ESTRUCTURA DE RESULTADOS
 
 [coordenada_de_la_transición, diferencia_de_brillo_en_la_transición]
+
+
+IMÁGENES QUE EXPORTA
+
+    - Imagen filtrada.
+    - Imagen con la transición dibujada.

@@ -96,3 +96,9 @@ ESTRUCTURA DE RESULTADOS
 promedio de los N niveles de gris más bajos,
 promedio de los N niveles de gris más altos,
 nivel de gris más bajo, nivel de gris más alto]
+
+
+IMÁGENES QUE EXPORTA
+
+    - Imagen filtrada
+    - Imagen en escala de grises

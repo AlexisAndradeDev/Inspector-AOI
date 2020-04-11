@@ -24,3 +24,9 @@ IMPORTANTE: «min_tamaño_de_blob» y «máx_tamaño_de_blob» NO funcionan actu
 ESTRUCTURA DE RESULTADOS
 
 [área_de_blob_total, blob_más_grande]
+
+
+IMÁGENES QUE EXPORTA
+
+    - Imagen filtrada
+    - Imagen binarizada

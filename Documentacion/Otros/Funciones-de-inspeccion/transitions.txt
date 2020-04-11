@@ -100,3 +100,14 @@ por ejemplo:
         [2, None]
     Se encontró 1 transición y se pedían 3, así que no se pudo calcular ancho
         [1, None]
+
+
+IMÁGENES QUE EXPORTA
+
+    - Imagen filtrada
+    - Imagen con las transiciones dibujadas
+        * Si se encontraron 2 transiciones que se intersectan, se dibujará también el punto donde se
+        intersectan.
+        * Si se encontraron 3 transiciones, se dibujará el punto central (entre los 2 across y sobre el
+        along).
+
