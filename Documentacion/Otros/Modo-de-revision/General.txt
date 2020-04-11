@@ -1,3 +1,19 @@
 Las imágenes serán guardadas en: 
     /x64/inspections/bad_windows_results/ en caso de que se esté usando para el proceso de «inspección». 
     /x64/pd/ si es el proceso de «debug».
+
+
+El formato del nombre de las imágenes es: 
+    num_de_tablero-referencia-punto_de_inspeccion-algoritmo-luz_utilizada-nombre_de_la_imagen.bmp
+
+Ejemplo:
+    1-[metal_film_resistor,r6]-cuerpo_de_resistencia-presencia-white-filtered.bmp
+    1-[metal_film_resistor,r6]-cuerpo_de_resistencia-presencia-white-matches.bmp
+    2-skip_function-skip_function-skip-white-color_converted.bmp
+
+Los nombres de las imágenes (nombre_de_la_imagen) que exporta cada función de inspección se encuentran en:
+    Otros/Funciones-de-inspeccion/
+
+
+Las funciones de skip exportan imágenes como cualquier otro algoritmo. Las imágenes de la función skip se escriben como si fuera un algoritmo 'skip', de un punto de inspección llamado 'skip_function', que a su vez está dentro de una referencia llamada 'skip_function':
+    ...skip_function-skip_function-skip...
