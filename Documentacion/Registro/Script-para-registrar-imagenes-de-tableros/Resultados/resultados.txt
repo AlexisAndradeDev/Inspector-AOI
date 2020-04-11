@@ -21,4 +21,4 @@ Los fallos se encuentran con la estructura:
 	
 	
 	
-Los códigos de fallos se encuentran en Otros/Codigos/Registration-fails.txt
+Los códigos de fallos se encuentran en Otros/Codigos/registration-fails.txt

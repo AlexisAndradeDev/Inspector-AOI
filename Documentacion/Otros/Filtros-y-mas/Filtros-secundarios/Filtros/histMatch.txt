@@ -1,0 +1,8 @@
+Se indica con 'histMatch'.
+
+Hace que los colores y luz de la imagen sean más parecidos a los de otra imagen base.
+
+1er parámetro: ruta de la imagen base con la que se ecualizará el histograma.
+    Se escribe entre comillas.
+    'directorio/imagen.bmp'.
+    La extensión (.bmp, .jpg, .png) da igual, siempre y cuando sea un formato de imagen.
