@@ -77,7 +77,7 @@ def inspect_boards(first_board, last_board, results, references, registration_se
 
             # Registro
             # alinear imagen del tablero con las ventanas y guardar tiempo de registro
-            fail, resulting_images, aligned_board_image, rotation, translation = reg_methods_func.align_board_image(
+            fail, registration_images, aligned_board_image, rotation, translation = reg_methods_func.align_board_image(
                 board_image, registration_settings
             )
 
@@ -88,19 +88,26 @@ def inspect_boards(first_board, last_board, results, references, registration_se
                     board_image, registration_settings
                 )
                 if fail:
-                    registration_images = ["{0}-{1}".format(board.get_number(), "white"), resulting_images]
-                    # si falló con el tablero a 180°, exportar imágenes del registro; se aborta la inspección del tablero y se continúa con el siguiente
-                    operations.export_registration_images(registration_images, settings["images_path"])
-
+                    # si falló con el tablero a 180°, se aborta la inspección del tablero y se continúa con el siguiente
                     board.set_status("registration_failed", code=fail)
                     board.add_references_results(references_results="")
                     board.set_results()
                     results.val += board.get_results()
+
+                    # exportar imágenes de registro
+                    if settings["check_mode"] == "check:yes":
+                        operations.export_registration_images(registration_images, board.get_number(), "white", settings["images_path"])
+
                     continue
 
                 if settings["uv_inspection"] == "uv_inspection:True":
                     # si pasó, rotar 180° la imagen con luz UV tambien
                     board_image_ultraviolet, _ = cv_func.rotate(board_image_ultraviolet, 180)
+
+            # exportar imágenes de registro si el modo de revisión es total
+            if settings["check_mode"] == "check:total":
+                registration_images = ["{0}-{1}".format(board.get_number(), "white"), resulting_images]
+                operations.export_registration_images(registration_images, settings["images_path"])
 
 
             # escribir imagen del tablero alineado con luz blanca
