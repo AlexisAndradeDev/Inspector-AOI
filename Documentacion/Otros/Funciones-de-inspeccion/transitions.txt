@@ -1,0 +1,102 @@
+Se indica con 't'
+
+
+
+Si se quiere encontrar las 3 transiciones:
+    ! Tiene que haber 2 across y un along, con los nombres "across1", "across2" y "along".
+
+[
+calcular_ancho_del_componente, ancho_mínimo_del_componente, ancho_máximo_del_componente,
+[
+["across1", "lado", coordenadas, diferencia_de_brillo_minima, "tipo_de_diferencia", "orientacion_de_busqueda", tamano_del_grupo],
+["across2", "lado", coordenadas, diferencia_de_brillo_minima, "tipo_de_diferencia", "orientacion_de_busqueda" tamano_del_grupo],
+["along", "lado", coordenadas, diferencia_de_brillo_minima, "tipo_de_diferencia", "orientacion_de_busqueda" tamano_del_grupo],
+],
+]
+
+
+donde:
+
+calcular_ancho_del_componente: True/False
+ancho_mínimo_del_componente: falla si la resta de los across (ancho del componente) no es mayor o igual al ancho mínimo del componente.
+    Si calcular_ancho_del_componente es False, dejar ancho_mínimo_del_componente como None
+ancho_máximo_del_componente: falla si la resta de los across (ancho del componente) no es menor o igual al ancho máximo del componente.
+    Si calcular_ancho_del_componente es False, dejar ancho_máximo_del_componente como None
+
+
+lado: "up", "down", "left", "right". Es el lado literal en donde se encontrará la transición.
+    Por ejemplo, si se quiere encontrar el across de arriba de un capacitor horizontal, el lado será "up".
+    Si se quiere encontrar el along de abajo de un capacitor vertical, el lado será "down".
+    Si se quiere encontrar el across izquierdo de un capacitor vertical, el lado será "left".
+
+coordenadas: [x1,y1,x2,y2]
+diferencia_de_brillo_minima: para encontrar la transición.
+
+tipo_de_diferencia: "bright_to_dark" o "dark_to_bright". Buscar de brillo a oscuro, o de oscuro a brillo.
+    Si se busca dark_to_bright, la diferencia se calculará:
+        difference = brightness - prev_brightness
+    Si se busca bright_to_dark, la diferencia se calculará:
+        difference = prev_brightness - brightness
+
+    Por ejemplo, si se busca bright_to_dark con una diferencia_de_brillo_minima de 4:
+        El grupo 5 tiene brillo 60. El grupo 6 tiene brillo 55. 
+        Diferencia: 60-55 = 5
+        Por lo tanto, el grupo 6 es una transición.
+
+orientacion_de_busqueda: "inside"/"outside".
+    Por ejemplo, se tiene la transición "across1" con lado "up" y orientacion de búsqueda "inside".
+        La transición se buscará de arriba para abajo.
+    Se tiene la transición "along" con lado "right" y orientacion de búsqueda "inside".
+        La transición se buscará de derecha a izquierda.
+    Se tiene la transición "along" con lado "right" y orientacion de búsqueda "outside".
+        La transición se buscará de izquierda a derecha.
+    Se tiene la transición "across2" con lado "down" y orientacion de búsqueda "outside".
+        La transición se buscará de arriba a abajo.
+    Se tiene la transición "across2" con lado "down" y orientacion de búsqueda "inside".
+        La transición se buscará de abajo a arriba.
+    Se tiene la transición "across2" con lado "up" y orientacion de búsqueda "outside".
+        La transición se buscará de abajo a arriba.
+    
+
+tamano_del_grupo: número de filas o columnas que se promediarán para calcular el brillo de cada grupo. Por ejemplo:
+    Una imagen de 28 de alto y 30 de ancho.
+    Tamaño de grupo de 4.
+
+    La imagen se dividirá en 7 grupos de filas (se busca en filas si la transición se buscará de arriba a abajo o de abajo a arriba, 
+        es decir, la transición se encontrará en 'y'. Se busca en columnas si se busca en 'x').
+    La fila 1 tiene 40 de brillo, la 2 tiene 41, la 3 tiene 43 y la 4 tiene 44. El promedio de brillo del grupo es «42».
+
+    Las filas 5, 6, 7 y 8 tienen un promedio de «45».
+    La diferencia de brillo se calculará con el brillo de cada grupo.
+
+
+
+El ancho del componente (distancia entre ambos across) puede calcularse teniendo por lo menos ambos across.
+
+
+Si se quiere encontrar across1 y across2, se puede utilizar la misma estructura de 3 transiciones pero eliminando la transición "along".
+Puede calcularse el ancho del componente.
+
+Si se quiere encontrar across1 y along o across2 y along, se utiliza la misma estructura de 3 transiciones eliminando la transición across no deseada.
+No puede calcular el ancho del componente, por lo que calculate_component_width es False, y los min_component_width y max_component_width son None
+
+
+
+ESTRUCTURA DE RESULTADOS
+
+[número_de_transiciones_encontradas, ancho_del_componente]
+
+Si no se pudo calcular el ancho_del_componente, o calcular_ancho_del_componente es False, 
+ancho_del_componente será None
+
+por ejemplo:
+    Se encontraron 3 transiciones y ancho=20
+        [3, 20]
+    Se encontraron 2 transiciones y ancho=15
+        [2, 15]
+    Se encontraron las 3 transiciones, pero no se quiere calcular ancho
+        [3, None]
+    Se encontraron 2 transiciones across, pero no se quiere calcular ancho
+        [2, None]
+    Se encontró 1 transición y se pedían 3, así que no se pudo calcular ancho
+        [1, None]

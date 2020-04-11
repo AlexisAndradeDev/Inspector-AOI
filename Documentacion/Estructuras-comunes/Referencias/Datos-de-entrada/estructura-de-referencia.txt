@@ -1,0 +1,10 @@
+["nombre_de_referencia", datos_de_algoritmo_de_parte,
+    [
+        datos_de_punto_de_inspeccion,
+        datos_de_punto_de_inspeccion,
+        datos_de_punto_de_inspeccion,
+    ]
+]
+
+Lo relacionado a los algoritmos de parte está en:
+    Otros/Algoritmos-de-parte/
