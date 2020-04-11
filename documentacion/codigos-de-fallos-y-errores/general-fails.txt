@@ -1,5 +1,0 @@
-FALLOS QUE AFECTAN TODA LA INSPECCIÓN DE UN TABLERO
-
-
-IMG_DOESNT_EXIST: Significa que la imagen de luz blanca del tablero no existe.
-UV_IMG_DOESNT_EXIST: La imagen de luz ultravioleta del tablero no existe.

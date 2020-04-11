@@ -1,8 +1,0 @@
-&&&nombre_del_punto_de_inspeccion;status%
-
-ejemplo:
-    &&&soldadura_superior;good%
-    
-
-Con « &&& » se indica que son los resultados generales del punto de inspección.
-El símbolo « % » se utiliza como separador para los resultados de cada punto de inspección.
