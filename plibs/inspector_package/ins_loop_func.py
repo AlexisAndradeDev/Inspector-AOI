@@ -77,19 +77,19 @@ def inspect_boards(first_board, last_board, results, references, registration_se
 
             # Registro
             # alinear imagen del tablero con las ventanas y guardar tiempo de registro
-            fail, registration_images, aligned_board_image, rotation, translation = reg_methods_func.align_board_image(
+            registration_fail, registration_images, aligned_board_image, rotation, translation = reg_methods_func.align_board_image(
                 board_image, registration_settings
             )
 
-            if fail:
+            if registration_fail:
                 # volver a intentar el registro con la imagen a 180°
                 board_image, _ = cv_func.rotate(board_image, 180)
-                fail, _, aligned_board_image, rotation, translation = reg_methods_func.align_board_image(
+                failed, _, aligned_board_image, rotation, translation = reg_methods_func.align_board_image(
                     board_image, registration_settings
                 )
-                if fail:
+                if failed:
                     # si falló con el tablero a 180°, se aborta la inspección del tablero y se continúa con el siguiente
-                    board.set_status("registration_failed", code=fail)
+                    board.set_status("registration_failed", code=registration_fail)
                     board.add_references_results(references_results="")
                     board.set_results()
                     results.val += board.get_results()
@@ -126,7 +126,7 @@ def inspect_boards(first_board, last_board, results, references, registration_se
         elif stage == "debug":
             photo = imread(r"C:/Dexill/Inspector/Alpha-Premium/x64/pd/{0}-white-board_aligned.bmp".format(board_number))
             if not photo:
-                board.set_status("failed", code="IMG_DOESNT_EXIST") # !GENERAL_FAIL
+                board.set_status("general_failed", code="IMG_DOESNT_EXIST") # !GENERAL_FAIL
                 board.add_references_results(references_results="")
                 board.set_results()
                 results.val += board.get_results()
@@ -136,7 +136,7 @@ def inspect_boards(first_board, last_board, results, references, registration_se
             if settings["uv_inspection"] == "uv_inspection:True":
                 photo_ultraviolet = imread(r"C:/Dexill/Inspector/Alpha-Premium/x64/pd/{0}-ultraviolet-board_aligned.bmp".format(board_number))
                 if not photo_ultraviolet:
-                    board.set_status("failed", code="UV_IMG_DOESNT_EXIST") # !GENERAL_FAIL
+                    board.set_status("general_failed", code="UV_IMG_DOESNT_EXIST") # !GENERAL_FAIL
                     board.add_references_results(references_results="")
                     board.set_results()
                     results.val += board.get_results()
