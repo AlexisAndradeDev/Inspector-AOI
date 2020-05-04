@@ -5,3 +5,47 @@
         datos_de_algoritmo,
     ]
 ]
+
+
+IMPORTANTE:
+    Si un algoritmo está encadenado a otro, llamado 'chained_to', el algoritmo 'chained_to' debe haberse
+    inspeccionado primero. De lo contrario, ocasionará graves bugs.
+
+    Para esto, en la estructura del punto de inspección los algoritmos deben estar ordenados de tal forma
+    que, si uno está encadenado a otro, el algoritmo al que está encadenado debe ir primero.
+
+    La estructura debe ser como un árbol, en la que los algoritmos que se ejecuten primero deben
+    escribirse antes.
+
+    Ejemplo:
+        Algoritmos 1, 2, 3, 4 y 5
+        El 2 y 3 están encadenados al 1.
+        El 4 está encadenado al 2
+        El 5 está encadenado al 1
+
+        Gráficamente, sería:
+        1
+            2
+                4
+            3
+            5
+
+        Que en la estructura aparecería en el orden:
+        1,
+        2,
+        4,
+        3,
+        5
+
+        Otra forma gráfica podría ser:
+        1
+            2
+            3
+            5
+                4
+
+    Lo importante es que los que se ejecuten primero, deben escribirse antes en la estructura.
+
+    Para generar estructuras de árbol, puede verse el código 'arbol.py' del repositorio de herramientas de
+    automatización: 
+        Automation-Tools, Project ID: 16165321, ubicado en crear-estructuras-de-datos/arbol-para-xml-usado-en-estructura-de-cadenas.py
