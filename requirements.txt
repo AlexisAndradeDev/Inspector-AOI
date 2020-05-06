@@ -1,2 +1,5 @@
-opencv-python==3.4.2.16
 more-itertools==8.2.0
+numpy==1.18.4
+opencv-python==3.4.2.16
+Pillow==7.1.2
+tk==0.1.0
