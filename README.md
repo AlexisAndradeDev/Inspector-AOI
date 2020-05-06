@@ -4,9 +4,9 @@ Repositorio de código del sistema de inspección Inspector, modelo Alpha.
 
 # Instalar módulos necesarios
 
-Ejecutar el comando:
+Descargar el archivo requirements.txt y ejecutar el comando:
     pip install -r requirements.txt
-en el archivo requirements.txt.
+sobre el archivo.
 
 # Directorios
 
