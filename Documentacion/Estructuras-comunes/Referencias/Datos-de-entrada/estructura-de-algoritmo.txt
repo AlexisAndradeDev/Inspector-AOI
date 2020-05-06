@@ -25,7 +25,7 @@ status_necesario_para_ser_good: si la función de inspección obtiene el status 
         El status necesario es "bad", y la función de inspección obtiene "bad":
             el status del algoritmo es "good"
         El status necesario es "bad", y la función de inspección obtiene "good":
-            el status del algoritmo es "good"
+            el status del algoritmo es "bad"
         El status necesario es "good", y la función de inspección obtiene "failed":
             el status del algoritmo es "failed"
         El status necesario es "bad", y la función de inspección obtiene "failed":
