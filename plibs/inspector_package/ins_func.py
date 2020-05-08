@@ -34,13 +34,13 @@ def get_blob_parameters(algorithm, parameters_data):
     parameters = {
         "invert_binary": parameters_data[0],
         "color_scale": parameters_data[1],
-        "lower_color": array(parameters_data[2][0]),
-        "upper_color": array(parameters_data[2][1]),
-        "min_blob_size": parameters_data[3],
-        "max_blob_size": parameters_data[4],
-        "min_area": parameters_data[5],
-        "max_area": parameters_data[6],
-        "max_allowed_blob_size": parameters_data[7],
+        "lower_color": parameters_data[2],
+        "upper_color": parameters_data[3],
+        "min_blob_size": parameters_data[4],
+        "max_blob_size": parameters_data[5],
+        "min_area": parameters_data[6],
+        "max_area": parameters_data[7],
+        "max_allowed_blob_size": parameters_data[8],
     }
     return parameters
 
