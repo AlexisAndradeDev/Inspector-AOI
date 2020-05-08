@@ -3,7 +3,7 @@
         [
             ["cuerpo_de_resistencia", [1978,554],
                 [
-                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backup/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
+                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backupold/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
                 ]
             ],
         ]
@@ -13,7 +13,7 @@
         [
             ["cuerpo_de_resistencia", [1978,714],
                 [
-                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backup/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
+                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backupold/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
                 ]
             ],
         ]
@@ -23,7 +23,7 @@
         [
             ["cuerpo_de_resistencia", [1978,876],
                 [
-                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backup/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
+                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backupold/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
                 ]
             ],
         ]
@@ -33,7 +33,7 @@
         [
             ["cuerpo_de_resistencia", [1978,1100],
                 [
-                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backup/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
+                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backupold/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
                 ]
             ],
         ]
@@ -43,7 +43,7 @@
         [
             ["cuerpo_de_resistencia", [1978,1261],
                 [
-                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backup/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
+                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backupold/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
                 ]
             ],
         ]
@@ -53,7 +53,7 @@
         [
             ["cuerpo_de_resistencia", [1978,1420],
                 [
-                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backup/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
+                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,324,118], "m", ["gray",'D:/Backupold/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia-clasica', 1, [0.7], 1], [['gaussianBlur', 5]]],
                 ]
             ],
         ]
@@ -63,7 +63,7 @@
         [
             ["número224", [1253, 541],
                 [
-                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,137,82], "m", [["binary", False, "hsv", [[13,0,167],[136,124,255]]],'D:/Backup/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_224', 1, [0.7], 1], [['gaussianBlur', 5]]],
+                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,137,82], "m", [["binary", False, "hsv", [[13,0,167],[136,124,255]]],'D:/Backupold/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_224', 1, [0.7], 1], [['gaussianBlur', 5]]],
                 ]
             ],
         ]
@@ -73,8 +73,8 @@
         [
             ["número393", [1207, 829],
                 [
-                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,73,170], "m", [["binary", False, "hsv", [[0,16,147],[180,81,255]]],'D:/Backup/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['gaussianBlur', 5]]],
-                    [False, "good", ["presencia", "good"], "presencia", "white", "presencia-gray", [0,0,47,67], "m", [["binary", False, "gray", [147,255]],'D:/Backup/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['gaussianBlur', 5]]],
+                    [False, "good", [None, None], "$inspection_point", "white", "presencia", [0,0,73,170], "m", [["binary", False, "hsv", [[0,16,147],[180,81,255]]],'D:/Backupold/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['gaussianBlur', 5]]],
+                    [False, "good", ["presencia", "good"], "presencia", "white", "presencia-gray", [0,0,47,67], "m", [["binary", False, "gray", [147,255]],'D:/Backupold/Dexill/Inspector/Clientes/FinePitch/Fotos Infaimon - FinePitch 5MPX/2464p x 2056p/placa_verde_resistencias/templates/resistencia_393', 1, [0.7], 1], [['gaussianBlur', 5]]],
                 ]
             ],
         ]
@@ -95,7 +95,7 @@
                       ],
                     [['gaussianBlur', 5]]
                     ],
-                    [True, "good", ["transiciones", "good"], "transiciones", "white", "blob-superior", [-34,-18,-34+70,-18+27], "b", [False, 'gray', [0,90], None, None, 900, None, None], [['gaussianBlur', 5]]],
+                    [True, "good", ["transiciones", "good"], "transiciones", "white", "blob-superior", [-34,-18,-34+70,-18+27], "b", [False, 'gray', 0, 90, None, None, 900, None, None], [['gaussianBlur', 5]]],
                     [False, "good", ["blob-superior", "bad"], "transiciones", "white", "histograma-superior1", [-34,-18,-34+70,-18+27], "h", [[0,90], [45, 100], [70, 100], 100, 0, 100, 250, [20, 255]], [['gaussianBlur', 5]]],
                     [False, "good", ["blob-superior", "good"], "transiciones", "white", "histograma-superior2", [-34,-18,-34+70,-18+27], "h", [[0,90], [45, 100], [70, 100], 100, 0, 100, 250, [20, 255]], [['gaussianBlur', 5]]],
                 ]
