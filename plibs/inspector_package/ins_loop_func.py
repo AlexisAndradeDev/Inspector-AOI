@@ -106,8 +106,7 @@ def inspect_boards(first_board, last_board, results, references, registration_se
 
             # exportar imágenes de registro si el modo de revisión es total
             if settings["check_mode"] == "check:total":
-                registration_images = ["{0}-{1}".format(board.get_number(), "white"), resulting_images]
-                operations.export_registration_images(registration_images, settings["images_path"])
+                operations.export_registration_images(registration_images, board.get_number(), "white", settings["images_path"])
 
 
             # escribir imagen del tablero alineado con luz blanca
