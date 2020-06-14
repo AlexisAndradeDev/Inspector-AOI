@@ -518,7 +518,7 @@ def find_reference_point_in_board(img, reference_point):
 
     # Coordenadas reales en el tablero
     [x,y] = coordinates
-    coordinates = (x+x1,y+y1)
+    coordinates = [x+x1,y+y1]
 
     return coordinates, images_to_export
 
