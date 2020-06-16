@@ -1,4 +1,4 @@
-from inspector_package import math_functions, cv_func, operations, results_management
+from inspector_package import math_functions, cv_func, operations, results_management, excepts
 
 from cv2 import imread, imwrite, rectangle, cvtColor, COLOR_BGR2GRAY
 from numpy import array

@@ -72,8 +72,6 @@ def register_with_rotation_points_and_translation_point(board_image, rotation_it
     y_diference = objective_y - translation_point_coordinates[1]
     board_image = cv_func.translate(board_image, x_diference, y_diference)
 
-    images_to_export += [["board_aligned", board_image]]
-
     return None, images_to_export, board_image, total_rotation, [x_diference, y_diference]
 
 def align_board_image(board_image, registration_settings):

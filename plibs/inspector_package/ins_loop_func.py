@@ -95,7 +95,7 @@ def inspect_boards(first_board, last_board, results, references, registration_se
                     results.val += board.get_results()
 
                     # exportar imágenes de registro
-                    if settings["check_mode"] == "check:yes":
+                    if settings["check_mode"] == "check:yes" or settings["check_mode"] == "check:total":
                         operations.export_registration_images(registration_images, board.get_number(), "white", settings["images_path"])
 
                     continue
