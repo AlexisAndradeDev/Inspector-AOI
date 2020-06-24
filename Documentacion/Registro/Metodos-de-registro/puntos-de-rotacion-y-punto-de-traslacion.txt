@@ -1,5 +1,7 @@
 El nombre del método es "rotation_points_and_translation_point"
 
+[
+"nombre_del_método",
 
 [
 [datos_del_punto_de_rotación1],
@@ -11,6 +13,8 @@ angulo deseado entre los 2 puntos de rotación,
 [coordenadas a las que se debe trasladar el punto de traslación despues de rotar],
 
 número_de_iteraciones_de_rotación
+]
+
 ]
 
 donde:
@@ -94,18 +98,24 @@ DATOS INICIALES DEL MÉTODO DE REGISTRO
 Los datos iniciales que servirán para calcular el resto de datos necesarios para el registro con el script herramienta «calregdat.py» son:
 
     [
+    "nombre_del_método",
+    
+    [
     [datos_del_punto_de_rotación1], 
     [datos_del_punto_de_rotación2], 
     [datos_del_punto_de_traslación]
     ]
 
+    ]
+
 Ejemplo:
     [
+    "rotation_points_and_translation_point",
 
-    ["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
-
-    ["centroid", [930, 940, 930+308, 940+251], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
-
-    ["centroid", [970, 500, 970+249, 500+222], "gray", 240, 255, True, [["medianBlur", 9]], {"min_diameter":{"min_diameter":25}, "max_diameter":{"max_diameter":35}, "circularity":{"min_circularity":0.85}} ],
+    [
+    ["corner", [3875, 160, 3875+210, 160+195], "hsv", [0, 0, 180], [255, 55, 255], False, [["medianBlur", 9]], {"min_area":{"min_area":1400}, "max_area":{"max_area":2100}, "min_diameter":{"min_diameter":40}, "max_diameter":{"max_diameter":52}} ],
+    ["corner", [85, 2451, 85+210, 2451+195], "hsv", [0, 0, 180], [255, 55, 255], False, [["medianBlur", 9]], {"min_area":{"min_area":1400}, "max_area":{"max_area":2100}, "min_diameter":{"min_diameter":40}, "max_diameter":{"max_diameter":52}} ],
+    ["corner", [3875, 160, 3875+210, 160+195], "hsv", [0, 0, 180], [255, 55, 255], False, [["medianBlur", 9]], {"min_area":{"min_area":1400}, "max_area":{"max_area":2100}, "min_diameter":{"min_diameter":40}, "max_diameter":{"max_diameter":52}} ]
+    ]
 
     ]
