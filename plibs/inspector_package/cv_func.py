@@ -505,8 +505,9 @@ def find_reference_point(img_, reference_point):
 
     return coordinates, images_to_return
 
-def find_reference_point_in_photo(img, reference_point):
-    """Suma las coordenadas del punto de referencia dentro de la ventana,
+def find_reference_point_in_board(img, reference_point):
+    """Encuentra las coordenadas del punto de referencia en la imagen del tablero.
+    Suma las coordenadas del punto de referencia dentro de la ventana,
     más las coordenadas de la esquina superior izquierda de la ventana."""
     [x1,y1,x2,y2] = reference_point["coordinates"]
     rp_img = img[y1:y2, x1:x2].copy()
@@ -517,7 +518,7 @@ def find_reference_point_in_photo(img, reference_point):
 
     # Coordenadas reales en el tablero
     [x,y] = coordinates
-    coordinates = (x+x1,y+y1)
+    coordinates = [x+x1,y+y1]
 
     return coordinates, images_to_export
 

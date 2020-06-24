@@ -42,4 +42,6 @@ La carpeta plibs, **después de haber instalado los paquetes que vengan dentro y
 
 Al momento de la instalación, se deben eliminar los archivos *.gitkeep*.
 
-Todos los scripts que sean ejecutados por C# (como ins.py, regallbrds, dbg.py, rt_img.py) deben estar dentro de plibs.
+Todos los scripts que sean ejecutados por C# (como ins.py, regallbrds.py, dbg.py, calregdat.py) deben estar dentro de plibs, y también los «scripts herramienta» como calregdat.py o rt_img.py, que se ejecutan desde C# para hacer algunos cálculos. 
+
+Es decir, **todos los scripts que estén dentro de la carpeta plibs del repositorio y no estén dentro de un paquete, se mantendrán dentro de plibs al momento de la instalación**.

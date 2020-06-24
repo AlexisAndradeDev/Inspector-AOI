@@ -1,15 +1,52 @@
 El nombre del método es "rotation_points_and_translation_point"
 
+[
+"nombre_del_método",
 
 [
-["centroid/corner", [x1,y1,x2,y2], "hsv/gray", [hsv minimo]/gray minimo, [hsv máximo]/gray máximo, invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ],
-["centroid/corner", [x1,y1,x2,y2], "hsv/gray", [hsv minimo]/gray minimo, [hsv máximo]/gray máximo, invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ],
-["centroid/corner", [x1,y1,x2,y2], "hsv/gray", [hsv minimo]/gray minimo, [hsv máximo]/gray máximo, invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor, "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ],
+[datos_del_punto_de_rotación1],
+[datos_del_punto_de_rotación2],
+[datos_del_punto_de_traslación],
+
 angulo deseado entre los 2 puntos de rotación,
+
 [coordenadas a las que se debe trasladar el punto de traslación despues de rotar],
+
 número_de_iteraciones_de_rotación
 ]
 
+]
+
+donde:
+
+punto_de_rotación1, punto_de_rotación2 y punto_de_traslación:
+    Tienen la estructura:
+
+    [tipo_de_punto_de_referencia, [x1,y1,x2,y2], escala_de_color, rango_mínimo, rango_máximo,
+    invertir_binarizado, [["filtro secundario", params]], {"filtro de contorno 1":{"parametro1":valor,
+    "parametro2":valor}, "filtro de contorno 2":{"parametro1":valor, "parametro2":valor}} ]
+
+    donde:
+
+    tipo_de_punto_de_referencia: "centroid" o "corner".
+
+    escala_de_color: "hsv" o "gray".
+
+    rango_mínimo: Depende de la escala de color. 
+        hsv: [h_mínimo, s_mínimo, v_mínimo]
+        gray: número entero mínimo.
+
+    rango_máximo: Depende de la escala de color. 
+        hsv: [h_máximo, s_máximo, v_máximo]
+        gray: número entero máximo.
+
+    invertir_binarizado: True o False
+
+    filtros secundarios:
+        Ver: Documentacion/Otros/Filtros-y-mas/Filtros-secundarios/
+    
+    filtros de contornos:
+        Ver: Documentacion/Otros/Filtros-y-mas/Filtros-de-contornos/
 
 
 EJEMPLO:
@@ -27,9 +64,6 @@ EJEMPLO:
 ]
 
 ]
-
-
-Los filtros de contornos se encuentran en Otros/Filtros-de-contornos/
 
 
 IMÁGENES QUE EXPORTA
@@ -57,3 +91,36 @@ IMÁGENES QUE EXPORTA
         found-rp2
         found-tp
         found-rp1
+
+
+DATOS INICIALES DEL MÉTODO DE REGISTRO
+
+Los datos iniciales que servirán para calcular el resto de datos necesarios para el registro con el script herramienta «calregdat.py» son:
+
+    [
+    "nombre_del_método",
+    
+    [
+    [datos_del_punto_de_rotación1], 
+    [datos_del_punto_de_rotación2], 
+    [datos_del_punto_de_traslación]
+    ]
+
+    ]
+
+Ejemplo:
+    [
+    "rotation_points_and_translation_point",
+
+    [
+    ["corner", [3875, 160, 3875+210, 160+195], "hsv", [0, 0, 180], [255, 55, 255], False, [["medianBlur", 9]], {"min_area":{"min_area":1400}, "max_area":{"max_area":2100}, "min_diameter":{"min_diameter":40}, "max_diameter":{"max_diameter":52}} ],
+    ["corner", [85, 2451, 85+210, 2451+195], "hsv", [0, 0, 180], [255, 55, 255], False, [["medianBlur", 9]], {"min_area":{"min_area":1400}, "max_area":{"max_area":2100}, "min_diameter":{"min_diameter":40}, "max_diameter":{"max_diameter":52}} ],
+    ["corner", [3875, 160, 3875+210, 160+195], "hsv", [0, 0, 180], [255, 55, 255], False, [["medianBlur", 9]], {"min_area":{"min_area":1400}, "max_area":{"max_area":2100}, "min_diameter":{"min_diameter":40}, "max_diameter":{"max_diameter":52}} ]
+    ]
+
+    ]
+
+
+ESTRUCTURA DE DATOS DE REGISTRO FALTANTES AL CALCULARLOS
+
+[ángulo_entre_puntos_de_rotación, centro_del_punto_de_rotación1, centro_del_punto_de_rotación1, centro_del_punto_de_traslación]

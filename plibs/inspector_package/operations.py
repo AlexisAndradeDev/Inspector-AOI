@@ -70,9 +70,9 @@ def create_threads(func, threads_num, targets_num, func_args):
     return threads
 
 
-def export_registration_images(images, board_name, light, images_path):
-    for images_to_export in images:
-        image_name, image = images_to_export
+def export_registration_images(images_to_export, board_name, light, images_path):
+    for image_data in images_to_export:
+        image_name, image = image_data
         imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, board_name, light, image_name), image)
 
 def export_algorithm_images(images, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):

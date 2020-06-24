@@ -1,4 +1,4 @@
-from inspector_package import math_functions, cv_func, operations, results_management
+from inspector_package import math_functions, cv_func, operations, results_management, excepts
 
 from cv2 import imread, imwrite, rectangle, cvtColor, COLOR_BGR2GRAY
 from numpy import array
@@ -42,6 +42,12 @@ def get_blob_parameters(algorithm, parameters_data):
         "max_area": parameters_data[7],
         "max_allowed_blob_size": parameters_data[8],
     }
+
+    if parameters["color_scale"] == "hsv":
+        # convertir a array de numpy
+        parameters["lower_color"] = array(parameters["lower_color"])
+        parameters["upper_color"] = array(parameters["upper_color"])
+
     return parameters
 
 
