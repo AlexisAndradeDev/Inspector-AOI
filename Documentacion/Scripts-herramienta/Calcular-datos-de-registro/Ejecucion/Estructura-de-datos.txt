@@ -1,0 +1,15 @@
+Los datos tendrán la estructura:
+    [ruta_de_la_imagen, datos_iniciales_del_método_de_registro]
+
+donde:
+
+ruta_de_la_imagen: Se escribe entre comillas. La imagen debe estar previamente recortada, de manera que la
+    imagen sea sólo la región del tablero.
+        Esto no significa que la imagen deba estar registrada, sino que debe estar recortada con las
+        coordenadas de la región del tablero.
+
+datos_iniciales_del_método_de_registro:
+    Son los datos, incompletos, del método de registro que servirán para calcular el resto de datos.
+
+    Ver la documentación de cada método de registro en: Documentacion/Registro/Metodos-de-registro/
+    Se encuentra en la sección "DATOS INICIALES DEL MÉTODO DE REGISTRO"

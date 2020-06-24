@@ -1,0 +1,27 @@
+FUNCIÓN
+
+Obtiene los datos necesarios para crear todos los datos del registro (ángulo entre puntos de rotación, centros de puntos de referencia), a partir de algunos parámetros del método de registro que se use.
+
+    Por ejemplo, se puede utilizar para encontrar datos faltantes del método de registro
+    «puntos de rotación y punto de traslación»:
+        - Ángulo entre los puntos de rotación.
+        - Coordenadas de los centros de los puntos de rotación. (que sirven para
+          traslación de la imagen del tablero en el registro).
+
+    a partir de los parámetros utilizados para encontrar los puntos de rotación
+    y traslación:
+        - Tipo de punto de referencia (corner/centroid).
+        - Región de búsqueda de cada punto de referencia.
+        - Datos para binarizado del contorno.
+        - Filtros secundarios para cada punto de referencia.
+        - Filtros de contornos para cada punto de referencia.
+        ...
+
+
+EJECUCIÓN
+
+Se debe haber instalado previamente la carpeta plibs y los paquetes, ya que se utilizará el archivo calregdat.py para el proceso.
+
+En la carpeta « C:/Dexill/Inspector/Alpha-Premium/x64/pd/ » debe existir un archivo llamado calregdat_dt.di, el cual contendrá los datos de entrada para el script.
+
+La estructura de datos se encuentra en el archivo Estructura-de-datos.txt, ubicado en el mismo directorio que este archivo.
