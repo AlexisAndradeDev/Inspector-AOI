@@ -119,3 +119,8 @@ Ejemplo:
     ]
 
     ]
+
+
+ESTRUCTURA DE DATOS DE REGISTRO FALTANTES AL CALCULARLOS
+
+[ángulo_entre_puntos_de_rotación, centro_del_punto_de_rotación1, centro_del_punto_de_rotación1, centro_del_punto_de_traslación]
