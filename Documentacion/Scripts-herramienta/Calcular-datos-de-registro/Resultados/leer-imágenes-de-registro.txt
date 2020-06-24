@@ -1,0 +1,3 @@
+Las imágenes se exportan a la carpeta C:/Dexill/Inspector/Alpha-Premium/x64/pd/
+
+Los nombres de las imágenes que exporta cada método de registro se encuentra en: Documentacion/Registro/Metodos-de-registro, en la sección «IMÁGENES QUE EXPORTA».
