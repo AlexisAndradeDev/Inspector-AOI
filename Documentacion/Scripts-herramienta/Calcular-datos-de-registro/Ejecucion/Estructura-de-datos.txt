@@ -1,5 +1,10 @@
 Los datos tendrán la estructura:
-    [ruta_de_la_imagen, datos_iniciales_del_método_de_registro]
+    [
+    ruta_de_la_imagen, 
+
+    [datos_iniciales_del_método_de_registro]
+
+    ]
 
 donde:
 
@@ -13,3 +18,13 @@ datos_iniciales_del_método_de_registro:
 
     Ver la documentación de cada método de registro en: Documentacion/Registro/Metodos-de-registro/
     Se encuentra en la sección "DATOS INICIALES DEL MÉTODO DE REGISTRO"
+
+
+Ejemplo:
+
+[
+"C:/Dexill/Inspector/Alpha-Premium/x64/programs/programa1/tablero-recortado.bmp",
+
+[datos_iniciales_del_método_de_registro]
+
+]
