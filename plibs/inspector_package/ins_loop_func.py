@@ -37,32 +37,29 @@ def inspect_boards(first_board, last_board, results, references, registration_se
             # Utilizar la función skip
             skip, skip_status, skip_results, skip_images, skip_fails = use_skip_function(board_image, settings["skip_function"])
             if skip:
-                # volver a intentarlo con la imagen rotada 180°
-                board_image, _ = cv_func.rotate(board_image, 180)
-                skip_with_180, _, _, _, _ = use_skip_function(board_image, settings["skip_function"])
-                if skip_with_180:
-                    # si no pasó con el tablero a 180°, saltar al siguiente tablero
-                    board.set_status("skip")
+                # si no pasó, saltar al siguiente tablero
+                board.set_status("skip")
 
-                    # agregar resultados de la función skip con &%&
-                    skip_function_results = results_management.create_algorithm_results_string(
-                        settings["skip_function"]["name"], settings["skip_function"]["light"],
-                        skip_status, skip_results, skip_fails
+                # agregar resultados de la función skip con &%&
+                skip_function_results = results_management.create_algorithm_results_string(
+                    settings["skip_function"]["name"], settings["skip_function"]["light"],
+                    skip_status, skip_results, skip_fails
+                )
+                board.add_references_results(references_results="")
+                board.set_results()
+
+                results.val += board.get_results()
+
+                # exportar imágenes de la función de skip
+                if settings["check_mode"] == "check:yes" or settings["check_mode"] == "check:total":
+                    operations.export_algorithm_images(
+                        images=skip_images, board_number=board.get_number(),
+                        reference_name="skip_function", inspection_point_name="skip_function",
+                        algorithm_name=settings["skip_function"]["name"],
+                        light=settings["skip_function"]["light"],
+                        images_path=settings["images_path"]
                     )
-                    board.add_references_results(references_results="")
-                    board.set_results()
-
-                    results.val += board.get_results()
-                    # exportar imágenes de la función de skip
-                    if settings["check_mode"] == "check:yes":
-                        operations.export_algorithm_images(
-                            images=skip_images, board_number=board.get_number(),
-                            reference_name="skip_function", inspection_point_name="skip_function",
-                            algorithm_name=settings["skip_function"]["name"],
-                            light=settings["skip_function"]["light"],
-                            images_path=settings["images_path"]
-                        )
-                    continue
+                continue
 
             # exportar imágenes de la función de skip si el modo de revisión es total
             if settings["check_mode"] == "check:total":
@@ -82,27 +79,17 @@ def inspect_boards(first_board, last_board, results, references, registration_se
             )
 
             if registration_fail:
-                # volver a intentar el registro con la imagen a 180°
-                board_image, _ = cv_func.rotate(board_image, 180)
-                failed, _, aligned_board_image, rotation, translation = reg_methods_func.align_board_image(
-                    board_image, registration_settings
-                )
-                if failed:
-                    # si falló con el tablero a 180°, se aborta la inspección del tablero y se continúa con el siguiente
-                    board.set_status("registration_failed", code=registration_fail)
-                    board.add_references_results(references_results="")
-                    board.set_results()
-                    results.val += board.get_results()
+                # si falló, se aborta la inspección del tablero y se continúa con el siguiente
+                board.set_status("registration_failed", code=registration_fail)
+                board.add_references_results(references_results="")
+                board.set_results()
+                results.val += board.get_results()
 
-                    # exportar imágenes de registro
-                    if settings["check_mode"] == "check:yes" or settings["check_mode"] == "check:total":
-                        operations.export_registration_images(registration_images, board.get_number(), "white", settings["images_path"])
+                # exportar imágenes de registro
+                if settings["check_mode"] == "check:yes" or settings["check_mode"] == "check:total":
+                    operations.export_registration_images(registration_images, board.get_number(), "white", settings["images_path"])
 
-                    continue
-
-                if settings["uv_inspection"] == "uv_inspection:True":
-                    # si pasó, rotar 180° la imagen con luz UV tambien
-                    board_image_ultraviolet, _ = cv_func.rotate(board_image_ultraviolet, 180)
+                continue
 
             # exportar imágenes de registro si el modo de revisión es total
             if settings["check_mode"] == "check:total":
