@@ -5,6 +5,19 @@
 # Instalación
 
 
+# Carpetas que deben existir antes de la instalación
+Dentro de la carpeta de instalación de la versión de Inspector que se tenga (ej. Alpha-Premium) se encuentra el directorio «x64».
+Las carpetas que contendrá x64 antes de la instalación son (sin contar el debugeo interactivo, cuya documentación se encuentra en su repositorio https://gitlab.com/Alexismtzan/inspector-interactive-debug):
+
+    x64
+        inspections
+            data
+            status
+            bad_windows_results
+        plibs
+        
+
+
 # Instalar módulos necesarios
 
 Descargar el archivo requirements.txt y ejecutar el comando:
