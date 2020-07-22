@@ -1,4 +1,4 @@
-FALLOS QUE AFECTAN TODA LA INSPECCIÓN DE UN TABLERO
+Fallos que afectan la inspección de todo un tablero, ocasionados por fallos externos independientes del código de este repositorio (imágenes que no existen, por ejemplo).
 
 
 IMG_DOESNT_EXIST: Significa que la imagen de luz blanca del tablero no existe.

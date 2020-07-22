@@ -1,4 +1,4 @@
-Ocurren si hay un fallo al registrar el tablero.
+Ocurren si hay un fallo al registrar un tablero (con modo de registro local).
 
 
 CONTOURS_NOT_FOUND_FID_{numero_del_fiducial}: No se encontraron contornos en el área de búsqueda del fiducial.
