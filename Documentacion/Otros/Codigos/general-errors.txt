@@ -1,0 +1,4 @@
+Son errores que afectan a todo un tablero y no a toda la inspección de todos los tableros, ocasionados generalmente por un error de programación.
+
+
+NO_RESULTS: Ocurre cuando no se pudo producir los resultados del tablero.

@@ -1,5 +1,4 @@
-Ocurren si hay un fallo al registrar el tablero.
-
+Ocurren al fallar el registro, ya sea global o local.
 
 CONTOURS_NOT_FOUND_FID_{numero_del_fiducial}: No se encontraron contornos en el área de búsqueda del fiducial.
     Ejemplos de nombre completo del código: 
@@ -14,3 +13,6 @@ APPROPRIATE_CONTOUR_NOT_FOUND_{nombre_del_punto_de_referencia}: No se encontró 
         APPROPRIATE_CONTOUR_NOT_FOUND_ROTATION_POINT1
         APPROPRIATE_CONTOUR_NOT_FOUND_ROTATION_POINT2
         APPROPRIATE_CONTOUR_NOT_FOUND_TRANSLATION_POINT
+
+
+Para información más específica sobre errores de registro global y local ver: Documentacion/Otros/Codigos/local-registration-fails.txt y global-registration-fails.txt
