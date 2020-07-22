@@ -36,4 +36,6 @@ EJEMPLO:
 ]
 
 
-La documentación acerca de los datos de registro y de referencias, se encuentran en la carpeta Documentacion/Estructuras-comunes/ 
+La documentación acerca de los datos de referencias, se encuentran en la carpeta Documentacion/Estructuras-comunes/Referencias/Datos-de-entrada/
+
+La documentación sobre el registro: Documentacion/Registro/estructura-de-datos.txt
