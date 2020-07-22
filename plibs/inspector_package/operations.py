@@ -69,8 +69,12 @@ def create_threads(func, threads_num, targets_num, func_args):
 
     return threads
 
+def export_global_registration_images(images_to_export, light, images_path):
+    for image_data in images_to_export:
+        image_name, image = image_data
+        imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, "global_registration", light, image_name), image)
 
-def export_registration_images(images_to_export, board_name, light, images_path):
+def export_local_registration_images(images_to_export, board_name, light, images_path):
     for image_data in images_to_export:
         image_name, image = image_data
         imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, board_name, light, image_name), image)
