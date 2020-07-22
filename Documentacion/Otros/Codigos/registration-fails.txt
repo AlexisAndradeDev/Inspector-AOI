@@ -1,0 +1,18 @@
+Ocurren al fallar el registro, ya sea global o local.
+
+CONTOURS_NOT_FOUND_FID_{numero_del_fiducial}: No se encontraron contornos en el área de búsqueda del fiducial.
+    Ejemplos de nombre completo del código: 
+        CONTOURS_NOT_FOUND_FID_1
+        CONTOURS_NOT_FOUND_FID_2
+
+APPROPRIATE_CIRCLE_FID_{numero_del_fiducial}: No se encontró un contorno que cumpliera con los filtros del círculo.
+
+APPROPRIATE_CONTOUR_NOT_FOUND_{nombre_del_punto_de_referencia}: No se encontró un contorno que cumpliera
+    con los filtros de contorno.
+    Los 3 nombres posibles son:
+        APPROPRIATE_CONTOUR_NOT_FOUND_ROTATION_POINT1
+        APPROPRIATE_CONTOUR_NOT_FOUND_ROTATION_POINT2
+        APPROPRIATE_CONTOUR_NOT_FOUND_TRANSLATION_POINT
+
+
+Para información más específica sobre errores de registro global y local ver: Documentacion/Otros/Codigos/local-registration-fails.txt y global-registration-fails.txt
