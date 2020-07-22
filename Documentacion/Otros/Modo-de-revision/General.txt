@@ -21,8 +21,29 @@ Las funciones de skip exportan imágenes como cualquier otro algoritmo. Las imá
     ...skip_function-skip_function-skip...
 
 
+
 REGISTRO
 
 También se exportarán las imágenes del proceso de registro al activar el modo de revisión.
-    Los nombres de las imágenes exportadas por los métodos de registro se encuentran en: /Registro/ y
-    /Registro/Metodos-de-registro/
+
+REGISTRO LOCAL
+
+Las imágenes tienen la estructura:
+    num_de_tablero-luz-nombre_de_imagen.bmp
+
+Por ejemplo:
+    1-white-nombre_de_imagen.bmp
+    5-white-nombre_de_imagen.bmp
+    8-white-nombre_de_imagen.bmp
+
+
+
+REGISTRO GLOBAL
+    En lugar de num_de_tablero, se escribirá solamente « global_registration ».
+    global_registration-luz-nombre_de_imagen.bmp
+
+Por ejemplo:
+    global_registration-white-nombre_de_imagen.bmp
+
+
+Los nombre_de_imagen se encuentran en: Documentacion/Registro/Metodos-de-registro/

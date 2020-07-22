@@ -22,4 +22,4 @@ Por ejemplo:
     global_registration-white-nombre_de_imagen.bmp
 
 
-Los nombre_de_imagen se encuentran en la carpeta /Registro/Metodos-de-registro/
+Los nombre_de_imagen se encuentran en: Documentacion/Registro/Metodos-de-registro/
