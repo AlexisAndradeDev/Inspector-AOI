@@ -2,8 +2,5 @@ Al activarlo ('check:yes' en el archivo de datos), las imágenes del proceso de 
 
 
 Si falla una parte del registro, también exportará las imágenes del proceso del método de registro utilizado.
-    Los nombres de las imágenes exportadas por los métodos de registro se encuentran en: /Registro/ y
-    /Registro/Metodos-de-registro/
-
 
 Si una función de skip no pasó y se activa el modo de revisión, se exportarán también las imágenes de la función de skip.

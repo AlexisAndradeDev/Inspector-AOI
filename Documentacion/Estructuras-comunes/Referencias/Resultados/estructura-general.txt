@@ -44,4 +44,44 @@ ESTRUCTURA:
         resultados_generales_de_punto_de_inspeccion
     resultados_generales_de_referencia
 resultados_generales_de_tablero
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+        resultados_generales_de_punto_de_inspeccion
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+        resultados_generales_de_punto_de_inspeccion
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+        resultados_generales_de_punto_de_inspeccion
+    resultados_generales_de_referencia
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+        resultados_generales_de_punto_de_inspeccion
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+        resultados_generales_de_punto_de_inspeccion
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+        resultados_generales_de_punto_de_inspeccion
+    resultados_generales_de_referencia
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+        resultados_generales_de_punto_de_inspeccion
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+        resultados_generales_de_punto_de_inspeccion
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+            resultados_de_algoritmo
+        resultados_generales_de_punto_de_inspeccion
+    resultados_generales_de_referencia
+resultados_generales_de_tablero
 $&$tiempo_total

@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     # Datos de configuración
     [uv_inspection, boards_num, threads_num_for_boards, threads_num_for_references,
-    check_mode, boards_coordinates, skip_function_data] = settings_data
+    check_mode, boards_coordinates, registration_mode, skip_function_data] = settings_data
 
     # Función de inspección para verificar que el tablero N esté en la imagen,
     # si no pasa la función, no se inspecciona el tablero
@@ -23,6 +23,7 @@ if __name__ == '__main__':
         "threads_num_for_boards":threads_num_for_boards,
         "threads_num_for_references":threads_num_for_references,
         "check_mode":check_mode,
+        "registration_mode":registration_mode,
         "skip_function":skip_function,
     }
 

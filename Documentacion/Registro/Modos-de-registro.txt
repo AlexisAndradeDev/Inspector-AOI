@@ -1,0 +1,14 @@
+Se tienen dos modos de registro: global y local.
+
+GLOBAL
+
+Registra la fotografía completa antes de comenzar a inspeccionar cada tablero. 
+El método de registro se aplica una única vez en la fotografía completa, y una vez registrada, se procede con la inspección de cada tablero.
+    Fallos de registro global: Documentacion/Otros/Codigos/global-registration-fails.txt
+
+
+LOCAL
+
+Registra cada tablero individualmente aplicándole el método de registro a cada uno. Necesita que el método de registro pueda llevarse a cabo en cada tablero.
+    Fallos de registro local: Documentacion/Otros/Codigos/local-registration-fails.txt
+

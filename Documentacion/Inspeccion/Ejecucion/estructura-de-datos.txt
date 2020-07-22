@@ -8,7 +8,7 @@ ESTRUCTURA
 [
 'uv_inspection:True/False',
 num_de_tableros, num_de_multihilos (para inspeccionar tableros), num_de_multihilos (para las referencias),
-'check:no/yes', [[region del tablero 1], [region del tablero 2], [region del tablero 3]],
+'check:no/yes', [[region del tablero 1], [region del tablero 2], [region del tablero 3]], 'registration_mode:global/local',
 [datos de la función de skip],
 ],
 
@@ -25,7 +25,7 @@ EJEMPLO:
 
 [
 "uv_inspection:False",
-4, 4, 3, "check:yes", [[0, 0, 2450, 2056], [2450, 0, 4920, 2056], [0, 2056, 2450, 4112], [2450, 2056, 4920, 4112]],
+4, 4, 3, "check:yes", [[0, 0, 2450, 2056], [2450, 0, 4920, 2056], [0, 2056, 2450, 4112], [2450, 2056, 4920, 4112]], 'registration_mode:local',
 [datos de la función skip],
 ],
 
@@ -36,4 +36,8 @@ EJEMPLO:
 ]
 
 
-La documentación acerca de los datos de registro y de referencias, se encuentran en la carpeta Documentacion/Estructuras-comunes/ 
+La documentación acerca de los datos de referencias, se encuentran en la carpeta Documentacion/Estructuras-comunes/Referencias/Datos-de-entrada/
+
+La documentación sobre el registro: Documentacion/Registro/
+
+
