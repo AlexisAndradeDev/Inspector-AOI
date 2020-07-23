@@ -21,7 +21,18 @@ def use_skip_function(board_image, skip_function):
     else:
         return False, status, results, resulting_images, fails
 
-def inspect_boards(first_board, last_board, results, references, registration_settings, settings, stage, photo=None, photo_ultraviolet=None):
+def inspect_boards(first_board, last_board, results, references, registration_settings, settings, stage, photo=None, photo_ultraviolet=None, photo_number=None):
+    if stage == "registration":
+        # Calcular el número del primer tablero y del último tablero para el registro pre-debugeo
+
+        # en registro, first_board es en realidad la posición dentro del panel
+        # del primer tablero que inspeccionará, y last_board es la posición en el panel del último
+        first_board_position = first_board
+        last_board_position = last_board
+
+        first_board, last_board = operations.get_first_last_boards_in_thread(first_board_position, last_board_position, settings["boards_per_photo"], photo_number)
+
+
     # la función range toma desde first hasta last-1, así que hay que sumarle 1
     for board_number in range(first_board, last_board+1):
         board = results_management.ObjectInspected(board_number=board_number, stage=stage, position_in_photo=operations.get_board_position_in_photo(board_number, settings["boards_per_photo"]))
@@ -163,8 +174,7 @@ def register_photos(first_photo, last_photo, results, total_time, registration_s
     photos_results = operations.StaticVar("")
 
     for photo_number in range(first_photo, last_photo+1):
-        first_board, last_board = operations.get_first_last_boards_for_registration(settings["boards_per_photo"], photo_number)
-
+        first_board, last_board = operations.get_first_last_boards_in_photo(settings["boards_per_photo"], photo_number)
         fail, photo, photo_ultraviolet = operations.read_photos_for_registration(settings, photo_number)
 
         if fail:
@@ -212,15 +222,12 @@ def register_photos(first_photo, last_photo, results, total_time, registration_s
             func=inspect_boards,
             threads_num=settings["threads_num_for_boards"],
             targets_num=settings["boards_per_photo"],
-            func_args=[photos_results, None, registration_settings, settings, "registration", photo, photo_ultraviolet],
-            first_target=first_board, last_target=last_board,
+            func_args=[photos_results, None, registration_settings, settings, "registration", photo, photo_ultraviolet, photo_number],
         )
 
         operations.run_threads(threads)
 
     results.val += photos_results.val
-    print("Terminado")
-    print(results.val)
 
     return results
 
