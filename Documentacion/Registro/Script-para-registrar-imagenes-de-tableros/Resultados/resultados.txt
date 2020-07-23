@@ -15,10 +15,10 @@ Por ejemplo:
 	6;good#
 	7;good#
 	8;good;codigo#
-	9;failed;codigo#
-	10;failed;codigo#
-	11;failed;codigo#
-	12;failed;codigo#
+	9;general_failed;codigo#
+	10;general_failed;codigo#
+	11;general_failed;codigo#
+	12;general_failed;codigo#
 	13;error;codigo#
 	14;error;codigo#
 	$&$0.897123
@@ -32,8 +32,8 @@ Los fallos de registro se encuentran con la estructura:
 	* Aún si se utilizó registro global, el código del fallo de registro se escribirá en cada tablero afectado (en cada tablero del panel).
 
 
-Los fallos (no de registro) se encuentran con la estructura:
-	num_tablero;registration_failed;codigo
+Los fallos generales (no de registro) se encuentran con la estructura:
+	num_tablero;general_failed;codigo
 
 	Se encuentran en: Otros/Codigos/general-fails.txt
 

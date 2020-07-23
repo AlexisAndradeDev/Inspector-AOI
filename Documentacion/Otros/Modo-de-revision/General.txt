@@ -24,8 +24,6 @@ Las funciones de skip exportan imágenes como cualquier otro algoritmo. Las imá
 
 REGISTRO
 
-También se exportarán las imágenes del proceso de registro al activar el modo de revisión.
-
 REGISTRO LOCAL
 
 Las imágenes tienen la estructura:
