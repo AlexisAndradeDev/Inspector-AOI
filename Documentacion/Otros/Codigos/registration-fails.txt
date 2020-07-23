@@ -1,4 +1,4 @@
-Ocurren al fallar el registro, ya sea global o local.
+Ocurren al fallar el registro, ya sea global (global-registration-fails.txt) o local (local-registration-fails.txt).
 
 CONTOURS_NOT_FOUND_FID_{numero_del_fiducial}: No se encontraron contornos en el área de búsqueda del fiducial.
     Ejemplos de nombre completo del código: 

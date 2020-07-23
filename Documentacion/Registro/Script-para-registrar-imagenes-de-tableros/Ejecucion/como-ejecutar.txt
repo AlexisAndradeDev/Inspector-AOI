@@ -25,4 +25,5 @@ Ejemplo:
     5-ultraviolet.bmp
 
 
-Para iniciar el registro, ahora solo hará falta ejecutar el script regallbrds.py y exportará las imágenes resultantes en C:/Dexill/Inspector/Alpha-Premium/x64/pd/
+Para iniciar el registro, ahora solo hará falta ejecutar el script regallbrds.py y exportará las imágenes resultantes en C:/Dexill/
+Inspector/Alpha-Premium/x64/pd/

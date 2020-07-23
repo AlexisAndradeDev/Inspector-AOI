@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
 
     # Datos de configuración
-    [uv_inspection, boards_num, threads_num_for_boards, threads_num_for_references,
+    [uv_inspection, boards_per_photo, threads_num_for_boards, threads_num_for_references,
     check_mode, boards_coordinates, registration_mode, skip_function_data] = settings_data
 
     # Función de inspección para verificar que el tablero N esté en la imagen,
@@ -16,9 +16,10 @@ if __name__ == '__main__':
     skip_function = ins_func.create_algorithm(skip_function_data)
 
     settings = { # diccionario con datos de configuración
-        "images_path":"C:/Dexill/Inspector/Alpha-Premium/x64/inspections/bad_windows_results/",
+        "read_images_path":"C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/",
+        "check_mode_images_path":"C:/Dexill/Inspector/Alpha-Premium/x64/inspections/bad_windows_results/",
         "uv_inspection":uv_inspection,
-        "boards_num":boards_num,
+        "boards_per_photo":boards_per_photo,
         "boards_coordinates":boards_coordinates,
         "threads_num_for_boards":threads_num_for_boards,
         "threads_num_for_references":threads_num_for_references,
@@ -30,31 +31,6 @@ if __name__ == '__main__':
 
     # Datos de registro del tablero (alineación de imagen)
     [registration_method, method_data] = registration_data
-
-    if registration_method == "circular_fiducials":
-        [fiducials_windows, min_diameters, max_diameters, min_circle_perfections,
-        max_circle_perfections, objective_angle, [objective_x, objective_y],
-        fiducials_filters] = method_data
-
-        # Crear 2 objetos con los datos de los fiduciales 1 y 2
-        fiducial_1 = reg_methods_func.Fiducial(
-            1, fiducials_windows[0], min_diameters[0],
-            max_diameters[0], min_circle_perfections[0],
-            max_circle_perfections[0], fiducials_filters[0])
-
-        fiducial_2 = reg_methods_func.Fiducial(
-            2, fiducials_windows[1], min_diameters[1],
-            max_diameters[1], min_circle_perfections[1],
-            max_circle_perfections[1], fiducials_filters[1])
-
-        registration_settings = {
-            "method":"circular_fiducials",
-            "fiducial_1":fiducial_1,
-            "fiducial_2":fiducial_2,
-            "objective_x":objective_x,
-            "objective_y":objective_y,
-            "objective_angle":objective_angle,
-        }
 
     if registration_method == "rotation_points_and_translation_point":
         [rotation_point1_data, rotation_point2_data, translation_point_data,
@@ -106,5 +82,4 @@ if __name__ == '__main__':
     references = ins_func.create_references(references_data)
 
     # Iniciar el bucle de inspección
-    results = "" # crear variable global para resultados
-    ins_loop_func.start_inspection_loop(references, registration_settings, settings, "inspection")
+    ins_loop_func.start_inspection_loop(references, registration_settings, settings, stage="inspection")

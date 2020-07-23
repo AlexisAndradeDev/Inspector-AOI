@@ -1,6 +1,8 @@
 Las imágenes serán guardadas en: 
     /x64/inspections/bad_windows_results/ en caso de que se esté usando para el proceso de «inspección». 
-    /x64/pd/ si es el proceso de «debug».
+    /x64/pd/ si es el proceso de «debug» o «registro».
+
+«Debug» y «registro» utilizan el Modo de revisión total.
 
 
 INSPECCIÓN
@@ -23,8 +25,6 @@ Las funciones de skip exportan imágenes como cualquier otro algoritmo. Las imá
 
 
 REGISTRO
-
-También se exportarán las imágenes del proceso de registro al activar el modo de revisión.
 
 REGISTRO LOCAL
 

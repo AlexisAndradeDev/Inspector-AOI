@@ -11,9 +11,11 @@ if __name__ == '__main__':
     [images_path, uv_inspection, boards_num, threads_num_for_boards, threads_num_for_references] = settings_data
 
     settings = { # diccionario con datos de configuración
-        "images_path":images_path,
+        "read_images_path":images_path,
+        "check_mode_images_path":"C:/Dexill/Inspector/Alpha-Premium/x64/pd/",
         "uv_inspection":uv_inspection,
         "boards_num":boards_num,
+        "boards_per_photo":1,
         "threads_num_for_boards":threads_num_for_boards,
         "threads_num_for_references":threads_num_for_references,
         "check_mode":"check:total",
@@ -24,4 +26,4 @@ if __name__ == '__main__':
     references = ins_func.create_references(references_data)
 
     # Iniciar el bucle de inspección
-    ins_loop_func.start_inspection_loop(references=references, registration_settings="not_register", settings=settings, stage="debug")
+    ins_loop_func.start_inspection_loop(references=references, registration_settings=None, settings=settings, stage="debug")

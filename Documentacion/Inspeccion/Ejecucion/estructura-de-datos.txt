@@ -7,7 +7,7 @@ ESTRUCTURA
 
 [
 'uv_inspection:True/False',
-num_de_tableros, num_de_multihilos (para inspeccionar tableros), num_de_multihilos (para las referencias),
+num_de_tableros_por_foto, num_de_multihilos (para inspeccionar tableros), num_de_multihilos (para las referencias),
 'check:no/yes', [[region del tablero 1], [region del tablero 2], [region del tablero 3]], 'registration_mode:global/local',
 [datos de la función de skip],
 ],
