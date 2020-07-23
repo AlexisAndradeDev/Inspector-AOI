@@ -1,6 +1,6 @@
 [
 
-['uv_inspection:True/False', 'Ruta de las imagenes de los tableros desalineados terminando en /', num_de_fotos, num_de_tableros_por_foto, num_de_multihilos, [[region del tablero 1], [region del tablero 2], [region del tablero 3], [region del tablero 4]] ],
+['uv_inspection:True/False', 'Ruta de las imagenes de los tableros desalineados terminando en /', num_de_fotos, num_de_tableros_por_foto, num_de_multihilos_para_fotos, num_de_multihilos_para_tableros, [[region del tablero 1], [region del tablero 2], [region del tablero 3], [region del tablero 4]] ],
 
 [datos de registro],
 
