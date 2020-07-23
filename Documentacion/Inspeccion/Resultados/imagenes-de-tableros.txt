@@ -1,5 +1,5 @@
 Las imágenes de los tableros alineados al terminar de inspeccionar estarán en la ruta:
-C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/board-num_de_tablero.jpg
+C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/board-num_de_tablero.bmp
 
 board-1.bmp
 board-2.bmp

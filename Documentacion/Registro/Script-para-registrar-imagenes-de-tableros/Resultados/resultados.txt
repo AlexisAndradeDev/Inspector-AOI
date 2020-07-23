@@ -45,3 +45,7 @@ También puede ocurrir un error en un tablero, con la estructura:
 	
 Existe la posibilidad de que ocurran errores que afecten al registro de todos los paneles:
 	Ver: Otros/Codigos/fatal-errors.txt
+
+
+Información sobre los posibles status de tableros:
+	Documentacion/Otros/Status/status-de-tableros.txt
