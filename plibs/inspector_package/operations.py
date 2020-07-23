@@ -32,7 +32,7 @@ def run_threads(threads):
     # Matar los procesos que vayan terminando
     [thread.join() for thread in threads]
 
-def create_threads(func, threads_num, targets_num, func_args):
+def create_threads(func, threads_num, targets_num, func_args, first_target=None, last_target=None):
     """
     Retorna una lista de multihilos.
     Si hay menos targets que número de hilos que se desean crear, se asignará un hilo cada target.
@@ -42,6 +42,14 @@ def create_threads(func, threads_num, targets_num, func_args):
     Targets: Son los elementos que procesará la función, por ejemplo:
         Los tableros son procesados por la función inspect_boards.
         Los puntos de inspección son procesados por la función inspect_inspection_points.
+
+    Si se da un valor a los argumentos arbitrarios first_target y last_target,
+    se pasarán a «func» en lugar de asignarlos automáticamente.
+    Por defecto se asignan a first_target y last_target como el índice del primer target
+    y el índice del último target, respectivamente.
+        Ejemplo:
+            first_target = índice del primer tablero
+            last_target = índice del último tablero
     """
     # Si hay menos targets que número de hilos que se desean crear, se asignará un hilo cada target.
     if targets_num < threads_num:
@@ -55,10 +63,13 @@ def create_threads(func, threads_num, targets_num, func_args):
 
     threads = []
     for thread_targets in targets_per_thread:
-        last_target = thread_targets[1]
-        func_args.insert(0, last_target) # añadir el índice del último target como argumento para func
-        first_target = thread_targets[0]
-        func_args.insert(0, first_target) # añadir el índice del primer target como argumento para func
+        if not first_target and not last_target:
+            last_target = thread_targets[1] # añadir el índice del último target como argumento para func
+            first_target = thread_targets[0] # añadir el índice del primer target como argumento para func
+
+        func_args.insert(0, last_target)
+        func_args.insert(0, first_target)
+
 
         thread = threading.Thread(target=func,args=copy.copy(func_args))
         threads.append(thread)
@@ -69,27 +80,23 @@ def create_threads(func, threads_num, targets_num, func_args):
 
     return threads
 
-def export_global_registration_images(images_to_export, light, images_path):
-    for image_data in images_to_export:
-        image_name, image = image_data
-        imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, "global_registration", light, image_name), image)
 
-def export_local_registration_images(images_to_export, board_name, light, images_path):
-    for image_data in images_to_export:
-        image_name, image = image_data
-        imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, board_name, light, image_name), image)
+def export_registration_images(images, name, light, images_path, check_mode, registration_fail):
+    if check_mode == "check:total" or (check_mode == "check:yes" and registration_fail):
+        for image_name, image in images:
+            imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, name, light, image_name), image)
 
 def export_algorithm_images(images, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):
     # exportar imágenes de un algoritmo
     for image_name, image in images:
         imwrite("{0}{1}-{2}-{3}-{4}-{5}-{6}.bmp".format(images_path, board_number, reference_name, inspection_point_name, algorithm_name, light, image_name), image)
 
-def export_reference_images(images_to_export, board_number, reference_name, images_path):
-    if images_to_export is None:
+def export_reference_images(reference_images, board_number, reference_name, images_path):
+    if reference_images is None:
         return
     # exportar imágenes de una referencia
     # iterar por cada punto de inspección
-    for inspection_point_images in images_to_export:
+    for inspection_point_images in reference_images:
         ip_name, ip_images = inspection_point_images
         # iterar por cada algoritmo
         for algorithm_images in ip_images:
@@ -117,6 +124,49 @@ def write_results(results, stage):
         path = "C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/results.io"
     elif stage == "debug":
         path = "C:/Dexill/Inspector/Alpha-Premium/x64/pd/dbg_results.do"
+    elif stage == "registration":
+        path = "C:/Dexill/Inspector/Alpha-Premium/x64/pd/regallbrds_results.do"
     file = codecs.open(path, "w", encoding='utf8')
     file.write(str(results))
     file.close()
+
+
+def get_first_last_boards_for_registration(boards_per_photo, photo_number):
+    first_board = boards_per_photo * (photo_number-1) + 1
+    last_board = boards_per_photo * (photo_number)
+    return first_board, last_board
+
+def read_photos_for_registration(settings, photo_number):
+    path = "{0}{1}.bmp".format(settings["read_images_path"], photo_number)
+    photo = imread(path)
+
+    if photo is None:
+        fail = "IMG_DOESNT_EXIST" # !GENERAL_FAIL
+        return fail, None, None
+
+    if settings["uv_inspection"] == "uv_inspection:True":
+        path = "{0}{1}-ultraviolet.bmp".format(settings["images_path"], photo_number)
+        photo_ultraviolet = imread(path)
+
+        if photo_ultraviolet is None:
+            fail = "UV_IMG_DOESNT_EXIST" # !GENERAL_FAIL
+            return fail, None, None
+
+    else:
+        photo_ultraviolet = None
+
+    return None, photo, photo_ultraviolet
+
+def get_board_position_in_photo(board_number, boards_per_photo):
+    """
+    Retorna la posición del tablero en el panel.
+    Por ejemplo, si es el tablero 20 y hay 5 tableros por foto, su posición será
+    la 5; si es el tablero 18, será la 3.
+    Si hay 3 tableros por foto y es el 7, su posición será 1.
+    """
+    position = board_number%boards_per_photo
+
+    if position == 0:
+        position = boards_per_photo # última posición
+
+    return position

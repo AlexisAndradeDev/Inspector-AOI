@@ -1,9 +1,11 @@
 class ObjectInspected:
-    def __init__(self,board_number):
+    def __init__(self,board_number,stage,position_in_photo):
         self.number = board_number
         # el í­ndice es igual al número del tablero menos uno, ya que el índice
         # es usado para posiciones en lista, cuya primera posición es 0.
         self.index = board_number-1
+        self.stage = stage # inspection, debug, etc.
+        self.position_in_photo = position_in_photo # número de posición en el panel
         self.status = "good" # iniciar como "bueno" por defecto
         self.code = None # inicializar código de error o de fallo
         self.references_results = ""
@@ -16,6 +18,8 @@ class ObjectInspected:
         return self.number
     def get_index(self):
         return self.index
+    def get_position_in_photo(self):
+        return self.position_in_photo
 
     def set_status(self, status, code=None):
         self.status = str(status)
@@ -39,9 +43,20 @@ class ObjectInspected:
         if status != "not_entered":
             self.set_status(status) # por si no se utilizó el método set_status antes
 
-        self.results = "{0}&{1};{2};{3}%%".format(
-            self.references_results, self.number, self.status, self.code,
-        )
+        if self.stage == "inspection" or self.stage == "debug":
+            self.results = "{0}&{1};{2};{3}%%".format(
+                self.references_results, self.number, self.status, self.code,
+            )
+
+        elif self.stage == "registration":
+            if self.code:
+                self.results = "{0};{1};{2}#".format(
+                    self.number, self.status, self.code,
+                )
+            else:
+                self.results = "{0};{1}#".format(
+                    self.number, self.status,
+                )
     def get_results(self):
         """
         Resultados de las referencias y generales del tablero.
