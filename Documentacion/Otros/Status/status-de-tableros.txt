@@ -13,5 +13,5 @@ general_failed: ocurre por fallos que afectan a todo el tablero como que la imag
 registration_failed: ocurrió un fallo al registrar el tablero.
     codigos de fallos: documentacion/codigos-de-fallos-y-errores/registration-fails.txt
 
-error: ocurre si hay un error que impide la realización de toda la inspección del tablero o de una parte importante de ella.
-    codigos de fallos: documentacion/codigos-de-fallos-y-errores/errors.txt
+general_error: ocurre si hay un error que impide la realización de toda la inspección del tablero.
+    codigos de fallos: documentacion/codigos-de-fallos-y-errores/general-errors.txt
