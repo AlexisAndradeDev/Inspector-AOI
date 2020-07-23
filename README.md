@@ -15,6 +15,7 @@ Las carpetas que contendrá x64 antes de la instalación son (sin contar el debu
             status
             bad_windows_results
         plibs
+        pd
         
 
 
