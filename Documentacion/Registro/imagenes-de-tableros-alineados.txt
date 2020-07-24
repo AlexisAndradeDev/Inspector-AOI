@@ -1,0 +1,29 @@
+Las imágenes de los tableros alineados serán guardadas en: 
+    /x64/inspections/status/ en caso de que se esté usando para el proceso de «inspección». 
+    /x64/pd/ si es el proceso de «registro».
+
+Nombre de las imágenes:
+	num_de_foto-num_de_tablero-luz-registered.bmp
+
+1-1-white-registered.bmp
+1-2-white-registered.bmp
+1-3-white-registered.bmp
+2-1-white-registered.bmp
+2-2-white-registered.bmp
+2-3-white-registered.bmp
+...
+
+
+Las imágenes del tablero alineado con luz ultravioleta estarán en la misma ruta con -ultraviolet:
+
+1-1-ultraviolet-registered.bmp
+1-2-ultraviolet-registered.bmp
+1-3-ultraviolet-registered.bmp
+2-1-ultraviolet-registered.bmp
+2-2-ultraviolet-registered.bmp
+2-3-ultraviolet-registered.bmp
+...
+
+
+La información sobre las imágenes exportadas por los métodos de registro se encuentran en la sección REGISTRO de: Documentación/Otros/Modo-de-revision/General.txt
+	* Siempre se exportarán las imágenes del proceso de registro.

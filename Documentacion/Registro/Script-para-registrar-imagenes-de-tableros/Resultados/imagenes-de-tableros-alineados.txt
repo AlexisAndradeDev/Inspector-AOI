@@ -1,18 +1,1 @@
-Las imágenes de los tableros alineados se encuentran en la ruta C:/Dexill/Inspector/Alpha-Premium/x64/pd/ con el nombre de:
-	board-num_de_tablero.bmp
-
-board-1.bmp
-board-2.bmp
-board-3.bmp
-board-4.bmp
-...
-
-Las imágenes del tablero alineado con luz ultravioleta estarán en la misma ruta con la extensión -ultraviolet:
-
-board-1-ultraviolet.bmp
-board-2-ultraviolet.bmp
-board-3-ultraviolet.bmp
-...
-
-La información sobre las imágenes exportadas por los métodos de registro se encuentran en la sección REGISTRO de: Documentación/Otros/Modo-de-revision/General.txt
-	* Siempre se exportarán las imágenes del proceso de registro.
+Ver: Documentacion/Registro/imagenes-de-tableros-alineados.txt

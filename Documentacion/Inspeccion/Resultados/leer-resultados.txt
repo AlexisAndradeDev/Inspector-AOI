@@ -1,4 +1,4 @@
 En la ruta /x64/inspections/status/ se encontrará results.io con los resultados de los tableros.
 
-La documentación acerca de la estructura de resultados de las referencias se encuentra en:
+La documentación acerca de la estructura de resultados se encuentra en:
     Documentacion/Estructuras-comunes/Referencias/Resultados/
