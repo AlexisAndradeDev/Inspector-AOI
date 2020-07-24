@@ -32,7 +32,7 @@ def run_threads(threads):
     # Matar los procesos que vayan terminando
     [thread.join() for thread in threads]
 
-def create_threads(func, threads_num, targets_num, func_args, first_target=None, last_target=None):
+def create_threads(func, threads_num, targets_num, func_args):
     """
     Retorna una lista de multihilos.
     Si hay menos targets que número de hilos que se desean crear, se asignará un hilo cada target.
@@ -42,14 +42,6 @@ def create_threads(func, threads_num, targets_num, func_args, first_target=None,
     Targets: Son los elementos que procesará la función, por ejemplo:
         Los tableros son procesados por la función inspect_boards.
         Los puntos de inspección son procesados por la función inspect_inspection_points.
-
-    Si se da un valor a los argumentos arbitrarios first_target y last_target,
-    se pasarán a «func» en lugar de asignarlos automáticamente.
-    Por defecto se asignan a first_target y last_target como el índice del primer target
-    y el índice del último target, respectivamente.
-        Ejemplo:
-            first_target = índice del primer tablero
-            last_target = índice del último tablero
     """
     # Si hay menos targets que número de hilos que se desean crear, se asignará un hilo cada target.
     if targets_num < threads_num:
@@ -63,11 +55,9 @@ def create_threads(func, threads_num, targets_num, func_args, first_target=None,
 
     threads = []
     for thread_targets in targets_per_thread:
-        if not first_target and not last_target:
-            last_target = thread_targets[1] # añadir el índice del último target como argumento para func
-            first_target = thread_targets[0] # añadir el índice del primer target como argumento para func
-
+        last_target = thread_targets[1] # añadir el índice del último target como argumento para func
         func_args.insert(0, last_target)
+        first_target = thread_targets[0] # añadir el índice del primer target como argumento para func
         func_args.insert(0, first_target)
 
 
@@ -81,17 +71,30 @@ def create_threads(func, threads_num, targets_num, func_args, first_target=None,
     return threads
 
 
-def export_registration_images(images, name, light, images_path, check_mode, registration_fail):
+def export_aligned_board_image(image, image_uv, stage, photo_number, position_in_photo):
+    # escribir imagen del tablero alineado con luz blanca
+    if stage == "inspection":
+        dir = "C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/"
+    elif stage == "registration":
+        dir = "C:/Dexill/Inspector/Alpha-Premium/x64/pd/"
+
+    imwrite(dir+"{0}-{1}-white-registered.bmp".format(photo_number, position_in_photo), image)
+
+    if image_uv is not None:
+        # escribir imagen del tablero alineado con luz ultravioleta
+        imwrite(dir+"{0}-{1}-ultraviolet-registered.bmp".format(photo_number, position_in_photo), image_uv)
+
+def export_registration_images(images, photo_number, name, light, images_path, check_mode, registration_fail):
     if check_mode == "check:total" or (check_mode == "check:yes" and registration_fail):
         for image_name, image in images:
-            imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, name, light, image_name), image)
+            imwrite("{0}{1}-{2}-{3}-{4}.bmp".format(images_path, photo_number, name, light, image_name), image)
 
-def export_algorithm_images(images, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):
+def export_algorithm_images(images, photo_number, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):
     # exportar imágenes de un algoritmo
     for image_name, image in images:
-        imwrite("{0}{1}-{2}-{3}-{4}-{5}-{6}.bmp".format(images_path, board_number, reference_name, inspection_point_name, algorithm_name, light, image_name), image)
+        imwrite("{0}{1}-{2}-{3}-{4}-{5}-{6}-{7}.bmp".format(images_path, photo_number, board_number, reference_name, inspection_point_name, algorithm_name, light, image_name), image)
 
-def export_reference_images(reference_images, board_number, reference_name, images_path):
+def export_reference_images(reference_images, photo_number, board_number, reference_name, images_path):
     if reference_images is None:
         return
     # exportar imágenes de una referencia
@@ -101,7 +104,7 @@ def export_reference_images(reference_images, board_number, reference_name, imag
         # iterar por cada algoritmo
         for algorithm_images in ip_images:
             algorithm_name, algorithm_light, algorithm_images = algorithm_images
-            export_algorithm_images(algorithm_images, board_number, reference_name, ip_name, algorithm_name, algorithm_light, images_path)
+            export_algorithm_images(algorithm_images, photo_number, board_number, reference_name, ip_name, algorithm_name, algorithm_light, images_path)
 
 
 def add_to_images_name(images, str_):
@@ -131,10 +134,20 @@ def write_results(results, stage):
     file.close()
 
 
-def get_first_last_boards_for_registration(boards_per_photo, photo_number):
+def get_first_last_boards_in_photo(boards_per_photo, photo_number):
     first_board = boards_per_photo * (photo_number-1) + 1
     last_board = boards_per_photo * (photo_number)
     return first_board, last_board
+
+def get_first_last_boards_in_thread(first_board_position, last_board_position, boards_per_photo, photo_number):
+    first_board_in_photo_number = boards_per_photo * (photo_number-1) + 1
+    last_board_in_photo_number = boards_per_photo * (photo_number)
+
+    first_board = first_board_in_photo_number + (first_board_position - 1)
+    last_board = last_board_in_photo_number - (boards_per_photo - last_board_position)
+
+    return first_board, last_board
+
 
 def read_photos_for_registration(settings, photo_number):
     path = "{0}{1}.bmp".format(settings["read_images_path"], photo_number)
@@ -145,7 +158,7 @@ def read_photos_for_registration(settings, photo_number):
         return fail, None, None
 
     if settings["uv_inspection"] == "uv_inspection:True":
-        path = "{0}{1}-ultraviolet.bmp".format(settings["images_path"], photo_number)
+        path = "{0}{1}-ultraviolet.bmp".format(settings["read_images_path"], photo_number)
         photo_ultraviolet = imread(path)
 
         if photo_ultraviolet is None:

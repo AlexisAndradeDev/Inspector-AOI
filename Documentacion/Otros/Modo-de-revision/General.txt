@@ -8,42 +8,51 @@ Las imágenes serán guardadas en:
 INSPECCIÓN
 
 El formato del nombre de las imágenes es: 
-    num_de_tablero-referencia-punto_de_inspeccion-algoritmo-luz_utilizada-nombre_de_la_imagen.bmp
+    num_foto-num_de_tablero-referencia-punto_de_inspeccion-algoritmo-luz_utilizada-nombre_de_la_imagen.bmp
 
 Ejemplo:
-    1-[metal_film_resistor,r6]-cuerpo_de_resistencia-presencia-white-filtered.bmp
-    1-[metal_film_resistor,r6]-cuerpo_de_resistencia-presencia-white-matches.bmp
-    2-skip_function-skip_function-skip-white-color_converted.bmp
+    1-1-[metal_film_resistor,r6]-cuerpo_de_resistencia-presencia-white-nombre_de_la_imagen.bmp
+    1-2-[metal_film_resistor,r3]-cuerpo_de_resistencia-soldadura-white-nombre_de_la_imagen.bmp
 
 Los nombres de las imágenes (nombre_de_la_imagen) que exporta cada función de inspección se encuentran en:
-    Otros/Funciones-de-inspeccion/
+    Documentacion/Otros/Funciones-de-inspeccion/
 
+
+
+FUNCIÓN SKIP
 
 Las funciones de skip exportan imágenes como cualquier otro algoritmo. Las imágenes de la función skip se escriben como si fuera un algoritmo 'skip', de un punto de inspección llamado 'skip_function', que a su vez está dentro de una referencia llamada 'skip_function':
-    ...skip_function-skip_function-skip...
+    referencia: skip_function
+    punto_de_inspeccion: skip_function
+    algoritmo: skip
 
 
 
 REGISTRO
 
+Nota: Este apartado se refiere a las imágenes exportadas por los métodos de registro, no a las imágenes completas de los tableros registrados. 
+    Para información sobre las imágenes de los tableros registrados, ver: Documentacion/Registro/imagenes-de-tableros-alineados.txt
+
+
 REGISTRO LOCAL
 
 Las imágenes tienen la estructura:
-    num_de_tablero-luz-nombre_de_imagen.bmp
+    num_foto-num_de_tablero-luz-nombre_de_imagen.bmp
 
 Por ejemplo:
-    1-white-nombre_de_imagen.bmp
-    5-white-nombre_de_imagen.bmp
-    8-white-nombre_de_imagen.bmp
-
+    1-1-white-nombre_de_imagen.bmp
+    1-2-white-nombre_de_imagen.bmp
+    2-1-white-nombre_de_imagen.bmp
+    2-2-white-nombre_de_imagen.bmp
 
 
 REGISTRO GLOBAL
     En lugar de num_de_tablero, se escribirá solamente « global_registration ».
-    global_registration-luz-nombre_de_imagen.bmp
+    num_foto-global_registration-luz-nombre_de_imagen.bmp
 
 Por ejemplo:
-    global_registration-white-nombre_de_imagen.bmp
+    1-global_registration-white-nombre_de_imagen.bmp
+    2-global_registration-white-nombre_de_imagen.bmp
 
 
 Los nombre_de_imagen se encuentran en: Documentacion/Registro/Metodos-de-registro/

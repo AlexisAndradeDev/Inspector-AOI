@@ -1,3 +1,8 @@
+Explicación: 
+Encuentra dos puntos de rotación y calcula el ángulo entre ellos. Luego, rota la imagen para que el ángulo entre ellos sea el asignado por el usuario (angulo_deseado).
+Este proceso de encontrar los puntos de rotación y rotar la imagen se hace N veces, siendo N el número de iteraciones asignado por el usuario (número_de_iteraciones_de_rotación); el valor recomendado es 1, aunque en algunos casos, hacer dos o más iteraciones podría ser útil.
+
+
 El nombre del método es "rotation_points_and_translation_point"
 
 [
@@ -8,7 +13,7 @@ El nombre del método es "rotation_points_and_translation_point"
 [datos_del_punto_de_rotación2],
 [datos_del_punto_de_traslación],
 
-angulo deseado entre los 2 puntos de rotación,
+angulo_deseado,
 
 [coordenadas a las que se debe trasladar el punto de traslación despues de rotar],
 

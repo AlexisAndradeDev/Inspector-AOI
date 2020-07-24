@@ -2,28 +2,32 @@ Para ejecutar el script dbg.py, antes debe existir un archivo dbg_dt.di en la ru
 
 Este archivo debe contener los datos de debugeo. La documentación del archivo dbg_dt.di se encuentra en este mismo directorio, en el archivo estructura-de-datos.txt
 
-En el archivo dbg_dt.di se escribe la dirección de la carpeta que contiene las imágenes de los tableros alineados con el script regallbrds.py
+
+En el archivo dbg_dt.di se escribe la dirección de la carpeta que contiene las imágenes de los tableros alineados (generalmente, con el script regallbrds.py).
 
 En la dirección se deben encontrar las imágenes con el formato de nombre: 
-	número_de_tablero-luz-board_aligned.bmp
+	num_de_foto-num_de_tablero-luz-registered.bmp
 
-    * Las imágenes de los tableros a debugear deben estar alineadas.
+
 
 Ejemplo:
-	1-white-board_aligned.bmp
-	2-white-board_aligned.bmp
-	3-white-board_aligned.bmp
-	4-white-board_aligned.bmp
-	5-white-board_aligned.bmp
+    1-1-white-registered.bmp
+    1-2-white-registered.bmp
+    1-3-white-registered.bmp
+    2-1-white-registered.bmp
+    2-2-white-registered.bmp
+    2-3-white-registered.bmp
 	
 Si se usa luz ultravioleta, las imágenes llevan el nombre de:
-    número_de_tablero-ultraviolet-board_aligned.bmp
+    num_de_foto-num_de_tablero-ultraviolet-registered.bmp
     
 Ejemplo:
-    1-ultraviolet-board_aligned.bmp
-    2-ultraviolet-board_aligned.bmp
-    3-ultraviolet-board_aligned.bmp
-    4-ultraviolet-board_aligned.bmp
-    5-ultraviolet-board_aligned.bmp
+    1-1-ultraviolet-registered.bmp
+    1-2-ultraviolet-registered.bmp
+    1-3-ultraviolet-registered.bmp
+    2-1-ultraviolet-registered.bmp
+    2-2-ultraviolet-registered.bmp
+    2-3-ultraviolet-registered.bmp
 
-Para iniciar el debugeo, ahora sólo hará falta ejecutar el script regallbrds.py y exportará las imágenes resultantes.
+
+Para iniciar el debugeo, ahora sólo hará falta ejecutar el script dbg.py.

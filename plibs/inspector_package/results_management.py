@@ -1,9 +1,10 @@
 class ObjectInspected:
-    def __init__(self,board_number,stage,position_in_photo):
+    def __init__(self,board_number,photo_number,stage,position_in_photo):
         self.number = board_number
         # el í­ndice es igual al número del tablero menos uno, ya que el índice
         # es usado para posiciones en lista, cuya primera posición es 0.
         self.index = board_number-1
+        self.photo_number = photo_number
         self.stage = stage # inspection, debug, etc.
         self.position_in_photo = position_in_photo # número de posición en el panel
         self.status = "good" # iniciar como "bueno" por defecto
@@ -18,6 +19,8 @@ class ObjectInspected:
         return self.number
     def get_index(self):
         return self.index
+    def get_photo_number(self):
+        return self.photo_number
     def get_position_in_photo(self):
         return self.position_in_photo
 
@@ -39,8 +42,8 @@ class ObjectInspected:
     def add_references_results(self, references_results):
         self.references_results += references_results
 
-    def set_results(self, status="not_entered"):
-        if status != "not_entered":
+    def process_results(self, status=None):
+        if status:
             self.set_status(status) # por si no se utilizó el método set_status antes
 
         if self.stage == "inspection" or self.stage == "debug":
@@ -50,12 +53,12 @@ class ObjectInspected:
 
         elif self.stage == "registration":
             if self.code:
-                self.results = "{0};{1};{2}#".format(
-                    self.number, self.status, self.code,
+                self.results = "{0};{1};{2};{3}#".format(
+                    self.photo_number, self.position_in_photo, self.status, self.code,
                 )
             else:
-                self.results = "{0};{1}#".format(
-                    self.number, self.status,
+                self.results = "{0};{1};{2}#".format(
+                    self.photo_number, self.position_in_photo, self.status,
                 )
     def get_results(self):
         """

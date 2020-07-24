@@ -49,9 +49,9 @@ def resize(img, scale):
     return scaled
 
 def apply_transformations(image, rotation, translation):
-    image, _ = cv_func.rotate(image, rotation)
+    image, _ = rotate(image, rotation)
     [x_translation, y_translation] = translation
-    image = cv_func.translate(image, x_translation, y_translation)
+    image = translate(image, x_translation, y_translation)
     return image
 
 def rotate(image, angleInDegrees):

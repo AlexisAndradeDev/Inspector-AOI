@@ -12,3 +12,5 @@ LOCAL
 Registra cada tablero individualmente aplicándole el método de registro a cada uno. Necesita que el método de registro pueda llevarse a cabo en cada tablero.
     Fallos de registro local: Documentacion/Otros/Codigos/local-registration-fails.txt
 
+
+El nombre de las imágenes exportadas por el modo de revisión cambia según el modo de registro: Documentacion/Otros/Modo-de-revision/General.txt (sección «REGISTRO LOCAL» y «REGISTRO GLOBAL»)

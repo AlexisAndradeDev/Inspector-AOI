@@ -464,7 +464,7 @@ def inspect_reference(image, board, reference, check_mode, images_path , image_u
         inspection_points_results["status"], reference_results["status"]
     )
 
-    operations.export_reference_images(inspection_points_results["images"], board.get_number(), reference["name"], images_path)
+    operations.export_reference_images(inspection_points_results["images"], board.get_photo_number(), board.get_number(), reference["name"], images_path)
 
 
     reference_algorithm_results = { "status":"", "results":[], "fails":[] }

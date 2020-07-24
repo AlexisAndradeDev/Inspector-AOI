@@ -1,51 +1,44 @@
 Los resultados de los tableros se encuentran en C:/Dexill/Inspector/Alpha-Premium/x64/pd/regallbrds_results.do
 
 Se escriben con la estructura:
-	num_tablero;status#
+	num_foto;num_tablero_en_panel;status#
 
 Al final de los resultados, se encontrará el tiempo que tardó en ejecución con la estructura:
 	$&$tiempo
 
 Por ejemplo:
-	1;good#
-	2;good#
-	3;registration_failed;codigo#
-	4;good#
-	5;registration_failed;codigo#
-	6;good#
-	7;good#
-	8;good;codigo#
-	9;general_failed;codigo#
-	10;general_failed;codigo#
-	11;general_failed;codigo#
-	12;general_failed;codigo#
-	13;error;codigo#
-	14;error;codigo#
+	1;1;good#
+	1;2;good#
+	2;1;registration_failed;codigo#
+	2;2;good#
+	3;1;registration_failed;codigo#
+	3;2;good#
+	4;1;good#
+	4;2;good#
+	5;1;general_failed;codigo#
+	5;2;general_failed;codigo#
+	6;1;good#
+	6;2;good#
+	7;1;error;codigo#
+	7;2;error;codigo#
 	$&$0.897123
 
 
+Cualquier fallo o error se encuentra con la estructura:
+	num_foto;num_tablero;status;codigo
+
+	Todos los posibles status se encuentran en: Documentacion/Otros/Status/status-de-tableros.txt
+	Los códigos de fallos y errores se encuentran en Otros/Codigos/
+
+
 Los fallos de registro se encuentran con la estructura:
-	num_tablero;registration_failed;codigo
+	num_foto;num_tablero;registration_failed;codigo
 
 	Los códigos de fallos de registro se encuentran en Otros/Codigos/registration-fails.txt
 
-	* Aún si se utilizó registro global, el código del fallo de registro se escribirá en cada tablero afectado (en cada tablero del panel).
+	* Aún si se utilizó registro global, el código del fallo de registro se escribirá en cada tablero afectado (en cada tablero del panel) como si fuera un fallo de registro local.
 
 
-Los fallos generales (no de registro) se encuentran con la estructura:
-	num_tablero;general_failed;codigo
 
-	Se encuentran en: Otros/Codigos/general-fails.txt
-
-
-También puede ocurrir un error en un tablero, con la estructura:
-	num_tablero;error;codigo
-
-	Los códigos de errores se encuentran en Otros/Codigos/general-errors.txt
-	
 Existe la posibilidad de que ocurran errores que afecten al registro de todos los paneles:
 	Ver: Otros/Codigos/fatal-errors.txt
-
-
-Información sobre los posibles status de tableros:
-	Documentacion/Otros/Status/status-de-tableros.txt
