@@ -1,5 +1,4 @@
-Si la función de skip no pasa, se vuelve a intentar con la imagen del tablero rotada a 180°.
-Si no pasa a 180° tampoco, el tablero se omite y no se inspecciona.
+Si la función de skip no pasa, el tablero se omite y no se inspecciona.
 
 Los datos de la función skip son exactamente los mismos que los de un algoritmo cualquiera.
 
