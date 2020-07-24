@@ -59,7 +59,7 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
             # exportar imágenes de la función de skip si el modo de revisión es total o si no pasó el skip
             if settings["check_mode"] == "check:total" or (settings["check_mode"] == "check:yes" and skip):
                 operations.export_algorithm_images(
-                    images=skip_images, board_number=board.get_number(),
+                    images=skip_images, photo_number=board.get_photo_number(), board_number=board.get_number(),
                     reference_name="skip_function", inspection_point_name="skip_function",
                     algorithm_name=settings["skip_function"]["name"],
                     light=settings["skip_function"]["light"],

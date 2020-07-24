@@ -85,7 +85,7 @@ def register_image(image, image_ultraviolet, registration_settings):
             registration_settings["objective_x"], registration_settings["objective_y"]
         )
 
-    if image_ultraviolet is not None:
+    if image_ultraviolet is not None and not fail:
         image_ultraviolet = image_ultraviolet.copy()
         image_ultraviolet = cv_func.apply_transformations(image_ultraviolet, rotation, translation)
 

@@ -82,19 +82,19 @@ def export_aligned_board_image(image, image_uv, stage, photo_number, position_in
 
     if image_uv is not None:
         # escribir imagen del tablero alineado con luz ultravioleta
-        imwrite(dir+"{0}-{1}-ultraviolet-registered.bmp".format(photo_number, position_in_photo), aligned_board_image_ultraviolet)
+        imwrite(dir+"{0}-{1}-ultraviolet-registered.bmp".format(photo_number, position_in_photo), image_uv)
 
 def export_registration_images(images, photo_number, name, light, images_path, check_mode, registration_fail):
     if check_mode == "check:total" or (check_mode == "check:yes" and registration_fail):
         for image_name, image in images:
             imwrite("{0}{1}-{2}-{3}-{4}.bmp".format(images_path, photo_number, name, light, image_name), image)
 
-def export_algorithm_images(images, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):
+def export_algorithm_images(images, photo_number, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):
     # exportar imágenes de un algoritmo
     for image_name, image in images:
-        imwrite("{0}{1}-{2}-{3}-{4}-{5}-{6}.bmp".format(images_path, board_number, reference_name, inspection_point_name, algorithm_name, light, image_name), image)
+        imwrite("{0}{1}-{2}-{3}-{4}-{5}-{6}-{7}.bmp".format(images_path, photo_number, board_number, reference_name, inspection_point_name, algorithm_name, light, image_name), image)
 
-def export_reference_images(reference_images, board_number, reference_name, images_path):
+def export_reference_images(reference_images, photo_number, board_number, reference_name, images_path):
     if reference_images is None:
         return
     # exportar imágenes de una referencia
@@ -104,7 +104,7 @@ def export_reference_images(reference_images, board_number, reference_name, imag
         # iterar por cada algoritmo
         for algorithm_images in ip_images:
             algorithm_name, algorithm_light, algorithm_images = algorithm_images
-            export_algorithm_images(algorithm_images, board_number, reference_name, ip_name, algorithm_name, algorithm_light, images_path)
+            export_algorithm_images(algorithm_images, photo_number, board_number, reference_name, ip_name, algorithm_name, algorithm_light, images_path)
 
 
 def add_to_images_name(images, str_):
@@ -158,7 +158,7 @@ def read_photos_for_registration(settings, photo_number):
         return fail, None, None
 
     if settings["uv_inspection"] == "uv_inspection:True":
-        path = "{0}{1}-ultraviolet.bmp".format(settings["images_path"], photo_number)
+        path = "{0}{1}-ultraviolet.bmp".format(settings["read_images_path"], photo_number)
         photo_ultraviolet = imread(path)
 
         if photo_ultraviolet is None:
