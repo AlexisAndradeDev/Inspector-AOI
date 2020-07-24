@@ -71,10 +71,23 @@ def create_threads(func, threads_num, targets_num, func_args):
     return threads
 
 
-def export_registration_images(images, name, light, images_path, check_mode, registration_fail):
+def export_aligned_board_image(image, image_uv, stage, photo_number, position_in_photo):
+    # escribir imagen del tablero alineado con luz blanca
+    if stage == "inspection":
+        dir = "C:/Dexill/Inspector/Alpha-Premium/x64/inspections/status/"
+    elif stage == "registration":
+        dir = "C:/Dexill/Inspector/Alpha-Premium/x64/pd/"
+
+    imwrite(dir+"{0}-{1}-white-registered.bmp".format(photo_number, position_in_photo), image)
+
+    if image_uv is not None:
+        # escribir imagen del tablero alineado con luz ultravioleta
+        imwrite(dir+"{0}-{1}-ultraviolet-registered.bmp".format(photo_number, position_in_photo), aligned_board_image_ultraviolet)
+
+def export_registration_images(images, photo_number, name, light, images_path, check_mode, registration_fail):
     if check_mode == "check:total" or (check_mode == "check:yes" and registration_fail):
         for image_name, image in images:
-            imwrite("{0}{1}-{2}-{3}.bmp".format(images_path, name, light, image_name), image)
+            imwrite("{0}{1}-{2}-{3}-{4}.bmp".format(images_path, photo_number, name, light, image_name), image)
 
 def export_algorithm_images(images, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):
     # exportar imágenes de un algoritmo
