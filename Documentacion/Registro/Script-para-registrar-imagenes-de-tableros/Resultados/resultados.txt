@@ -24,28 +24,21 @@ Por ejemplo:
 	$&$0.897123
 
 
+Cualquier fallo o error se encuentra con la estructura:
+	num_foto;num_tablero;status;codigo
+
+	Todos los posibles status se encuentran en: Documentacion/Otros/Status/status-de-tableros.txt
+	Los códigos de fallos y errores se encuentran en Otros/Codigos/
+
+
 Los fallos de registro se encuentran con la estructura:
 	num_foto;num_tablero;registration_failed;codigo
 
 	Los códigos de fallos de registro se encuentran en Otros/Codigos/registration-fails.txt
 
-	* Aún si se utilizó registro global, el código del fallo de registro se escribirá en cada tablero afectado (en cada tablero del panel).
+	* Aún si se utilizó registro global, el código del fallo de registro se escribirá en cada tablero afectado (en cada tablero del panel) como si fuera un fallo de registro local.
 
 
-Los fallos generales (no de registro) se encuentran con la estructura:
-	num_foto;num_tablero;general_failed;codigo
 
-	Se encuentran en: Otros/Codigos/general-fails.txt
-
-
-También puede ocurrir un error en un tablero, con la estructura:
-	num_foto;num_tablero;error;codigo
-
-	Los códigos de errores se encuentran en Otros/Codigos/general-errors.txt
-	
 Existe la posibilidad de que ocurran errores que afecten al registro de todos los paneles:
 	Ver: Otros/Codigos/fatal-errors.txt
-
-
-Información sobre los posibles status de tableros:
-	Documentacion/Otros/Status/status-de-tableros.txt
