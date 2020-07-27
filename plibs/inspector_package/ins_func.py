@@ -328,6 +328,12 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
             algorithm_results = {
                 "results":[], "string":"", "status":"", "location":{}, "images":[], "fails":[]
             }
+            
+            # si el algoritmo ya fue inspeccionado (está en los resultados y su status no es "not_executed"),
+            # no volver a inspeccionarlo
+            if algorithm["name"] in algorithms_results["algorithms_status"]:
+                continue
+
 
             # verificar si se ejecutará o no el algoritmo, dependiendo de la cadena
             if (algorithm["chained_to"] != None and
@@ -464,7 +470,7 @@ def inspect_reference(image, board, reference, check_mode, images_path , image_u
         inspection_points_results["status"], reference_results["status"]
     )
 
-    operations.export_reference_images(inspection_points_results["images"], board.get_photo_number(), board.get_number(), reference["name"], images_path)
+    operations.export_reference_images(inspection_points_results["images"], board.get_number(), reference["name"], images_path)
 
 
     reference_algorithm_results = { "status":"", "results":[], "fails":[] }
