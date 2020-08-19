@@ -328,10 +328,10 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
             algorithm_results = {
                 "results":[], "string":"", "status":"", "location":{}, "images":[], "fails":[]
             }
-            
+
             # si el algoritmo ya fue inspeccionado (está en los resultados y su status no es "not_executed"),
             # no volver a inspeccionarlo
-            if algorithm["name"] in algorithms_results["algorithms_status"]:
+            if algorithm["name"] in algorithms_results["algorithms_status"] and algorithms_results.get(algorithm["name"]) != "not_executed":
                 continue
 
 
