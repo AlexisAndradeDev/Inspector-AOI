@@ -20,7 +20,7 @@ def crop_image(image, coordinates, take_as_origin=[0,0]):
     oX, oY = take_as_origin
     [x1,y1,x2,y2] = coordinates
     x1,y1,x2,y2 = x1+oX, y1+oY, x2+oX, y2+oY
-    return image[y1:y2,x1:x2].copy()
+    return image[y1:y2+1,x1:x2+1].copy()
 
 def open_camera(camera_number, camera_dim_width, camera_dim_height, captures_to_adapt):
     camera = cv2.VideoCapture(camera_number)
@@ -227,6 +227,9 @@ def get_valid_contours_filters(filters):
     valid_filters = {} # dict
     invalid_filters = [] # filtros no existentes
 
+    if not filters:
+        return valid_filters, invalid_filters
+
     for filter, parameters in filters.items():
         if filter in CONTOURS_FILTERS:
             valid_filters[filter] = parameters
@@ -242,10 +245,11 @@ def contour_fulfills_filters(cnt, binary, contours_filters):
     Puede filtrarse según los siguientes parámetros (contours_filters):
     1. Área mínima del contorno.
     2. Área máxima del contorno
-    3. Polígono: selecciona los contornos cuya forma sea parecida al polígono señalado o cuyo número de vértices coincida con el requerido.
+    3. Polígono: selecciona los contornos cuya forma sea parecida al polígono señalado por su número de vértices.
     4. Círculo: circularidad mín del contorno.
     5. Círculo: mín diámetro.
     6. Círculo: máx diámetro.
+    7. Vértices: número de vértices
     """
     # si no pasa alguno de los filtros, tomará valor False y continuará con el siguiente contorno
     cnt_is_valid = True
@@ -397,10 +401,10 @@ def create_corner_parameters(name, coordinates, lower_color, upper_color,
     return corner_parameters
 
 def find_corner(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
-    images_to_return = [] # imágenes que se retornarán
+    images_to_return = {} # imágenes que se retornarán
 
     corner_contour, binary = find_filtered_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
-    images_to_return.append(["binary",binary])
+    images_to_return["binary"] = binary
 
     if corner_contour is None:
         return None, images_to_return
@@ -410,7 +414,7 @@ def find_corner(img, color_scale, lower_color, upper_color, invert_binary, conto
 
     # imagen de la esquina encontrada
     found = draw_found_circle(img, x, y)
-    images_to_return.append(["found", found])
+    images_to_return["found"] = found
 
     return [x,y], images_to_return
 
@@ -430,10 +434,10 @@ def create_centroid_parameters(name, coordinates, lower_color, upper_color,
     return centroid_parameters
 
 def find_centroid(img, color_scale, lower_color, upper_color, invert_binary, contours_filters):
-    images_to_return = [] # imágenes que se retornarán
+    images_to_return = {} # imágenes que se retornarán
 
     centroid_contour, binary = find_filtered_contour(img, color_scale, lower_color, upper_color, invert_binary, contours_filters)
-    images_to_return.append(["binary", binary])
+    images_to_return["binary"] = binary
 
     if centroid_contour is None:
         return None, images_to_return
@@ -449,7 +453,7 @@ def find_centroid(img, color_scale, lower_color, upper_color, invert_binary, con
 
     # imagen del centroide encontrado
     found = draw_found_circle(img, x, y)
-    images_to_return.append(["found", found])
+    images_to_return["found"] = found
 
     return [x,y], images_to_return
 
@@ -489,13 +493,13 @@ def create_reference_point(rp_type, name, coordinates, color_scale, lower_color,
 
 def find_reference_point(img_, reference_point):
     img = img_.copy() # no corromper la imagen original
-    images_to_return = []
+    images_to_return = {}
 
 
     # Aplicar filtros secundarios a la imagen
     img = apply_filters(img, reference_point["filters"])
 
-    images_to_return.append(["filtered", img])
+    images_to_return["filtered"] = img
 
     if reference_point["type"] == "centroid":
         coordinates, resulting_images = find_centroid(img, reference_point["color_scale"],
@@ -507,7 +511,7 @@ def find_reference_point(img_, reference_point):
             reference_point["lower_color"], reference_point["upper_color"],
             reference_point["invert_binary"], reference_point["contours_filters"])
 
-    images_to_return += resulting_images
+    images_to_return.update(resulting_images)
 
     return coordinates, images_to_return
 
@@ -518,15 +522,15 @@ def find_reference_point_in_board(img, reference_point):
     [x1,y1,x2,y2] = reference_point["coordinates"]
     rp_img = img[y1:y2, x1:x2].copy()
 
-    coordinates, images_to_export = find_reference_point(rp_img, reference_point)
+    coordinates, images_to_return = find_reference_point(rp_img, reference_point)
     if not coordinates:
-        return None, images_to_export
+        return None, images_to_return
 
     # Coordenadas reales en el tablero
     [x,y] = coordinates
     coordinates = [x+x1,y+y1]
 
-    return coordinates, images_to_export
+    return coordinates, images_to_return
 
 
 def choose_blobs_by_min_max_area(binary, contours, min_blob_size, max_blob_size):

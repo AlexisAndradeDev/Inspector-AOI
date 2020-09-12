@@ -535,9 +535,9 @@ def inspection_function_blob(inspection_image, algorithm):
     location = "not_available"
     status = ""
     fails = []
-    images_to_export = []
+    images_to_return = {}
 
-    images_to_export += [["filtered", inspection_image]]
+    images_to_return["filtered"] = inspection_image
 
     blob_area, biggest_blob, binary_image = cv_func.calculate_blob_area(
         inspection_image,
@@ -547,7 +547,7 @@ def inspection_function_blob(inspection_image, algorithm):
         algorithm["parameters"]["invert_binary"],
     )
 
-    images_to_export.append(["binary", binary_image])
+    images_to_return["binary"] = binary_image
 
     # Evaluar el punto de inspección
     blob_is_correct = evaluate_blob_results(
@@ -563,7 +563,7 @@ def inspection_function_blob(inspection_image, algorithm):
         status = "bad"
 
     window_results = [blob_area, biggest_blob]
-    return fails, location, window_results, status, images_to_export
+    return fails, location, window_results, status, images_to_return
 
 def evaluate_blob_results(blob_area, biggest_blob, min_area, max_area, max_allowed_blob_size):
     # evaluar con máximo tamaño de blob permitido
@@ -618,9 +618,9 @@ def inspection_function_template_matching(inspection_image, algorithm):
     location = "not_available"
     status = ""
     fails = []
-    images_to_export = []
+    images_to_return = {}
 
-    images_to_export += [["filtered", inspection_image]]
+    images_to_return["filtered"] = inspection_image
 
     # listas con los resultados de cada template
     best_match_per_template = [] # mejor coincidencia de cada una
@@ -655,7 +655,7 @@ def inspection_function_template_matching(inspection_image, algorithm):
                 algorithm["parameters"]["color_range"],
                 algorithm["parameters"]["invert_binary"],
             )
-            images_to_export += [["color_converted", color_converted_img]]
+            images_to_return["color_converted"] = color_converted_img
         except excepts.MT_ERROR:
             best_match_per_template.append(None)
             matches_number_per_template.append(None)
@@ -710,9 +710,9 @@ def inspection_function_template_matching(inspection_image, algorithm):
                          (x+template_width, y+template_height),
                          (0, 255, 0), 2)
 
-        images_to_export += [["matches", matches_image]]
+        images_to_return["matches"] = matches_image
 
-    return fails, location, window_results, status, images_to_export
+    return fails, location, window_results, status, images_to_return
 
 
 def inspection_function_unique_transition(inspection_image, algorithm):
@@ -726,9 +726,9 @@ def inspection_function_unique_transition(inspection_image, algorithm):
     location = "not_available"
     status = "good" # inicializar como good
     fails = []
-    images_to_export = []
+    images_to_return = {}
 
-    images_to_export += [["filtered", inspection_image]]
+    images_to_return["filtered"] = inspection_image
 
 
     # encontrar transición
@@ -742,7 +742,7 @@ def inspection_function_unique_transition(inspection_image, algorithm):
     if not coordinate:
         status = "bad"
         window_results = [None, None]
-        return fails, window_results, status, images_to_export
+        return fails, window_results, status, images_to_return
 
     axis = cv_func.get_transition_axis(algorithm["parameters"]["searching_orientation"])
 
@@ -754,10 +754,10 @@ def inspection_function_unique_transition(inspection_image, algorithm):
 
     # dibujar transición
     transition_drawn = cv_func.draw_transition(inspection_image, coordinate, axis)
-    images_to_export += [["transition_drawn", transition_drawn]]
+    images_to_return["transition_drawn"] = transition_drawn
 
     window_results = [coordinate, brightness_difference]
-    return fails, location, window_results, status, images_to_export
+    return fails, location, window_results, status, images_to_return
 
 
 def inspection_function_transitions(inspection_image, algorithm):
@@ -771,9 +771,9 @@ def inspection_function_transitions(inspection_image, algorithm):
     location = "not_available"
     status = "good" # inicializar como good
     fails = []
-    images_to_export = []
+    images_to_return = {}
 
-    images_to_export += [["filtered", inspection_image]]
+    images_to_return["filtered"] = inspection_image
 
 
     # encontrar transiciones
@@ -784,10 +784,10 @@ def inspection_function_transitions(inspection_image, algorithm):
     transitions_drawn_image = cv_func.draw_transitions(inspection_image, transitions)
 
     if transitions_number != algorithm["parameters"]["required_transitions_number"]:
-        images_to_export += [["transitions_drawn", transitions_drawn_image]]
+        images_to_return["transitions_drawn"] = transitions_drawn_image
         status = "bad"
         window_results = [transitions_number, None]
-        return fails, location, window_results, status, images_to_export
+        return fails, location, window_results, status, images_to_return
 
 
     # encontrar la localización del algoritmo
@@ -798,13 +798,13 @@ def inspection_function_transitions(inspection_image, algorithm):
         status = "failed"
         fails.append(fail)
         window_results = [transitions_number, None]
-        return fails, location, window_results, status, images_to_export
+        return fails, location, window_results, status, images_to_return
 
     # dibujar la localización
     if location["type"] == "pair_of_coordinates":
         transitions_drawn_image = cv_func.draw_point(transitions_drawn_image, location["coordinates"], color=[0, 255, 255])
 
-    images_to_export += [["transitions_drawn", transitions_drawn_image]]
+    images_to_return["transitions_drawn"] = transitions_drawn_image
 
 
     # ancho del componente
@@ -815,7 +815,7 @@ def inspection_function_transitions(inspection_image, algorithm):
             status = "bad"
 
     window_results = [transitions_number, component_width]
-    return fails, location, window_results, status, images_to_export
+    return fails, location, window_results, status, images_to_return
 
 def calculate_location_for_transitions(required_transitions, transitions):
     if required_transitions_is_unique(required_transitions):
@@ -913,14 +913,14 @@ def inspection_function_histogram(inspection_image, algorithm):
     location = "not_available"
     status = "good" # inicializar como good
     fails = []
-    images_to_export = []
+    images_to_return = {}
     area_percentage, average_gray, average_lowest_gray, average_highest_gray, lowest_gray, highest_gray = None, None, None, None, None, None
 
-    images_to_export += [["filtered", inspection_image]]
+    images_to_return["filtered"] = inspection_image
 
 
     gray_image = cvtColor(inspection_image, COLOR_BGR2GRAY)
-    images_to_export += [["gray", gray_image]]
+    images_to_return["gray"] = gray_image
 
 
     if algorithm["parameters"]["min_area_percentage"] or algorithm["parameters"]["max_area_percentage"]:
@@ -975,7 +975,7 @@ def inspection_function_histogram(inspection_image, algorithm):
 
     window_results = [area_percentage, average_gray, average_lowest_gray,
         average_highest_gray, lowest_gray, highest_gray]
-    return fails, location, window_results, status, images_to_export
+    return fails, location, window_results, status, images_to_return
 
 def evaluate_histogram_results(area_percentage, average_gray, average_lowest_gray,
         average_highest_gray, lowest_gray, highest_gray, parameters

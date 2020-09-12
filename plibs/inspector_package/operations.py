@@ -86,12 +86,12 @@ def export_aligned_board_image(image, image_uv, stage, photo_number, position_in
 
 def export_registration_images(images, photo_number, name, light, images_path, check_mode, registration_fail):
     if check_mode == "check:total" or (check_mode == "check:yes" and registration_fail):
-        for image_name, image in images:
+        for image_name, image in zip(images.keys(), images.values()):
             imwrite("{0}{1}-{2}-{3}-{4}.bmp".format(images_path, photo_number, name, light, image_name), image)
 
 def export_algorithm_images(images, photo_number, board_number, reference_name, inspection_point_name, algorithm_name, light, images_path):
     # exportar imágenes de un algoritmo
-    for image_name, image in images:
+    for image_name, image in zip(images.keys(), images.values()):
         imwrite("{0}{1}-{2}-{3}-{4}-{5}-{6}-{7}.bmp".format(images_path, photo_number, board_number, reference_name, inspection_point_name, algorithm_name, light, image_name), image)
 
 def export_reference_images(reference_images, photo_number, board_number, reference_name, images_path):
@@ -113,11 +113,11 @@ def add_to_images_name(images, str_):
     imágenes que son retornadas por funciones de inspección y métodos de registro
     para ser exportadas.
     """
-    for image_index in range(len(images)):
-        image_name, image = images[image_index]
+    for image_name, image in zip(images.keys(), images.values()):
         new_name = image_name + str_
         # actualizar nombre
-        images[image_index][0] = new_name
+        del images[image_name]
+        images[new_name] = image
 
     return images
 
