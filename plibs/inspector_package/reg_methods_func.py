@@ -24,27 +24,27 @@ def register_with_rotation_points_and_translation_point(image, rotation_iteratio
     total_rotation = 0
     for _ in range(rotation_iterations):
         # limpiar lista de imágenes que se retornará para ser exportada
-        images_to_export = []
+        images_to_return = {}
 
         # Encontrar punto de rotación 1
         rotation_point1_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, rotation_point1)
         # agregar nombre del punto de rotación a las imágenes
         resulting_images = operations.add_to_images_name(resulting_images, "-rp1")
-        images_to_export += resulting_images
+        images_to_return.update(resulting_images)
 
         if not rotation_point1_coordinates:
             fail = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point1["name"]) # !REGISTRATION_FAIL
-            return fail, images_to_export, None, None, None
+            return fail, images_to_return, None, None, None
 
         # Encontrar punto de rotación 2
         rotation_point2_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, rotation_point2)
         # agregar nombre del punto de rotación a las imágenes
         resulting_images = operations.add_to_images_name(resulting_images, "-rp2")
-        images_to_export += resulting_images
+        images_to_return.update(resulting_images)
 
         if not rotation_point2_coordinates:
             fail = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point2["name"]) # !REGISTRATION_FAIL
-            return fail, images_to_export, None, None, None
+            return fail, images_to_return, None, None, None
 
 
         # ángulo entre los 2 puntos de rotación
@@ -61,24 +61,24 @@ def register_with_rotation_points_and_translation_point(image, rotation_iteratio
     translation_point_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, translation_point)
     # agregar nombre del punto de traslación a las imágenes
     resulting_images = operations.add_to_images_name(resulting_images, "-tp")
-    images_to_export += resulting_images
+    images_to_return.update(resulting_images)
 
     if not translation_point_coordinates:
         fail = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(translation_point["name"]) # !REGISTRATION_FAIL
-        return fail, images_to_export, None, None, None
+        return fail, images_to_return, None, None, None
 
     # Se traslada la diferencia entre las coordenadas donde deberá ubicarse el punto de traslación menos las coordenadas encontradas
     x_diference = objective_x - translation_point_coordinates[0]
     y_diference = objective_y - translation_point_coordinates[1]
     image = cv_func.translate(image, x_diference, y_diference)
 
-    return None, images_to_export, image, total_rotation, [x_diference, y_diference]
+    return None, images_to_return, image, total_rotation, [x_diference, y_diference]
 
 def register_image(image, image_ultraviolet, registration_settings):
     image = image.copy() # no corromper la original
 
     if registration_settings["method"] == "rotation_points_and_translation_point":
-        fail, images_to_export, image, rotation, translation = register_with_rotation_points_and_translation_point(
+        fail, images_to_return, image, rotation, translation = register_with_rotation_points_and_translation_point(
             image, registration_settings["rotation_iterations"],
             registration_settings["rotation_point1"], registration_settings["rotation_point2"],
             registration_settings["translation_point"], registration_settings["objective_angle"],
@@ -89,33 +89,33 @@ def register_image(image, image_ultraviolet, registration_settings):
         image_ultraviolet = image_ultraviolet.copy()
         image_ultraviolet = cv_func.apply_transformations(image_ultraviolet, rotation, translation)
 
-    return fail, images_to_export, image, image_ultraviolet, rotation, translation
+    return fail, images_to_return, image, image_ultraviolet, rotation, translation
 
 
 def calculate_missing_registration_data_rotation_points_and_translation_point(image, rotation_point1, rotation_point2, translation_point):
     fail = None
-    images_to_export = []
+    images_to_return = {}
 
 
     # Encontrar punto de rotación 1
     rotation_point1_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, rotation_point1)
     # agregar nombre del punto de rotación a las imágenes
     resulting_images = operations.add_to_images_name(resulting_images, "-rp1")
-    images_to_export += resulting_images
+    images_to_return.update(resulting_images)
 
     if not rotation_point1_coordinates:
         fail = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point1["name"]) # !REGISTRATION_FAIL
-        return fail, images_to_export, None
+        return fail, images_to_return, None
 
     # Encontrar punto de rotación 2
     rotation_point2_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, rotation_point2)
     # agregar nombre del punto de rotación a las imágenes
     resulting_images = operations.add_to_images_name(resulting_images, "-rp2")
-    images_to_export += resulting_images
+    images_to_return.update(resulting_images)
 
     if not rotation_point2_coordinates:
         fail = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(rotation_point2["name"]) # !REGISTRATION_FAIL
-        return fail, images_to_export, None
+        return fail, images_to_return, None
 
 
     # ángulo entre los 2 puntos de rotación
@@ -126,13 +126,13 @@ def calculate_missing_registration_data_rotation_points_and_translation_point(im
     translation_point_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, translation_point)
     # agregar nombre del punto de traslación a las imágenes
     resulting_images = operations.add_to_images_name(resulting_images, "-tp")
-    images_to_export += resulting_images
+    images_to_return.update(resulting_images)
 
     if not translation_point_coordinates:
         fail = "APPROPRIATE_CONTOUR_NOT_FOUND_{0}".format(translation_point["name"]) # !REGISTRATION_FAIL
-        return fail, images_to_export, None
+        return fail, images_to_return, None
 
-    return None, images_to_export, [angle_between_rotation_points, rotation_point1_coordinates,
+    return None, images_to_return, [angle_between_rotation_points, rotation_point1_coordinates,
         rotation_point2_coordinates, translation_point_coordinates]
 
 def calculate_missing_registration_data(image, method_settings):
@@ -157,10 +157,10 @@ def calculate_missing_registration_data(image, method_settings):
     """
 
     if method_settings["method"] == "rotation_points_and_translation_point":
-        fail, images_to_export, missing_data = calculate_missing_registration_data_rotation_points_and_translation_point(
+        fail, images_to_return, missing_data = calculate_missing_registration_data_rotation_points_and_translation_point(
             image, method_settings["rotation_point1"],
             method_settings["rotation_point2"],
             method_settings["translation_point"],
         )
 
-    return fail, images_to_export, missing_data
+    return fail, images_to_return, missing_data
