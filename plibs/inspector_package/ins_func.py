@@ -748,8 +748,8 @@ def inspection_function_unique_transition(inspection_image, algorithm):
 
     location = {
         "type":"one_coordinate",
-        "axis":transition["axis"],
-        "coordinate":transition["coordinate"]
+        "axis":axis,
+        "coordinate":coordinate
     }
 
     # dibujar transición
