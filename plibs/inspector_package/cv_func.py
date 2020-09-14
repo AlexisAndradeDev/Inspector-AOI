@@ -969,7 +969,7 @@ def draw_transition(image, coordinate, axis):
     [h, w] = drawn.shape[:2]
 
     if axis == "x":
-        cv2.rectangle(drawn, (coordinate, 0), (coordinate, w), (0, 255, 255), 1)
+        cv2.rectangle(drawn, (coordinate, 0), (coordinate, h), (0, 255, 255), 1)
     if axis == "y":
         cv2.rectangle(drawn, (0, coordinate), (w, coordinate), (0, 255, 255), 1)
 
