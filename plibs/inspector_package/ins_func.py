@@ -297,11 +297,11 @@ def calculate_location_inside_algorithm_in_photo(inspection_point, algorithm, lo
         if location["axis"] == "x":
             window_height = y2-y1
             # tomar como «y» la mitad del alto de la ventana
-            location["coordinates"] = [location["coordinate"], window_height/2]
+            location["coordinates"] = [location["coordinate"], int(window_height/2)]
         if location["axis"] == "y":
             window_width = x2-x1
             # tomar como «x» la mitad del ancho de la ventana
-            location["coordinates"] = [window_width/2, location["coordinate"]]
+            location["coordinates"] = [int(window_width)/2, location["coordinate"]]
 
     # localización = localización dentro de la ventana del algoritmo +
     # coordenadas del algoritmo + coordenadas del punto de inspección
