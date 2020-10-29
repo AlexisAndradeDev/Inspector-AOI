@@ -229,19 +229,22 @@ def run_registration(first_photo, last_photo, results, registration_settings, se
 
     return results
 
-def run_debug(first_board, last_board, results, references, settings):
+def run_debug(first_board, last_board, results, references, settings, stage):
+    photo_number, registration_settings, photo, photo_ultraviolet = None, None, None, None
+
     # multihilos para tableros
     threads = operations.create_threads(
         func=inspect_boards,
         threads_num=settings["threads_num_for_boards"],
         targets_num=settings["boards_num"],
-        func_args=[results, None, references, registration_settings, settings, stage, photo, photo_ultraviolet]
+        func_args=[results, photo_number, references, registration_settings, settings, stage, photo, photo_ultraviolet]
     )
 
 def run(references, registration_settings, settings, stage, photo=None, photo_ultraviolet=None):
     results = operations.StaticVar("")
     total_time = 0
 
+    # registro global
     if stage == "inspection":
         photo_number = 1 # sólo hay una fotografía por inspección
 
@@ -282,7 +285,7 @@ def run(references, registration_settings, settings, stage, photo=None, photo_ul
             func=run_debug,
             threads_num=settings["threads_num_for_boards"],
             targets_num=settings["boards_num"],
-            func_args=[results, references, settings]
+            func_args=[results, references, settings, stage]
         )
 
     elif stage == "registration":
