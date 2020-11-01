@@ -6,16 +6,16 @@ if __name__ == '__main__':
     data = eval(data)
     [settings_data, references_data] = data
 
-
     # Datos de configuración
-    [images_path, uv_inspection, boards_num, threads_num_for_boards, threads_num_for_references] = settings_data
+    [images_path, uv_inspection, photos_num, boards_per_photo, threads_num_for_photos, threads_num_for_boards, threads_num_for_references] = settings_data
 
     settings = { # diccionario con datos de configuración
         "read_images_path":images_path,
         "check_mode_images_path":"C:/Dexill/Inspector/Alpha-Premium/x64/pd/",
         "uv_inspection":uv_inspection,
-        "boards_num":boards_num,
-        "boards_per_photo":1,
+        "photos_num":photos_num,
+        "boards_per_photo":boards_per_photo,
+        "threads_num_for_photos":threads_num_for_photos,
         "threads_num_for_boards":threads_num_for_boards,
         "threads_num_for_references":threads_num_for_references,
         "check_mode":"check:total",

@@ -1,6 +1,6 @@
 [
 
-['Ruta de los tableros terminando en /', 'uv_inspection:True/False', número de imágenes, número de multihilos para tableros, número de multihilos para referencias],
+['Ruta de los tableros terminando en /', 'uv_inspection:True/False', num_de_fotos, num_de_tableros_por_foto, num_de_multihilos_para_fotos, num_de_multihilos_para_tableros, num_de_multihilos_para_referencias],
 
 [datos_de_referencias],
 
@@ -10,7 +10,7 @@ EJEMPLO:
 
 [
 
-['C:/Dexill/Inspector/Alpha-Premium/x64/pd/', "uv_inspection:True", 4, 4, 2],
+['C:/Dexill/Inspector/Alpha-Premium/x64/pd/', "uv_inspection:True", 5, 4, 5, 2, 2],
 
 [datos_de_referencias],
 
