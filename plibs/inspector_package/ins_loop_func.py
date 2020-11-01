@@ -35,11 +35,6 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
 
     # la función range toma desde first hasta last-1, así que hay que sumarle 1
     for board_number in range(first_board, last_board+1):
-        if stage == "debug":
-            # en debugeo, actualmente el número de tablero es el número de fotografía (luego habrá que cambiarlo a que sea el número correcto)
-            photo_number = board_number
-
-
         board = results_management.ObjectInspected(board_number=board_number, photo_number=photo_number, stage=stage, position_in_photo=operations.get_board_position_in_photo(board_number, settings["boards_per_photo"]))
 
         # Recortar región del tablero
@@ -118,9 +113,9 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
             )
 
 
-        elif stage == "debug": # ! CHECAR SI NO HAY ERRORES <<<-------------------------------------------0
+        elif stage == "debug":
             # debugeo lee las imágenes de los tableros ya alineadas, no registra
-            aligned_board_image = imread("{0}{1}-white-board_aligned.bmp".format(settings["read_images_path"], board_number))
+            aligned_board_image = imread("{0}{1}-{2}-white-registered.bmp".format(settings["read_images_path"], board.get_photo_number(), board.get_position_in_photo()))
             if aligned_board_image is None:
                 board.set_status("general_failed", code="IMG_DOESNT_EXIST") # !GENERAL_FAIL
                 board.add_references_results(references_results="")
@@ -129,7 +124,7 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
                 continue
 
             if settings["uv_inspection"] == "uv_inspection:True":
-                aligned_board_image_ultraviolet = imread("{0}{1}-ultraviolet-board_aligned.bmp".format(settings["read_images_path"], board_number))
+                aligned_board_image_ultraviolet = imread("{0}{1}-{2}-ultraviolet-registered.bmp".format(settings["read_images_path"], board.get_photo_number(), board.get_position_in_photo()))
                 if aligned_board_image_ultraviolet is None:
                     board.set_status("general_failed", code="UV_IMG_DOESNT_EXIST") # !GENERAL_FAIL
                     board.add_references_results(references_results="")
@@ -229,19 +224,25 @@ def run_registration(first_photo, last_photo, results, registration_settings, se
 
     return results
 
-def run_debug(first_board, last_board, results, references, settings):
-    # multihilos para tableros
-    threads = operations.create_threads(
-        func=inspect_boards,
-        threads_num=settings["threads_num_for_boards"],
-        targets_num=settings["boards_num"],
-        func_args=[results, None, references, registration_settings, settings, stage, photo, photo_ultraviolet]
-    )
+def run_debug(first_photo, last_photo, results, references, settings):
+    registration_settings, stage, photo, photo_ultraviolet = None, "debug", None, None
+
+    for photo_number in range(first_photo, last_photo+1):
+        # multihilos para tableros
+        threads = operations.create_threads(
+            func=inspect_boards,
+            threads_num=settings["threads_num_for_boards"],
+            targets_num=settings["boards_per_photo"],
+            func_args=[results, photo_number, references, registration_settings, settings, stage, photo, photo_ultraviolet]
+        )
+
+        operations.run_threads(threads)
 
 def run(references, registration_settings, settings, stage, photo=None, photo_ultraviolet=None):
     results = operations.StaticVar("")
     total_time = 0
 
+    # registro global
     if stage == "inspection":
         photo_number = 1 # sólo hay una fotografía por inspección
 
@@ -280,8 +281,8 @@ def run(references, registration_settings, settings, stage, photo=None, photo_ul
         # multihilos para tableros
         threads = operations.create_threads(
             func=run_debug,
-            threads_num=settings["threads_num_for_boards"],
-            targets_num=settings["boards_num"],
+            threads_num=settings["threads_num_for_photos"],
+            targets_num=settings["photos_num"],
             func_args=[results, references, settings]
         )
 
