@@ -1,6 +1,6 @@
 [
 
-['Ruta de los tableros terminando en /', 'uv_inspection:True/False', num_de_fotos, num_de_tableros_por_foto, num_de_multihilos_para_fotos, num_de_multihilos_para_tableros, num_de_multihilos_para_referencias],
+['Ruta de los tableros terminando en /', 'uv_inspection:True/False', num_de_fotos, num_de_tableros_por_foto, num_de_multihilos_para_fotos, num_de_multihilos_para_tableros, num_de_multihilos_para_referencias, 'check:no/yes/total'],
 
 [datos_de_referencias],
 

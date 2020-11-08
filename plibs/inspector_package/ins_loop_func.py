@@ -38,7 +38,7 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
         board = results_management.ObjectInspected(board_number=board_number, photo_number=photo_number, stage=stage, position_in_photo=operations.get_board_position_in_photo(board_number, settings["boards_per_photo"]))
 
         # Recortar región del tablero
-        if stage == "inspection" or stage == "registration":
+        if stage in ["inspection", "registration"]:
             coordinates = settings["boards_coordinates"][board.get_position_in_photo()-1]
             board_image = cv_func.crop_image(photo, coordinates)
             if settings["uv_inspection"] == "uv_inspection:True":
@@ -47,7 +47,7 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
                 board_image_ultraviolet = None
 
         # Skip
-        if stage == "inspection":
+        if stage in ["inspection"]:
             # función skip
             skip, skip_status, skip_results, skip_images, skip_fails = use_skip_function(board_image, settings["skip_function"])
 
@@ -79,7 +79,7 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
 
 
         # Registro
-        if stage == "inspection" or stage == "registration":
+        if stage in ["inspection", "registration"]:
             if settings["registration_mode"] == "registration_mode:local":
                 # Registro local
                 registration_fail, registration_images, aligned_board_image, \
@@ -134,7 +134,7 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
 
 
         # Inspeccionar referencias con multihilos
-        if stage == "inspection" or stage == "debug":
+        if stage in ["inspection", "debug"]:
             if settings["uv_inspection"] == "uv_inspection:True":
                 threads = operations.create_threads(
                     func=ins_func.inspect_references,
