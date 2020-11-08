@@ -7,7 +7,8 @@ if __name__ == '__main__':
     [settings_data, references_data] = data
 
     # Datos de configuración
-    [images_path, uv_inspection, photos_num, boards_per_photo, threads_num_for_photos, threads_num_for_boards, threads_num_for_references] = settings_data
+    [images_path, uv_inspection, photos_num, boards_per_photo, threads_num_for_photos,
+    threads_num_for_boards, threads_num_for_references, check_mode] = settings_data
 
     settings = { # diccionario con datos de configuración
         "read_images_path":images_path,
@@ -18,7 +19,7 @@ if __name__ == '__main__':
         "threads_num_for_photos":threads_num_for_photos,
         "threads_num_for_boards":threads_num_for_boards,
         "threads_num_for_references":threads_num_for_references,
-        "check_mode":"check:total",
+        "check_mode":check_mode,
     }
 
 
