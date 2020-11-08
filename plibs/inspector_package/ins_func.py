@@ -246,7 +246,8 @@ def get_reference_algorithm(reference_algorithm_data):
 def create_reference(reference_data):
     reference = {
         "name":reference_data[0],
-        "inspection_points":create_inspection_points(reference_data[2]),
+        "boards_with_this_reference":reference_data[2],
+        "inspection_points":create_inspection_points(reference_data[3]),
     }
 
     reference_algorithm_data = reference_data[1]
@@ -519,6 +520,9 @@ def inspect_references(first_reference, last_reference,
 
     references_results_string = ""
     for reference in references:
+        if board.get_position_in_photo() not in reference["boards_with_this_reference"]:
+            continue
+
         reference_results_string = inspect_reference(image, board, reference,
             check_mode, images_path, image_ultraviolet
         )
