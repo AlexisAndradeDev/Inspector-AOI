@@ -22,7 +22,7 @@ def use_skip_function(board_image, skip_function):
         return False, status, results, resulting_images, fails
 
 def inspect_boards(first_board, last_board, results, photo_number, references, registration_settings, settings, stage, photo=None, photo_ultraviolet=None):
-    if stage == "registration" or stage == "inspection":
+    if stage in ["registration", "inspection"]:
         # Calcular el número del primer tablero y del último tablero para el registro pre-debugeo
 
         # en registro, first_board es en realidad la posición dentro del panel
@@ -54,7 +54,7 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
             # exportar imágenes de la función de skip si el modo de revisión es total o si no pasó el skip
             if settings["check_mode"] == "check:total" or (settings["check_mode"] == "check:yes" and skip):
                 operations.export_algorithm_images(
-                    images=skip_images, photo_number=board.get_photo_number(), board_number=board.get_number(),
+                    images=skip_images, photo_number=board.get_photo_number(), board_number=board.get_position_in_photo(),
                     reference_name="skip_function", inspection_point_name="skip_function",
                     algorithm_name=settings["skip_function"]["name"],
                     light=settings["skip_function"]["light"],
@@ -87,7 +87,7 @@ def inspect_boards(first_board, last_board, results, photo_number, references, r
                     board_image, board_image_ultraviolet, registration_settings,
                 )
 
-                operations.export_registration_images(registration_images, board.get_photo_number(), board.get_number(), "white", settings["check_mode_images_path"], settings["check_mode"], registration_fail)
+                operations.export_registration_images(registration_images, board.get_photo_number(), board.get_position_in_photo(), "white", settings["check_mode_images_path"], settings["check_mode"], registration_fail)
 
                 if registration_fail:
                     # si falló, se aborta la inspección del tablero y se continúa con el siguiente
