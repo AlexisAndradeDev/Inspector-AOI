@@ -185,8 +185,9 @@ def create_algorithm(algorithm_data):
         "light":algorithm_data[4], # white / ultraviolet
         "name":algorithm_data[5],
         "coordinates":algorithm_data[6],
-        "inspection_function":algorithm_data[7],
-        "filters":algorithm_data[9],
+        "boards_without_this_algorithm":algorithm_data[7],
+        "inspection_function":algorithm_data[8],
+        "filters":algorithm_data[10],
     }
 
     chain_data = algorithm_data[2]
@@ -194,7 +195,7 @@ def create_algorithm(algorithm_data):
 
     # parámetros de la función de inspección del punto (áreas de blob, templates de
     # template matching, etc.)
-    parameters_data = algorithm_data[8]
+    parameters_data = algorithm_data[9]
     algorithm["parameters"] = get_inspection_function_parameters(algorithm, parameters_data)
 
     return algorithm
@@ -246,7 +247,7 @@ def get_reference_algorithm(reference_algorithm_data):
 def create_reference(reference_data):
     reference = {
         "name":reference_data[0],
-        "boards_with_this_reference":reference_data[2],
+        "boards_without_this_reference":reference_data[2],
         "inspection_points":create_inspection_points(reference_data[3]),
     }
 
@@ -312,7 +313,7 @@ def calculate_location_inside_algorithm_in_photo(inspection_point, algorithm, lo
     )
     return location["coordinates"]
 
-def inspect_inspection_points(image, image_ultraviolet, inspection_points, check_mode="check:no"):
+def inspect_inspection_points(image, image_ultraviolet, board, inspection_points, check_mode="check:no"):
     inspection_points_results = {
         "results":[], "string":"", "status":"good", "images":[],
     }
@@ -329,6 +330,9 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
             algorithm_results = {
                 "results":[], "string":"", "status":"", "location":{}, "images":[], "fails":[]
             }
+
+            if board.get_position_in_photo() in algorithm["boards_without_this_algorithm"]:
+                continue
 
             # si el algoritmo ya fue inspeccionado (está en los resultados y su status no es "not_executed"),
             # no volver a inspeccionarlo
@@ -464,7 +468,7 @@ def execute_reference_algorithm(reference_algorithm, inspection_points_results):
 def inspect_reference(image, board, reference, check_mode, images_path , image_ultraviolet=None):
     reference_results = {"string":"", "status":"good"}
 
-    inspection_points_results = inspect_inspection_points(image, image_ultraviolet, reference["inspection_points"], check_mode)
+    inspection_points_results = inspect_inspection_points(image, image_ultraviolet, board, reference["inspection_points"], check_mode)
 
     # cambiar el status de la referencia si es necesario
     reference_results["status"] = results_management.evaluate_status(
@@ -520,7 +524,7 @@ def inspect_references(first_reference, last_reference,
 
     references_results_string = ""
     for reference in references:
-        if board.get_position_in_photo() not in reference["boards_with_this_reference"]:
+        if board.get_position_in_photo() in reference["boards_without_this_reference"]:
             continue
 
         reference_results_string = inspect_reference(image, board, reference,
