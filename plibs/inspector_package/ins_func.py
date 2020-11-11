@@ -185,7 +185,7 @@ def create_algorithm(algorithm_data):
         "light":algorithm_data[4], # white / ultraviolet
         "name":algorithm_data[5],
         "coordinates":algorithm_data[6],
-        "boards_without_this_algorithm":algorithm_data[7],
+        "ignore_in_boards":algorithm_data[7],
         "inspection_function":algorithm_data[8],
         "filters":algorithm_data[10],
     }
@@ -212,9 +212,10 @@ def create_inspection_point(inspection_point_data):
     inspection_point = {
         "name":inspection_point_data[0],
         "coordinates":inspection_point_data[1],
+        "ignore_in_boards":inspection_point_data[2],
     }
 
-    algorithms_data = inspection_point_data[2]
+    algorithms_data = inspection_point_data[3]
     inspection_point["algorithms"] = create_algorithms(algorithms_data)
 
     return inspection_point
@@ -247,7 +248,7 @@ def get_reference_algorithm(reference_algorithm_data):
 def create_reference(reference_data):
     reference = {
         "name":reference_data[0],
-        "boards_without_this_reference":reference_data[2],
+        "ignore_in_boards":reference_data[2],
         "inspection_points":create_inspection_points(reference_data[3]),
     }
 
@@ -319,6 +320,10 @@ def inspect_inspection_points(image, image_ultraviolet, board, inspection_points
     }
 
     for inspection_point in inspection_points:
+        # no inspeccionar el punto de inspección si se asignó para ignorarlo en él
+        if board.get_position_in_photo() in inspection_point["ignore_in_boards"]:
+            continue
+
         inspection_point_results = {
             "status":"good", "results":[],
         }
@@ -331,7 +336,8 @@ def inspect_inspection_points(image, image_ultraviolet, board, inspection_points
                 "results":[], "string":"", "status":"", "location":{}, "images":[], "fails":[]
             }
 
-            if board.get_position_in_photo() in algorithm["boards_without_this_algorithm"]:
+            # no inspeccionar el algoritmo si se asignó para ignorarlo en él
+            if board.get_position_in_photo() in algorithm["ignore_in_boards"]:
                 continue
 
             # si el algoritmo ya fue inspeccionado (está en los resultados y su status no es "not_executed"),
@@ -524,7 +530,8 @@ def inspect_references(first_reference, last_reference,
 
     references_results_string = ""
     for reference in references:
-        if board.get_position_in_photo() in reference["boards_without_this_reference"]:
+        # no inspeccionar la referencia si se asignó para ignorarla en él
+        if board.get_position_in_photo() in reference["ignore_in_boards"]:
             continue
 
         reference_results_string = inspect_reference(image, board, reference,
