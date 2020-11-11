@@ -185,8 +185,9 @@ def create_algorithm(algorithm_data):
         "light":algorithm_data[4], # white / ultraviolet
         "name":algorithm_data[5],
         "coordinates":algorithm_data[6],
-        "inspection_function":algorithm_data[7],
-        "filters":algorithm_data[9],
+        "ignore_in_boards":algorithm_data[7],
+        "inspection_function":algorithm_data[8],
+        "filters":algorithm_data[10],
     }
 
     chain_data = algorithm_data[2]
@@ -194,7 +195,7 @@ def create_algorithm(algorithm_data):
 
     # parámetros de la función de inspección del punto (áreas de blob, templates de
     # template matching, etc.)
-    parameters_data = algorithm_data[8]
+    parameters_data = algorithm_data[9]
     algorithm["parameters"] = get_inspection_function_parameters(algorithm, parameters_data)
 
     return algorithm
@@ -211,9 +212,10 @@ def create_inspection_point(inspection_point_data):
     inspection_point = {
         "name":inspection_point_data[0],
         "coordinates":inspection_point_data[1],
+        "ignore_in_boards":inspection_point_data[2],
     }
 
-    algorithms_data = inspection_point_data[2]
+    algorithms_data = inspection_point_data[3]
     inspection_point["algorithms"] = create_algorithms(algorithms_data)
 
     return inspection_point
@@ -246,7 +248,8 @@ def get_reference_algorithm(reference_algorithm_data):
 def create_reference(reference_data):
     reference = {
         "name":reference_data[0],
-        "inspection_points":create_inspection_points(reference_data[2]),
+        "ignore_in_boards":reference_data[2],
+        "inspection_points":create_inspection_points(reference_data[3]),
     }
 
     reference_algorithm_data = reference_data[1]
@@ -311,12 +314,16 @@ def calculate_location_inside_algorithm_in_photo(inspection_point, algorithm, lo
     )
     return location["coordinates"]
 
-def inspect_inspection_points(image, image_ultraviolet, inspection_points, check_mode="check:no"):
+def inspect_inspection_points(image, image_ultraviolet, board, inspection_points, check_mode="check:no"):
     inspection_points_results = {
         "results":[], "string":"", "status":"good", "images":[],
     }
 
     for inspection_point in inspection_points:
+        # no inspeccionar el punto de inspección si se asignó para ignorarlo en él
+        if board.get_position_in_photo() in inspection_point["ignore_in_boards"]:
+            continue
+
         inspection_point_results = {
             "status":"good", "results":[],
         }
@@ -328,6 +335,10 @@ def inspect_inspection_points(image, image_ultraviolet, inspection_points, check
             algorithm_results = {
                 "results":[], "string":"", "status":"", "location":{}, "images":[], "fails":[]
             }
+
+            # no inspeccionar el algoritmo si se asignó para ignorarlo en él
+            if board.get_position_in_photo() in algorithm["ignore_in_boards"]:
+                continue
 
             # si el algoritmo ya fue inspeccionado (está en los resultados y su status no es "not_executed"),
             # no volver a inspeccionarlo
@@ -463,7 +474,7 @@ def execute_reference_algorithm(reference_algorithm, inspection_points_results):
 def inspect_reference(image, board, reference, check_mode, images_path , image_ultraviolet=None):
     reference_results = {"string":"", "status":"good"}
 
-    inspection_points_results = inspect_inspection_points(image, image_ultraviolet, reference["inspection_points"], check_mode)
+    inspection_points_results = inspect_inspection_points(image, image_ultraviolet, board, reference["inspection_points"], check_mode)
 
     # cambiar el status de la referencia si es necesario
     reference_results["status"] = results_management.evaluate_status(
@@ -519,6 +530,10 @@ def inspect_references(first_reference, last_reference,
 
     references_results_string = ""
     for reference in references:
+        # no inspeccionar la referencia si se asignó para ignorarla en él
+        if board.get_position_in_photo() in reference["ignore_in_boards"]:
+            continue
+
         reference_results_string = inspect_reference(image, board, reference,
             check_mode, images_path, image_ultraviolet
         )

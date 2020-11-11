@@ -1,7 +1,7 @@
 [
  ignorar_status_bad, status_necesario_para_ser_good,
  [algoritmo_al_que_está_encadenado, status_necesario_del_algoritmo_al_que_está_encadenado],
- origen_del_algoritmo, luz, nombre_del_algoritmo, coordenadas, función_de_inspección, 
+ origen_del_algoritmo, luz, nombre_del_algoritmo, coordenadas, [tableros_en_los_que_NO_se_inspeccionará], función_de_inspección, 
  [parámetros_de_la_función_de_inspección],
  filtros_secundarios
 ],
@@ -46,6 +46,14 @@ origen_del_algoritmo: si se quiere que las coordenadas de origen sea el punto de
 luz: "white"/"ultraviolet"
 coordenadas: [x1,y1,x2,y2]
     Las coordenadas toman origen en origen_del_algoritmo
+
+tableros_en_los_que_NO_se_inspeccionará: lista con los tableros en los que no se inspeccionará el algoritmo.
+    Ejemplo: Hay 4 tableros en un panel, en los tableros 1 y 3 se inspeccionará el algoritmo; en los tableros 2 y 4 no se
+    inspeccionará el algoritmo (no se inspeccionará y no aparecerá en los resultados de estos tableros).
+        tableros_en_los_que_NO_se_inspeccionará sería: [2,4]
+    Si quiere inspeccionarse en los tableros 1, 2 y 3, sería: [4]
+        El tablero 4 ignoraría este algoritmo.
+    Si se inspeccionará en todos los tableros, se debe dejar una lista vacía [].
 
 función_de_inspección: "b", "m", entre otros.
 

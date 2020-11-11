@@ -1,4 +1,4 @@
-["nombre_de_punto_de_inspección", [x1,y1],
+["nombre_de_punto_de_inspección", [x1,y1], [tableros_en_los_que_NO_se_inspeccionará],
     [
         datos_de_algoritmo,
         datos_de_algoritmo,
@@ -6,6 +6,14 @@
     ]
 ]
 
+
+tableros_en_los_que_NO_se_inspeccionará: lista con los tableros en los que no se inspeccionará el algoritmo.
+    Ejemplo: Hay 4 tableros en un panel, en los tableros 1 y 3 se inspeccionará el algoritmo; en los tableros 2 y 4 no se
+    inspeccionará el algoritmo (no se inspeccionará y no aparecerá en los resultados de estos tableros).
+        tableros_en_los_que_NO_se_inspeccionará sería: [2,4]
+    Si quiere inspeccionarse en los tableros 1, 2 y 3, sería: [4]
+        El tablero 4 ignoraría este algoritmo.
+    Si se inspeccionará en todos los tableros, se debe dejar una lista vacía [].
 
 IMPORTANTE:
     Si un algoritmo está encadenado a otro, llamado 'chained_to', el algoritmo 'chained_to' debe haberse
