@@ -1,6 +1,0 @@
-En ocasiones surgen errores o fallos que afectan a todo el proceso de inspección, provocando que el archivo de resultados contenga únicamente un código de error, sin resultados sobre los tableros.
-    Ver más en: « Documentacion/Otros/Codigos/fatal-errors.txt », «global-registration-fails».
-
-También hay errores que no afectan a la inspección completa, pero sí a un tablero o a un algoritmo. 
-
-Ver documentación en: « Documentación/Otros/Codigos/ »
