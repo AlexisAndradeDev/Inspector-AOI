@@ -8,4 +8,6 @@ Cuando ocurre un fatal_error, el archivo de resultados se encuentra vacío, cont
 
 REQUIRED_TRANSITIONS_NOT_VALID: Si una transición no tiene un nombre válido en la estructura de datos de entrada.
 
-NO_RESULTS: Ocurre cuando no se pudo producir los resultados de ningún tablero.
+NO_RESULTS: No se pudo producir los resultados de ningún tablero.
+
+WRONG_UV_INSPECTION_FLAG: El parámetro de configuración para definir si se usará luz ultravioleta «uv_inspection» está mal escrito en los datos de entrada.
