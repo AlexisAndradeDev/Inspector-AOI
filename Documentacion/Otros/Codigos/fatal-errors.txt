@@ -2,8 +2,7 @@ Son errores que afectan a todo el proceso de inspección.
 
 Los fatal_errors se escriben con el signo '%' antes del código de error.
 
----> Cuando ocurre un fatal_error, el archivo de resultados se encuentra vacío, conteniendo
-     solamente el código del fatal_error
+Cuando ocurre un fatal_error, el archivo de resultados se encuentra vacío, conteniendo sólo el código del fatal_error
 
 
 

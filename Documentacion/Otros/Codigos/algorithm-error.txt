@@ -1,4 +1,6 @@
 Son errores que afectan la inspección de un algoritmo.
+Se escriben dentro de los resultados del algoritmo.
+
 
 ALGO_TO_TAKE_AS_ORIGIN_DOESNT_HAVE_COORDINATES: 
     Significa no se pudo obtener las coordenadas del algoritmo que otro algoritmo 

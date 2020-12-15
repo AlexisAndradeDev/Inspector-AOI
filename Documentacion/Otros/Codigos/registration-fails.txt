@@ -1,4 +1,5 @@
-Ocurren al fallar el registro, ya sea global (global-registration-fails.txt) o local (local-registration-fails.txt).
+Ocurren al fallar el registro, ya sea global, de tablero (board-registration-fail.txt) o local (local-registration-fail.txt).
+
 
 CONTOURS_NOT_FOUND_FID_{numero_del_fiducial}: No se encontraron contornos en el área de búsqueda del fiducial.
     Ejemplos de nombre completo del código: 
@@ -15,4 +16,9 @@ APPROPRIATE_CONTOUR_NOT_FOUND_{nombre_del_punto_de_referencia}: No se encontró 
         APPROPRIATE_CONTOUR_NOT_FOUND_TRANSLATION_POINT
 
 
-Para información más específica sobre errores de registro global y local ver: Documentacion/Otros/Codigos/local-registration-fails.txt y global-registration-fails.txt
+Para información más específica sobre errores de registro global, de tablero y local, ver: 
+    Documentacion/Otros/Codigos/
+        global-registration-fail.txt
+        board-registration-fail.txt
+        local-registration-fail.txt
+
