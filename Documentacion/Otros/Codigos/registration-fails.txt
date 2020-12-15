@@ -1,4 +1,4 @@
-Ocurren al fallar el registro, ya sea global, de tablero (board-registration-fail.txt) o local (local-registration-fail.txt).
+Ocurren al fallar el registro, ya sea global, de tablero o local.
 
 
 CONTOURS_NOT_FOUND_FID_{numero_del_fiducial}: No se encontraron contornos en el área de búsqueda del fiducial.
