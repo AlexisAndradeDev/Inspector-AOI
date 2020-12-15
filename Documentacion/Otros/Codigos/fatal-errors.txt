@@ -1,5 +1,4 @@
-Son errores que afectan a la inspección de todos los tableros.
-Es el tipo de error prioritario para solucionar.
+Son errores que afectan a todo el proceso de inspección.
 
 Los fatal_errors se escriben con el signo '%' antes del código de error.
 
@@ -8,7 +7,6 @@ Los fatal_errors se escriben con el signo '%' antes del código de error.
 
 
 
+REQUIRED_TRANSITIONS_NOT_VALID: Si una transición no tiene un nombre válido en la estructura de datos de entrada.
 
 NO_RESULTS: Ocurre cuando no se pudo producir los resultados de ningún tablero.
-
-NO_RESULTING_IMAGES: No se pudo producir ninguna imagen para escribir.

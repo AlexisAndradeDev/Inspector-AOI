@@ -1,0 +1,4 @@
+Ocurren cuando el registro global de un panel falla.
+Se escriben dentro de los resultados del panel.
+
+Códigos de errores en: Documentacion/Otros/Codigos/registration-fails.txt

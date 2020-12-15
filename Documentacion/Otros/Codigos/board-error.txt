@@ -1,0 +1,8 @@
+Son errores que afectan la inspección de todo un tablero.
+
+
+NO_RESULTS: Ocurre cuando no se pudo producir los resultados del tablero.
+
+IMG_DOESNT_EXIST: La imagen de luz blanca del tablero no se encuentra en el directorio.
+
+UV_IMG_DOESNT_EXIST: La imagen de luz ultravioleta del tablero no se encuentra en el directorio.
