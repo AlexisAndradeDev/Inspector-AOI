@@ -6,10 +6,7 @@ ESTRUCTURA
 [
 
 [
-'uv_inspection:True/False',
-num_de_tableros_por_foto, num_de_multihilos (para inspeccionar tableros), num_de_multihilos (para las referencias),
-'check:no/yes/total', [[region del tablero 1], [region del tablero 2], [region del tablero 3]], 'registration_mode:global/local',
-[datos de la función de skip],
+'inspeccion_ultravioleta', tableros_por_panel, multihilos_para_tableros, multihilos_para_referencias, 'modo_de_revision', [coordenadas_de_tableros], 'modo_de_registro', [funcion_de_skip],
 ],
 
 [datos_de_registro],
@@ -19,25 +16,32 @@ num_de_tableros_por_foto, num_de_multihilos (para inspeccionar tableros), num_de
 ]
 
 
-EJEMPLO:
+donde: 
 
-[
+inspeccion_ultravioleta: determina si se inspeccionará con luz ultravioleta.
+    Puede ser 'uv_inspection:True' o 'uv_inspection:False'.
 
-[
-"uv_inspection:False",
-4, 4, 3, "check:yes", [[0, 0, 2450, 2056], [2450, 0, 4920, 2056], [0, 2056, 2450, 4112], [2450, 2056, 4920, 4112]], 'registration_mode:local',
-[datos de la función skip],
-],
+tableros_por_panel: número de tableros que contiene cada panel.
 
-[datos_de_registro],
+multihilos_para_tableros: número de multihilos para inspeccionar tableros.
 
-[datos_de_referencias],
+multihilos_para_referencias: número de multihilos para inspeccionar referencias.
 
-]
+modo_de_revision: determina el modo de revisión.
+    Ver: Documentacion/Otros/Modo-de-revision/General.txt
 
+coordenadas_de_tableros: lista con las coordenadas de las regiones que abarca cada tablero.
+    Ejemplo: 
+        * Si hay 3 tableros en cada panel: [coordenadas_del_tablero_1, coordenadas_del_tablero_2, coordenadas_del_tablero_3]
+        En cada coordenadas_del_tablero, se asignará [x1,y1,x2,y2]
 
-La documentación acerca de los datos de referencias, se encuentran en la carpeta Documentacion/Estructuras-comunes/Referencias/Datos-de-entrada/
+modo_de_registro: determina el modo de registro.
+    Ver: Documentacion/Registro/Modos-de-registro.txt
 
-La documentación sobre el registro: Documentacion/Registro/
+funcion_de_skip: Los datos de la función skip son exactamente los mismos que los de un algoritmo cualquiera.
+    Ver: Documentacion/Otros/Funcion-de-skip/
 
+datos_de_registro: Ver: Documentacion/Registro/estructura-de-datos.txt
+
+datos_de_referencias: Ver: Documentacion/Estructuras-comunes/Referencias/Datos-de-entrada/
 

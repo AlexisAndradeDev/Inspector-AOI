@@ -4,4 +4,4 @@ Si ocurrió un fallo, sólo se escribirá el signo « % » y el código del fall
     %CÓDIGO
 
 Si no ocurrió ningún fallo, se escribirán los datos calculados. La estructura dependerá del método de registro utilizado.
-    Ver la sección ESTRUCTURA DE DATOS DE REGISTRO FALTANTES AL CALCULARLOS de cada uno en: Documentacion/Registro/Metodos-de-registro/
+    Ver la sección ESTRUCTURA DE DATOS DE REGISTRO FALTANTES de cada uno en: Documentacion/Registro/Metodos-de-registro/

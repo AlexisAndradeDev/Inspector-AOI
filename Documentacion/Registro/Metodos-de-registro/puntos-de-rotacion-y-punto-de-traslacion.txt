@@ -13,7 +13,7 @@ El nombre del método es "rotation_points_and_translation_point"
 [datos_del_punto_de_rotación2],
 [datos_del_punto_de_traslación],
 
-angulo_deseado,
+ángulo_entre_puntos_de_rotación_deseado,
 
 [coordenadas a las que se debe trasladar el punto de traslación despues de rotar],
 
@@ -126,6 +126,7 @@ Ejemplo:
     ]
 
 
-ESTRUCTURA DE DATOS DE REGISTRO FALTANTES AL CALCULARLOS
+ESTRUCTURA DE DATOS DE REGISTRO FALTANTES
 
-[ángulo_entre_puntos_de_rotación, centro_del_punto_de_rotación1, centro_del_punto_de_rotación2, centro_del_punto_de_traslación]
+Al calcular los datos de registro faltantes con calregdat.py, se obtendrán los resultados:
+    [ángulo_entre_puntos_de_rotación, centro_del_punto_de_rotación1, centro_del_punto_de_rotación2, centro_del_punto_de_traslación]

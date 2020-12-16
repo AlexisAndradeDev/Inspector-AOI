@@ -2,13 +2,24 @@ Las imágenes serán guardadas en:
     /x64/inspections/bad_windows_results/ en caso de que se esté usando para el proceso de «inspección». 
     /x64/pd/ si es el proceso de «debug» o «registro».
 
-«Debug» y «registro» utilizan el Modo de revisión total.
+«Registro» utiliza el Modo de revisión total.
+
+Para saber más sobre el modo de revisión normal, leer: Documentacion/Otros/Modo-de-revision/Modo-normal.txt
+Para saber más sobre el modo total, leer: Documentacion/Otros/Modo-de-revision/Modo-total.txt
+
+
+ACTIVAR MODOS DE REVISIÓN
+
+Sin revisión: Asignar 'check:no' en el parámetro de modo_de_revision de los datos de configuración.
+Modo normal: Asignar 'check:yes'.
+Modo total: Asignar 'check:total'.
+
 
 
 INSPECCIÓN
 
 El formato del nombre de las imágenes es: 
-    num_foto-num_de_tablero-referencia-punto_de_inspeccion-algoritmo-luz_utilizada-nombre_de_la_imagen.bmp
+    panel-tablero-referencia-punto_de_inspeccion-algoritmo-luz-nombre_de_la_imagen.bmp
 
 Ejemplo:
     1-1-[metal_film_resistor,r6]-cuerpo_de_resistencia-presencia-white-nombre_de_la_imagen.bmp
@@ -19,25 +30,16 @@ Los nombres de las imágenes (nombre_de_la_imagen) que exporta cada función de 
 
 
 
-FUNCIÓN SKIP
-
-Las funciones de skip exportan imágenes como cualquier otro algoritmo. Las imágenes de la función skip se escriben como si fuera un algoritmo 'skip', de un punto de inspección llamado 'skip_function', que a su vez está dentro de una referencia llamada 'skip_function':
-    referencia: skip_function
-    punto_de_inspeccion: skip_function
-    algoritmo: skip
-
-
-
 REGISTRO
 
 Nota: Este apartado se refiere a las imágenes exportadas por los métodos de registro, no a las imágenes completas de los tableros registrados. 
     Para información sobre las imágenes de los tableros registrados, ver: Documentacion/Registro/imagenes-de-tableros-alineados.txt
 
 
-REGISTRO LOCAL
+REGISTRO POR TABLERO
 
 Las imágenes tienen la estructura:
-    num_foto-num_de_tablero-luz-nombre_de_imagen.bmp
+    panel-tablero-luz-nombre_de_imagen.bmp
 
 Por ejemplo:
     1-1-white-nombre_de_imagen.bmp
@@ -47,12 +49,18 @@ Por ejemplo:
 
 
 REGISTRO GLOBAL
-    En lugar de num_de_tablero, se escribirá solamente « global_registration ».
-    num_foto-global_registration-luz-nombre_de_imagen.bmp
+    En lugar de tablero, se escribirá solamente « global_registration ».
+    panel-global_registration-luz-nombre_de_imagen.bmp
 
 Por ejemplo:
     1-global_registration-white-nombre_de_imagen.bmp
     2-global_registration-white-nombre_de_imagen.bmp
 
 
-Los nombre_de_imagen se encuentran en: Documentacion/Registro/Metodos-de-registro/
+Los nombre_de_imagen se encuentran en la documentación de cada método de registro: Documentacion/Registro/Metodos-de-registro/
+
+
+
+FUNCIÓN SKIP
+
+Las funciones de skip exportan imágenes como cualquier otro algoritmo. Las imágenes de la función skip se escriben como si fuera un algoritmo 'skip', de un punto de inspección llamado 'skip_function', que a su vez está dentro de una referencia llamada 'skip_function'.

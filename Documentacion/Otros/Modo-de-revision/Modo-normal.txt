@@ -1,6 +1,6 @@
-Al activarlo ('check:yes' en el archivo de datos), las imágenes del proceso de inspección de los algoritmos cuyo estatus fue "bad" serán guardadas.
+Al activarlo, las imágenes del proceso de inspección de los algoritmos cuyo estatus fue "bad" serán guardadas.
 
 
-Si falla una parte del registro, también exportará las imágenes del proceso del método de registro utilizado.
+Si falla una parte del registro, también exportará las imágenes del proceso del método de registro.
 
-Si una función de skip no pasó y se activa el modo de revisión, se exportarán también las imágenes de la función de skip.
+Si una función de skip no pasó y se activa el modo de revisión normal, se exportarán también las imágenes de la función de skip.
