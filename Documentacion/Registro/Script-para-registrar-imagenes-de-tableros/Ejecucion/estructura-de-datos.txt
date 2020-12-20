@@ -1,21 +1,39 @@
-[
+ADVERTENCIA: Para escribir rutas de directorios, utilizar el slash / y no el backslash \
 
-['Ruta de las imagenes de los tableros terminando en /', 'uv_inspection:True/False', num_de_fotos, num_de_tableros_por_foto, num_de_multihilos_para_fotos, num_de_multihilos_para_tableros, [[region del tablero 1], [region del tablero 2], [region del tablero 3], [region del tablero 4]], "registration_mode:global/local"],
-
-[datos de registro],
-
-]
-
-
-
-Ejemplo:
 
 [
 
 [
-"uv_inspection:False", "C:/dir1/dir2/", 4, 1, 4, 1, [[370,285,4770,3445]], "registration_mode:global",
+'ruta_de_imagenes', 'inspeccion_ultravioleta', numero_de_paneles, tableros_por_panel, multihilos_para_paneles, multihilos_para_tableros, [coordenadas_de_tableros], 'modo_de_registro',
 ],
 
-[datos de registro],
+[datos_de_registro],
 
 ]
+
+donde:
+
+'ruta_de_imagenes': establece el directorio en el cual se leerán las imágenes de los tableros.
+    La ruta debe terminar en «/». Ejemplo: 'C:/Dexill/Inspector/Alpha-Premium/x64/pd/'
+
+inspeccion_ultravioleta: determina si se inspeccionará con luz ultravioleta.
+    Puede ser 'uv_inspection:True' o 'uv_inspection:False'.
+
+numero_de_paneles: número de paneles que se registrarán.
+
+tableros_por_panel: número de tableros que contiene cada panel.
+
+multihilos_para_paneles: número de multihilos para registrar paneles.
+
+multihilos_para_tableros: número de multihilos para registrar tableros.
+
+coordenadas_de_tableros: lista con las coordenadas de las regiones que abarca cada tablero.
+    Ejemplo: 
+        * Si hay 3 tableros en cada panel: [coordenadas_del_tablero_1, coordenadas_del_tablero_2, coordenadas_del_tablero_3]
+        En cada coordenadas_del_tablero, se asignará [x1,y1,x2,y2]
+
+modo_de_registro: determina el modo de registro.
+    Ver: Documentacion/Registro/Modos-de-registro.txt
+
+datos_de_registro: Ver: Documentacion/Registro/estructura-de-datos.txt
+
