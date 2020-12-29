@@ -63,4 +63,5 @@ Los nombre_de_imagen se encuentran en la documentación de cada método de regis
 
 FUNCIÓN SKIP
 
-Las funciones de skip exportan imágenes como cualquier otro algoritmo. Las imágenes de la función skip se escriben como si fuera un algoritmo 'skip', de un punto de inspección llamado 'skip_function', que a su vez está dentro de una referencia llamada 'skip_function'.
+Las funciones de skip exportan imágenes como cualquier otro algoritmo. Las imágenes de la función skip se escriben como si fuera un algoritmo de un punto de inspección llamado 'skip_function', que a su vez está dentro de una referencia llamada 'skip_function'.
+En el «nombre de algoritmo» se escribirá el nombre que se le asignó a la función de skip en el archivo de datos de entrada (archivo comúnmente llamado «dt»).
