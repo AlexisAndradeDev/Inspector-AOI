@@ -12,9 +12,6 @@ TEMPLATE_DOESNT_EXIST-{número_de_template}:
 MT_ERROR-{número_de_template}:
     No pudo realizarse el template matching con esa template.
 
-UNKNOWN_CF_ERROR-{número_de_template}:
-    Hubo un error en el bucle para filtrar múltiples coincidencias con ese template.
-
 TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED: 
     No se pudo calcular la intersección entre dos transiciones.
     Esto es provocado porque las transiciones no se pueden intersectar, al ser paralelas.
