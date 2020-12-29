@@ -121,5 +121,5 @@ def calculate_circularity(area, perimeter):
 
 def average_coordinates(coordinates1, coordinates2):
     x_average = int(round((coordinates1[0] + coordinates2[0])/2))
-    y_average = int(round((coordinates1[0] + coordinates2[0])/2))
+    y_average = int(round((coordinates1[1] + coordinates2[1])/2))
     return [x_average, y_average]
