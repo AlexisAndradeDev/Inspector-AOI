@@ -1,17 +1,31 @@
-good: no hubo fallos, errores y todas las referencias tuvieron status 'good'.
+good: todas las referencias tienen estado 'good' y no ocurrieron errores.
 
-bad: una referencia o más tuvieron status 'bad'.
+bad: al menos una referencia tiene estado 'bad' y no ocurrieron errores.
 
-failed: ocurre si una referencia tiene status 'failed'.
+error: se asigna si al menos una referencia tiene status 'error', o si ocurrió un error en el tablero.
 
-skip: la función de skip no pasó, y por lo tanto, se omitió el tablero.
-    acerca de la función skip: documentacion/otros/funcion-de-skip/funcion-de-skip.txt
-
-general_failed: ocurre por fallos que afectan a todo el tablero como que la imagen del tablero no exista.
-    codigos de fallos: documentacion/codigos-de-fallos-y-errores/general-fails.txt
+skip: la función de skip no pasó, y por lo tanto, se omite el tablero.
+    Acerca de la función skip: Documentacion/Otros/Funcion-de-skip/explicacion.txt
 
 registration_failed: ocurrió un fallo al registrar el tablero.
-    codigos de fallos: documentacion/codigos-de-fallos-y-errores/registration-fails.txt
+    Códigos de fallos: Documentacion/Otros/Codigos/registration-fails.txt
 
-general_error: ocurre si hay un error que impide la realización de toda la inspección del tablero.
-    codigos de fallos: documentacion/codigos-de-fallos-y-errores/general-errors.txt
+
+JERARQUÍA
+
+'error': Todos los status pueden cambiar a 'error'. Una vez se obtenga el estado 'error', no puede cambiar a otro estado.
+
+'skip': Todos los status, excepto 'error', pueden cambiarse a 'skip'.
+    Sólo puede cambiar a 'error'.
+    Una vez se obtenga 'skip', el estado 'registration_failed' será imposible de obtener (el proceso que puede provocar
+    'registration_failed' no se ejecutará si se obtiene 'skip').
+
+'registration_failed': Todos los status, excepto 'error', pueden cambiar a 'registration_failed'.
+    Sólo puede cambiar a 'error'.
+
+'bad': Los status 'error', 'skip' y 'registration_failed' no pueden cambiar a 'bad'; los demás, sí pueden hacerlo.
+    Puede cambiar a 'error', 'skip' y 'registration_failed'.
+
+'good': Ningún status puede cambiar a 'good'.
+    Puede cambiar a cualquier estado.
+    Los status siempre se inicializan en 'good'.

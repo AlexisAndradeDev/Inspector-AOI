@@ -54,3 +54,4 @@ Si no hay código de error, «código_de_error» se escribirá como: None
 
 
 Los códigos de error y de fallos se encuentran en: Documentacion/Otros/Codigos/
+Los posibles status se encuentran en: Documentacion/Otros/Status/
