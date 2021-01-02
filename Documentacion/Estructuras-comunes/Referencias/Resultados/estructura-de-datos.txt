@@ -7,11 +7,11 @@ El símbolo «;» funcionará como separador dentro de las listas.
 
 El orden de las listas de resultados es aleatorio.
     Puede escribirse:
-        [resultados_de_un_algoritmo]
-        [resultados_de_un_panel]
-        [resultados_de_un_punto_de_inspección]
-        [resultados_de_un_algoritmo]
-        [resultados_de_un_tablero]
+        resultados_de_un_algoritmo#
+        resultados_de_un_panel#
+        resultados_de_un_punto_de_inspección#
+        resultados_de_un_algoritmo#
+        resultados_de_un_tablero#
     La estructura no lleva un orden de escritura.
 
 Al final de los resultados, el tiempo de inspección se indicará con:
@@ -24,7 +24,7 @@ ESTRUCTURAS
 
 
 ALGORITMOS
-[&; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; nombre_de_algoritmo; status; luz; resultados_de_función_de_inspección; códigos_de_fallos]#
+&; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; nombre_de_algoritmo; status; luz; resultados_de_función_de_inspección; códigos_de_fallos#
 
 Los resultados escritos por cada función de inspección (resultados_de_función_de_inspección) se encuentran en el directorio:
     Documentacion/Otros/Funciones-de-inspeccion/
@@ -33,21 +33,21 @@ Si no ocurrieron fallos, «códigos_de_fallos» se escribirá como una lista vac
 
 
 PUNTOS DE INSPECCIÓN
-[&&; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; status]#
+&&; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; status#
 
 
 REFERENCIAS
-[&&&; número_de_panel; número_de_tablero; nombre_de_referencia; status; resultados_del_algoritmo_de_parte]#
+&&&; número_de_panel; número_de_tablero; nombre_de_referencia; status; resultados_del_algoritmo_de_parte#
 
 
 TABLEROS
-[&&&&; número_de_panel; número_de_tablero; status; código_de_error]#
+    &&&&; número_de_panel; número_de_tablero; status; código_de_error#
 
 Si no hay código de error, «código_de_error» se escribirá como: None
 
 
 PANELES:
-[&&&&&; número_de_panel; status; código_de_error]#
+&&&&&; número_de_panel; status; código_de_error#
 
 Si no hay código de error, «código_de_error» se escribirá como: None
 
