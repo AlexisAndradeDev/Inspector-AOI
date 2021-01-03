@@ -2,4 +2,4 @@ Si la función de skip no pasa, el tablero se omite y no se inspecciona.
 
 Los datos de la función skip son exactamente los mismos que los de un algoritmo cualquiera.
 
-Si no pasa la función de skip, se escribirán sus resultados en el archivo de resultados como un algoritmo llamado "skip_function".
+Si no pasa la función de skip, se escribirán sus resultados en el archivo de resultados como un algoritmo con el nombre que se le asignó en el archivo de datos de entrada.
