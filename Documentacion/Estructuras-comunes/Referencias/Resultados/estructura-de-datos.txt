@@ -1,7 +1,7 @@
 Los resultados en la nueva estructura estarán totalmente desordenados.
 En cada resultado se indicará si es de una referencia, algoritmo, etc., según
 la palabra que se escriba en el primer elemento de los resultados:
-    "algorithm", "inspection_point", "reference", "board", "panel".
+    algorithm, inspection_point, reference, board, panel.
 
 El símbolo «#» funcionará como separador de las listas de resultados.
 El símbolo «;» funcionará como separador dentro de las listas.
@@ -25,7 +25,7 @@ ESTRUCTURAS
 
 
 ALGORITMOS
-"algorithm"; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; nombre_de_algoritmo; status; luz; resultados_de_función_de_inspección; códigos_de_fallos#
+algorithm; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; nombre_de_algoritmo; status; luz; resultados_de_función_de_inspección; códigos_de_fallos#
 
 Los resultados escritos por cada función de inspección (resultados_de_función_de_inspección) se encuentran en el directorio:
     Documentacion/Otros/Funciones-de-inspeccion/
@@ -34,21 +34,21 @@ Si no ocurrieron fallos, «códigos_de_fallos» se escribirá como una lista vac
 
 
 PUNTOS DE INSPECCIÓN
-"inspection_point"; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; status#
+inspection_point; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; status#
 
 
 REFERENCIAS
-"reference"; número_de_panel; número_de_tablero; nombre_de_referencia; status; resultados_del_algoritmo_de_parte#
+reference; número_de_panel; número_de_tablero; nombre_de_referencia; status; resultados_del_algoritmo_de_parte#
 
 
 TABLEROS
-"board"; número_de_panel; número_de_tablero; status; código_de_error#
+board; número_de_panel; número_de_tablero; status; código_de_error#
 
 Si no hay código de error, «código_de_error» se escribirá como: None
 
 
 PANELES:
-"panel"; número_de_panel; status; código_de_error#
+panel; número_de_panel; status; código_de_error#
 
 Si no hay código de error, «código_de_error» se escribirá como: None
 
