@@ -1,4 +1,4 @@
 Ocurren cuando el registro global de un panel falla.
-Se escriben dentro de los resultados del panel.
+Se escriben dentro de los resultados del panel y también en todos los tableros del panel.
 
 Códigos de errores en: Documentacion/Otros/Codigos/registration-fails.txt
