@@ -4,9 +4,12 @@ JERARQUÍA
 
 'registration_failed': Todos los status, excepto 'error', pueden cambiar a 'registration_failed'.
     Sólo puede cambiar a 'error'.
+    Al obtener status 'registration_failed', no puede obtenerse el status 'skip', ya que no se omitió el tablero.
 
-'skip': Todos los status, excepto 'error' y 'registration_failed', pueden cambiarse a 'skip'.
-    Puede cambiar a 'error' y 'registration_failed'.
+'skip': Todos los status, excepto 'error', pueden cambiarse a 'skip'.
+    Puede cambiar a 'error'.
+    Al obtener status 'skip', no puede obtenerse el status 'registration_failed', ya que el proceso para registrar
+    el tablero no se ejecutaría.
 
 'bad': Los status 'error', 'skip' y 'registration_failed' no pueden cambiar a 'bad'; los demás, sí pueden hacerlo.
     Puede cambiar a 'error', 'skip' y 'registration_failed'.
@@ -17,5 +20,9 @@ JERARQUÍA
 
 
 
-Al tener 'registration_failed', 'error' o 'skip' en un tablero, todo el panel adoptará ese status.
-    Por ejemplo, si se tuvo status 'registration_failed' en un tablero, el panel tendrá status 'registration_failed'.
+Si el registro global falló, el panel tendrá status 'registration_failed'.
+
+Al tener status 'error' en al menos un tablero, todo el panel adoptará el status de 'error'.
+
+Si «todos» los tableros tuvieron status 'registration_failed' o 'skip', el panel adoptará esos status.
+Si sólo algunos tableros tuvieron status 'registration_failed' o 'skip', el status de panel no se verá afectado.
