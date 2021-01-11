@@ -1,0 +1,3 @@
+good: La función de inspección pasó. No hubo errores ni fallos.
+bad: La función de inspección no pasó. No hubo errores ni fallos.
+error: Ocurrió un error al inspeccionar el algoritmo.
