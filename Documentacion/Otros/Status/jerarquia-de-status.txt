@@ -1,5 +1,9 @@
 JERARQUÍA
 
+*ADVERTENCIA*: Esta jerarquía no aplica para los algoritmos. Aplica para todos los demás objetos de inspección 
+    (puntos de inspección, referencias, tableros, etcétera).
+    La explicación de cómo se asignan los status a los algoritmos están en Documentacion/Otros/Status/status-de-algoritmo.txt
+
 'error': Todos los status pueden cambiar a 'error'. Una vez se obtenga el estado 'error', no puede cambiar a otro estado.
 
 'registration_failed': Todos los status, excepto 'error', pueden cambiar a 'registration_failed'.

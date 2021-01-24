@@ -1,3 +1,28 @@
-good: La función de inspección pasó. No hubo errores ni fallos.
-bad: La función de inspección no pasó. No hubo errores ni fallos.
+good: Se obtiene si el status obtenido en la función de inspección coincide con el que el usuario asignó en
+    status_necesario_para_ser_good en los datos de entrada.
+    (ver Documentacion/Estructuras-comunes/Referencias/Datos-de-entrada/estructura-de-algoritmo.txt).
+
+bad: Se asigna si no se obtuvo el status asignado en status_necesario_para_ser_good y el status obtenido de la función de
+    inspección fue "good" o "bad".
+
 error: Ocurrió un error al inspeccionar el algoritmo.
+
+Por ejemplo:
+    El status necesario es "good", y la función de inspección obtiene "good":
+        el status del algoritmo es "good"
+    El status necesario es "good", y la función de inspección obtiene "bad":
+        el status del algoritmo es "bad"
+    El status necesario es "bad", y la función de inspección obtiene "bad":
+        el status del algoritmo es "good"
+    El status necesario es "bad", y la función de inspección obtiene "good":
+        el status del algoritmo es "bad"
+    El status necesario es "good", y la función de inspección obtiene "failed":
+        el status del algoritmo es "failed"
+    El status necesario es "bad", y la función de inspección obtiene "failed":
+        el status del algoritmo es "failed"
+    
+    Experimental, no encuentro un uso práctico a lo siguiente:
+        El status necesario es "failed", y la función de inspección obtiene "failed":
+            el status del algoritmo es "good"
+        El status necesario es "failed", y la función de inspección obtiene "good":
+            el status del algoritmo es "bad"
