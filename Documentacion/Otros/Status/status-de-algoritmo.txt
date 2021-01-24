@@ -5,7 +5,8 @@ good: Se obtiene si el status obtenido en la función de inspección coincide co
 bad: Se asigna si no se obtuvo el status asignado en status_necesario_para_ser_good y el status obtenido de la función de
     inspección fue "good" o "bad".
 
-error: Ocurrió un error al inspeccionar el algoritmo.
+error: Ocurrió un error al inspeccionar el algoritmo. Este status es superior al de 'good' y 'bad', por lo que si la función de
+    inspección obtiene status 'bad' y ocurre un error, el status que se asignará será 'error' y no 'bad'.
 
 Por ejemplo:
     El status necesario es "good", y la función de inspección obtiene "good":
@@ -16,13 +17,8 @@ Por ejemplo:
         el status del algoritmo es "good"
     El status necesario es "bad", y la función de inspección obtiene "good":
         el status del algoritmo es "bad"
-    El status necesario es "good", y la función de inspección obtiene "failed":
-        el status del algoritmo es "failed"
-    El status necesario es "bad", y la función de inspección obtiene "failed":
-        el status del algoritmo es "failed"
+    El status necesario es "good", y la función de inspección obtiene "error":
+        el status del algoritmo es "error"
+    El status necesario es "bad", y la función de inspección obtiene "error":
+        el status del algoritmo es "error"
     
-    Experimental, no encuentro un uso práctico a lo siguiente:
-        El status necesario es "failed", y la función de inspección obtiene "failed":
-            el status del algoritmo es "good"
-        El status necesario es "failed", y la función de inspección obtiene "good":
-            el status del algoritmo es "bad"
