@@ -38,7 +38,9 @@ inspection_point; número_de_panel; número_de_tablero; nombre_de_referencia; no
 
 
 REFERENCIAS
-reference; número_de_panel; número_de_tablero; nombre_de_referencia; status; resultados_del_algoritmo_de_parte#
+reference; número_de_panel; número_de_tablero; nombre_de_referencia; status; resultados_del_algoritmo_de_parte; código_de_error#
+
+Si no hay código de error, «código_de_error» se escribirá como: None
 
 
 TABLEROS

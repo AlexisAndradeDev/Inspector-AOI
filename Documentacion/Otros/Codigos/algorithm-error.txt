@@ -18,3 +18,6 @@ TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED:
     
 TRANSITIONS_NAMES_CAN_NOT_INTERSECT:
     Las transiciones de las que se quiere calcular una intersección no pueden intersectarse entre sí.
+
+INVALID_INSPECTION_FUNCTION:
+    El nombre de la función de inspección no es válido.

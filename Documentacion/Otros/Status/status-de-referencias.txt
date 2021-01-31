@@ -1,0 +1,5 @@
+good: todos los puntos de inspección tienen status 'good' y no hubo errores.
+
+bad: al menos un punto de inspección tiene estado 'bad' y no ocurrieron errores.
+
+error: al menos un punto de inspección tiene status 'error' u ocurrió un error en la referencia.

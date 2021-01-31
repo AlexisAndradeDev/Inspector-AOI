@@ -1,0 +1,6 @@
+Son errores que afectan la inspección de toda una referencia.
+Se escriben dentro de los resultados de la referencia.
+
+
+INVALID_REFERENCE_ALGORITHM_FUNCTION: 
+    El nombre de la función del algoritmo de referencia (algoritmo de parte) no es válido.
