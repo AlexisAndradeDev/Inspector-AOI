@@ -1,1 +1,5 @@
 [status, [status]]
+
+donde:
+
+status: Estado de los puntos de inspección (no de la referencia).
