@@ -73,13 +73,13 @@ tamano_del_grupo: número de filas o columnas que se promediarán para calcular 
 
 El ancho del componente (distancia entre ambos across) puede calcularse teniendo por lo menos ambos across.
 
-
-Si se quiere encontrar across1 y across2, se puede utilizar la misma estructura de 3 transiciones pero eliminando la transición "along".
+Si se quiere encontrar across1 y across2, se utiliza la misma estructura de 3 transiciones pero eliminando la transición "along".
 Puede calcularse el ancho del componente.
 
 Si se quiere encontrar across1 y along o across2 y along, se utiliza la misma estructura de 3 transiciones eliminando la transición across no deseada.
 No puede calcular el ancho del componente, por lo que calculate_component_width es False, y los min_component_width y max_component_width son None
 
+Si se quiere encontrar sólo una transición, ya sea along, across1 o across2, se debe dejar sólo la transición deseada.
 
 
 ESTRUCTURA DE RESULTADOS
