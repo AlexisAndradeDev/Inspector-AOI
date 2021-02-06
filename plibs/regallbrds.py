@@ -1,4 +1,4 @@
-from inspector_package import ins_func, reg_methods_func, operations, cv_func, ins_loop_func
+from inspector_package import reg_methods_func, operations, cv_func, ins_loop_func
 
 if __name__ == '__main__':
     data = operations.read_file(r"C:/Dexill/Inspector/Alpha-Premium/x64/pd/regallbrds_dt.di")

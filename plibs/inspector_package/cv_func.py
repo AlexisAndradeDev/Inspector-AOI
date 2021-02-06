@@ -2,7 +2,7 @@ import cv2
 import math
 import numpy as np
 
-from inspector_package import math_functions, excepts
+from inspector_packageOptimizandoNuevo import math_functions, excepts
 
 def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1, c2_size=3, c2_color=(0,0,255), c2_thickness=1):
     found = img.copy()
@@ -650,79 +650,138 @@ def calculate_blob_area(img, lower, upper, color_scale, invert_binary=False):
     biggest_blob = get_biggest_contour_area(binary)
     return blob_area, biggest_blob, binary
 
-def find_matches(img, template, min_calification, required_matches, color_scale, color_scale_for_binary=None, color_range=None, invert_binary=False):
-    # Dimensiones del template
-    width = template.shape[1]
-    height = template.shape[0]
+def filter_multiple_template_matches(template, res, min_calification):
+    """
+    Filtra las coincidencias encontradas con template matching.
 
+    Args:
+        tm_results: Resultados del template matching retornados de 
+            cv2.matchTemplate()
+        template, min_calification: Ver cv_func.find_matches()
+
+    Returns:
+        matches_locations: Ver cv_func.find_matches()
+    """    
+    matches_locations = []
+    # Filtrar múltiples coincidencias
+    template_height, template_width = template.shape[:2]
+    while True:
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        top_left = max_loc
+
+        if max_val >= min_calification:
+            # floodfill the already found area
+            sx, sy = top_left
+            for x in range(int(sx-template_width/2), int(sx+template_width/2)):
+                for y in range(int(sy-template_height/2), int(sy+template_height/2)):
+                    try:
+                        res[y][x] = np.float32(-10000) # -MAX
+                    except IndexError: # ignore out of bounds
+                        pass
+            matches_locations.append(top_left)
+        else:
+            break
+    return matches_locations
+
+def find_matches(img, template, min_calification, required_matches, color_scale, 
+                 color_scale_for_binary=None, color_range=None, 
+                 invert_binary=False):
+    """
+    Encuentra coincidencias de una template dentro de una imagen con template
+    matching.
+
+    Args:
+        img (numpy.ndarray): Imagen en la que se buscará el template.
+        template (numpy.ndarray): Imagen del template (lo que se busca).
+        min_calification (Union[float, int]): Calificación mínima para considerar
+            una coincidencia del template.
+        required_matches (Union[float, int]): Número de coincidencias que se
+            busca tenga el template.
+        color_scale (str): Escala de colores a la que se transformará la imagen.
+            'gray', 'binary'.
+        color_scale_for_binary (str, optional): Escala de colores en la que se
+            binarizará la imagen. 
+            'gray', 'hsv'.
+
+            Ejemplo: 'gray'; primero se convertirá la imagen a escala de grises 
+            y luego se binarizará.
+
+            Si el parámetro color_scale no es 'binary', se debe asignar None.
+            Defaults to None.
+        color_range (list, optional): Rango de color para binarizar la imagen.
+            Estructura: [min, max]
+
+            Si es 'hsv', min y max serán listas; 
+            si es 'gray', min y max serán números (int).
+
+            Si el parámetro color_scale no es 'binary', se debe asignar None.
+            Defaults to None.
+        invert_binary (bool, optional): True si se invertirá el binarizado,
+            False si no se invertirá.
+            Defaults to False.
+
+    Raises:
+        excepts.AlgorithmError("MT_ERROR"): Si hay un error al ejecutar el
+            template matching.
+
+    Returns:
+        matches_locations (list): Es una lista que contiene listas de coordenadas 
+            en las que se encontraron coincidencias.
+            [[x,y], [x,y], [x,y], ...]
+            Si no hubo coincidencias, será una lista vacía.
+        best_match (float): Calificación de coincidencia más alta que se encontró.
+        color_converted_img (numpy.ndarray): img transformada a la escala de 
+            colores asignada.
+    """
     if color_scale == "gray":
-        # Convertir imagen y template a grises
         color_converted_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         color_converted_template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
     elif color_scale == "binary":
-        # convertir imagen y template a color binario (blanco y negro)
         if color_scale_for_binary == "gray":
-            # Si se eligió usar gray para binarizar la imagen
-            gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # imagen a gray
-            gray_template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY) # template a gray
+            # binarizar con gray
+            gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            gray_template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 
             [lower, upper] = color_range
 
-            color_converted_img = cv2.inRange(gray_img, lower, upper) # imagen a binary
-            color_converted_template = cv2.inRange(gray_template, lower, upper) # template a binary
+            color_converted_img = cv2.inRange(gray_img, lower, upper)
+            color_converted_template = cv2.inRange(gray_template, lower, upper)
 
         elif color_scale_for_binary == "hsv":
-            # Si se eligió usar hsv para binarizar la imagen
-            hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) # imagen a hsv
-            hsv_template = cv2.cvtColor(template, cv2.COLOR_BGR2HSV) # template a hsv
+            # binarizar con hsv
+            hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            hsv_template = cv2.cvtColor(template, cv2.COLOR_BGR2HSV)
 
-            [lower, upper] = color_range # rango para binarizar imagen
-            lower, upper = np.array(lower), np.array(upper) # convertir a arreglo de numpy
+            [lower, upper] = color_range
+            lower, upper = np.array(lower), np.array(upper)
 
-            color_converted_img = cv2.inRange(hsv_img, lower, upper) # imagen a binary
-            color_converted_template = cv2.inRange(hsv_template, lower, upper) # template a binary
+            color_converted_img = cv2.inRange(hsv_img, lower, upper)
+            color_converted_template = cv2.inRange(hsv_template, lower, upper)
 
         if invert_binary:
-            # invertir binarizado (lo negro se pone blanco, y lo blanco, negro)
+            # invertir binarizado
             color_converted_img = cv2.bitwise_not(color_converted_img)
             color_converted_template = cv2.bitwise_not(color_converted_template)
 
 
     # Template matching
     try:
-        res = cv2.matchTemplate(color_converted_img, color_converted_template, cv2.TM_CCOEFF_NORMED)
+        tm_results = cv2.matchTemplate(color_converted_img, color_converted_template, cv2.TM_CCOEFF_NORMED)
     except:
-        raise excepts.MT_ERROR()
+        raise excepts.AlgorithmError("MT_ERROR")
 
-    # Mejor coincidencia encontrada
-    _, best_match, _, max_loc = cv2.minMaxLoc(res)
-    # Lista donde se guardarán las coincidencias
+
+    _, best_match, _, max_loc = cv2.minMaxLoc(tm_results)
     matches_locations = []
+
 
     if required_matches == 1 and best_match >= min_calification:
         matches_locations.append(max_loc)
 
-    else:
-        # Bucle para filtrar múltiples coincidencias
-        while True:
-            try:
-                min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-                top_left = max_loc
-
-                if max_val >= min_calification:
-                    # floodfill the already found area
-                    sx, sy = top_left
-                    for x in range(int(sx-width/2), int(sx+width/2)):
-                        for y in range(int(sy-height/2), int(sy+height/2)):
-                            try:
-                                res[y][x] = np.float32(-10000) # -MAX
-                            except IndexError: # ignore out of bounds
-                                pass
-                    matches_locations.append(top_left)
-                else:
-                    break
-            except:
-                raise excepts.UNKNOWN_CF_ERROR()
+    elif required_matches > 1:
+        matches_locations = filter_multiple_template_matches(
+            template, tm_results, min_calification
+        )
 
     return matches_locations, best_match, color_converted_img
 

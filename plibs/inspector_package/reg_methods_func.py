@@ -1,11 +1,12 @@
 import cv2
 
-from inspector_package import math_functions, cv_func, operations
+from inspector_packageOptimizandoNuevo import (math_functions, cv_func, 
+    threads_operations, images_operations)
 
 
 def register_with_rotation_points_and_translation_point(image, rotation_iterations,
-        rotation_point1, rotation_point2, translation_point, objective_angle,
-        objective_x, objective_y,
+        rotation_point1, rotation_point2, translation_point, target_angle,
+        target_x, target_y,
     ):
     """
     Rota y traslada la imagen del tablero para alinearla con las ventanas de inspección.
@@ -29,7 +30,7 @@ def register_with_rotation_points_and_translation_point(image, rotation_iteratio
         # Encontrar punto de rotación 1
         rotation_point1_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, rotation_point1)
         # agregar nombre del punto de rotación a las imágenes
-        resulting_images = operations.add_to_images_name(resulting_images, "-rp1")
+        resulting_images = images_operations.add_to_images_name(resulting_images, "-rp1")
         images_to_return.update(resulting_images)
 
         if not rotation_point1_coordinates:
@@ -39,7 +40,7 @@ def register_with_rotation_points_and_translation_point(image, rotation_iteratio
         # Encontrar punto de rotación 2
         rotation_point2_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, rotation_point2)
         # agregar nombre del punto de rotación a las imágenes
-        resulting_images = operations.add_to_images_name(resulting_images, "-rp2")
+        resulting_images = images_operations.add_to_images_name(resulting_images, "-rp2")
         images_to_return.update(resulting_images)
 
         if not rotation_point2_coordinates:
@@ -51,7 +52,7 @@ def register_with_rotation_points_and_translation_point(image, rotation_iteratio
         angle_between_rotation_points = math_functions.calculate_angle(rotation_point1_coordinates, rotation_point2_coordinates)
 
         # Rotar la imagen
-        rotation = angle_between_rotation_points - objective_angle
+        rotation = angle_between_rotation_points - target_angle
         image, trMat = cv_func.rotate(image, rotation)
 
         total_rotation += rotation
@@ -60,7 +61,7 @@ def register_with_rotation_points_and_translation_point(image, rotation_iteratio
     # Encontrar punto de traslación
     translation_point_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, translation_point)
     # agregar nombre del punto de traslación a las imágenes
-    resulting_images = operations.add_to_images_name(resulting_images, "-tp")
+    resulting_images = images_operations.add_to_images_name(resulting_images, "-tp")
     images_to_return.update(resulting_images)
 
     if not translation_point_coordinates:
@@ -68,8 +69,8 @@ def register_with_rotation_points_and_translation_point(image, rotation_iteratio
         return fail, images_to_return, None, None, None
 
     # Se traslada la diferencia entre las coordenadas donde deberá ubicarse el punto de traslación menos las coordenadas encontradas
-    x_diference = objective_x - translation_point_coordinates[0]
-    y_diference = objective_y - translation_point_coordinates[1]
+    x_diference = target_x - translation_point_coordinates[0]
+    y_diference = target_y - translation_point_coordinates[1]
     image = cv_func.translate(image, x_diference, y_diference)
 
     return None, images_to_return, image, total_rotation, [x_diference, y_diference]
@@ -81,8 +82,8 @@ def register_image(image, image_ultraviolet, registration_settings):
         fail, images_to_return, image, rotation, translation = register_with_rotation_points_and_translation_point(
             image, registration_settings["rotation_iterations"],
             registration_settings["rotation_point1"], registration_settings["rotation_point2"],
-            registration_settings["translation_point"], registration_settings["objective_angle"],
-            registration_settings["objective_x"], registration_settings["objective_y"]
+            registration_settings["translation_point"], registration_settings["target_angle"],
+            registration_settings["target_x"], registration_settings["target_y"]
         )
 
     if image_ultraviolet is not None and not fail:
@@ -100,7 +101,7 @@ def calculate_missing_registration_data_rotation_points_and_translation_point(im
     # Encontrar punto de rotación 1
     rotation_point1_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, rotation_point1)
     # agregar nombre del punto de rotación a las imágenes
-    resulting_images = operations.add_to_images_name(resulting_images, "-rp1")
+    resulting_images = images_operations.add_to_images_name(resulting_images, "-rp1")
     images_to_return.update(resulting_images)
 
     if not rotation_point1_coordinates:
@@ -110,7 +111,7 @@ def calculate_missing_registration_data_rotation_points_and_translation_point(im
     # Encontrar punto de rotación 2
     rotation_point2_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, rotation_point2)
     # agregar nombre del punto de rotación a las imágenes
-    resulting_images = operations.add_to_images_name(resulting_images, "-rp2")
+    resulting_images = images_operations.add_to_images_name(resulting_images, "-rp2")
     images_to_return.update(resulting_images)
 
     if not rotation_point2_coordinates:
@@ -125,7 +126,7 @@ def calculate_missing_registration_data_rotation_points_and_translation_point(im
     # Encontrar punto de traslación
     translation_point_coordinates, resulting_images = cv_func.find_reference_point_in_board(image, translation_point)
     # agregar nombre del punto de traslación a las imágenes
-    resulting_images = operations.add_to_images_name(resulting_images, "-tp")
+    resulting_images = images_operations.add_to_images_name(resulting_images, "-tp")
     images_to_return.update(resulting_images)
 
     if not translation_point_coordinates:
