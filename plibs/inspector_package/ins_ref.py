@@ -398,7 +398,7 @@ def inspect_reference(results, board, reference, settings, image,
     reference_results["string"] = \
         results_management.create_reference_results_string(
             reference, board, reference_results["status"], 
-            reference_algorithm_results,
+            reference_algorithm_results["string"],
         )
 
     return reference_results

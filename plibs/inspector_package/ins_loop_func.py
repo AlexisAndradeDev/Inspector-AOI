@@ -347,7 +347,7 @@ def run_debug(first_panel, last_panel, results, settings, references, stage):
     registration_settings, photo, photo_ultraviolet = None, None, None
 
     for panel_number in range(first_panel, last_panel+1):
-        panel = inspection_objects.Panel(panel_number, stage)
+        panel = inspection_objects.Panel(panel_number)
 
         # multihilos para tableros
         threads = threads_operations.create_threads(
@@ -359,7 +359,8 @@ def run_debug(first_panel, last_panel, results, settings, references, stage):
         )
 
         threads_operations.run_threads(threads)
-        # añadir resultados del panel
+
+        panel.create_results_string()
         results.val += panel.get_results_string()
 
 def read_inspection_photo(settings):
