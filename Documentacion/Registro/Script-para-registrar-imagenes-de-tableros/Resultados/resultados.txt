@@ -1,40 +1,8 @@
-Los resultados de los tableros se encuentran en C:/Dexill/Inspector/Alpha-Premium/x64/pd/regallbrds_results.do
+Los resultados de los tableros se encuentran en la ruta C:/Dexill/Inspector/Alpha-Premium/x64/pd/regallbrds_results.do
 
-Se escriben con la estructura:
-	panel;num_de_posicion_del_tablero_en_panel;status#
+El archivo de resultados contendrá los resultados de los tableros y los resultados de los paneles.
+La documentación acerca de la estructura de resultados de los tableros y paneles se encuentra en:
+    Documentacion/Estructuras-comunes/Referencias/Resultados/
+	En las secciones «TABLEROS» y «PANELES».
 
-Al final de los resultados, se encontrará el tiempo que tardó en ejecución con la estructura:
-	$&$tiempo
-
-Por ejemplo:
-	1;1;good#
-	1;2;good#
-	2;1;registration_failed;codigo#
-	2;2;good#
-	3;1;registration_failed;codigo#
-	3;2;good#
-	4;1;good#
-	4;2;good#
-	5;1;general_failed;codigo#
-	5;2;general_failed;codigo#
-	6;1;good#
-	6;2;good#
-	7;1;error;codigo#
-	7;2;error;codigo#
-	$&$0.897123
-
-
-Cualquier fallo o error se encuentra con la estructura:
-	panel;num_de_posicion_del_tablero;status;codigo
-
-	Todos los posibles status se encuentran en: Documentacion/Otros/Status/status-de-tableros.txt
-	Los códigos de fallos y errores se encuentran en Otros/Codigos/
-
-
-Los fallos de registro se encuentran con la estructura:
-	panel;num_de_posicion_del_tablero;registration_failed;codigo
-
-	Los códigos de fallos de registro se encuentran en Otros/Codigos/
-
-	* Aún si se utilizó registro global, el código del fallo de registro se escribirá en cada tablero afectado (en cada tablero del panel).
-
+La documentación sobre los fallos de registro global y local se encuentra en Documentacion/Otros/Codigos/
