@@ -2,7 +2,7 @@ import cv2
 import math
 import numpy as np
 
-from inspector_packageOptimizandoNuevo import math_functions, excepts
+from inspector_package import math_functions, excepts
 
 def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1, c2_size=3, c2_color=(0,0,255), c2_thickness=1):
     found = img.copy()

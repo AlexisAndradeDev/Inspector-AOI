@@ -1,5 +1,5 @@
 from cv2 import imread, imwrite
-from inspector_packageOptimizandoNuevo import inspection_objects
+from inspector_package import inspection_objects
 
 def force_read_image(path):
     img = imread(path)
@@ -17,7 +17,9 @@ def read_photos_for_registration(settings, panel_number):
         return fail, None, None
 
     if settings["uv_inspection"]:
-        path = "{0}{1}-ultraviolet.bmp".format(settings["read_images_path"], panel_number)
+        path = "{0}{1}-ultraviolet.bmp".format(
+            settings["read_images_path"], panel_number,
+        )
         photo_ultraviolet = imread(path)
 
         if photo_ultraviolet is None:

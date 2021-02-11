@@ -2,7 +2,7 @@
 Funciones para leer los datos de entrada: Variables de datos y configuraciones 
 para cada una de las etapas (debug, registro, inspección).
 """
-from inspector_packageOptimizandoNuevo import (cv_func, excepts, 
+from inspector_package import (cv_func, excepts, 
     files_management, inspection_objects,)
 
 def get_registration_settings(registration_data):
@@ -84,7 +84,7 @@ def get_registration_stage_data():
         registration_settings (dict): Diccionario con la configuración
             de registro.
     """
-    data = operations.read_file(
+    data = files_management.read_file(
         r"C:/Dexill/Inspector/Alpha-Premium/x64/pd/regallbrds_dt.di"
     )
     data = eval(data) # Convertir string data a una lista

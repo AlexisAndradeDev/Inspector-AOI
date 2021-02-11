@@ -1,4 +1,4 @@
-from inspector_packageOptimizandoNuevo import (ins_func, cv_func, results_management, images_operations)
+from inspector_package import (ins_func, cv_func, results_management, images_operations)
 
 def execute_inspection_function(inspection_image_filt, algorithm):
     """

@@ -1,7 +1,7 @@
 """Clases y diccionarios de los objectos que se inspeccionarán, como 
 paneles, tableros o algoritmos."""
 
-from inspector_packageOptimizandoNuevo import results_management, ins_func
+from inspector_package import results_management, ins_func
 
 class Panel:
     """Clase para almacenar información sobre un panel."""

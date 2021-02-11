@@ -1,4 +1,4 @@
-from inspector_packageOptimizandoNuevo import math_functions, cv_func, \
+from inspector_package import math_functions, cv_func, \
     images_operations, threads_operations, results_management, excepts
 
 from cv2 import imread, imwrite, rectangle, cvtColor, COLOR_BGR2GRAY

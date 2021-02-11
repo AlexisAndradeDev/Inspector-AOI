@@ -1,6 +1,6 @@
 import cv2
 
-from inspector_packageOptimizandoNuevo import (math_functions, cv_func, 
+from inspector_package import (math_functions, cv_func, 
     threads_operations, images_operations)
 
 

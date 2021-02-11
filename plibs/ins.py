@@ -1,5 +1,5 @@
 """Inicia el proceso de inspección."""
-from inspector_packageOptimizandoNuevo import (read_data, ins_loop_func,
+from inspector_package import (read_data, ins_loop_func,
     results_management, excepts,)
 
 if __name__ == '__main__':
@@ -11,8 +11,8 @@ if __name__ == '__main__':
         # escribir código de fatal_error en el archivo de resultados
         results = "%"+str(e)
         results_management.write_results(results, stage)
-
-    # Iniciar el bucle de inspección
-    ins_loop_func.start_inspection_loop(
-        settings, references, registration_settings, stage,
-    )
+    else:
+        # Iniciar el bucle de inspección
+        ins_loop_func.start_inspection_loop(
+            settings, references, registration_settings, stage,
+        )

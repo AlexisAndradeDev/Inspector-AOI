@@ -1,4 +1,4 @@
-from inspector_packageOptimizandoNuevo import files_management, inspection_objects
+from inspector_package import files_management, inspection_objects
 
 def create_algorithm_results_string(algorithm, board, status, 
                                     inspection_function_results, codes):

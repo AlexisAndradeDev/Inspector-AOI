@@ -1,7 +1,7 @@
 """Contiene las funciones para iniciar los procesos de inspección, debugeo 
 y registro pre-debugeo."""
 
-from inspector_packageOptimizandoNuevo import (cv_func, ins_ref,
+from inspector_package import (cv_func, ins_ref,
     threads_operations, inspection_objects, results_management, 
     reg_methods_func, images_operations, files_management,)
 
@@ -62,11 +62,26 @@ def add_boards_in_panel_to_results_as_registration_failed(results, panel, boards
         results (ins_loop_func.StaticVar): Almacena el string de resultados.
         panel (inspection_objects.Panel): Panel que contiene a estos tableros.
         boards_per_panel (int): Número de tableros que cada panel contiene.
-        code (str): Código del fallo de registro.
+        code (str): Código de fallo/error.
     """
     for board_position in range(1, boards_per_panel+1):
         board = inspection_objects.Board(panel, board_position)
         board.set_as_registration_failed(code)
+        results.val += board.get_results_string()
+
+def add_boards_in_panel_to_results_as_error(results, panel, boards_per_panel, 
+        code):
+    """
+    Realiza lo mismo que add_boards_in_panel_to_results_as_registration_failed(),
+    la única diferencia es que asigna estado de error.
+
+    Args:
+        results, panel, boards_per_panel, code - 
+            Ver add_boards_in_panel_to_results_as_registration_failed()
+    """
+    for board_position in range(1, boards_per_panel+1):
+        board = inspection_objects.Board(panel, board_position)
+        board.set_as_error(code)
         results.val += board.get_results_string()
 
 def use_skip_function(board_image, board_image_ultraviolet, skip_function):
@@ -263,75 +278,58 @@ def run_registration(first_panel, last_panel, results, settings,
             Ver ins_loop_func.run_inspection()
     """
     references = None
-    photos_results = StaticVar("")
 
     for panel_number in range(first_panel, last_panel+1):
-        first_board, last_board = get_first_last_boards_in_photo(
-            settings["boards_per_panel"], panel_number
-        )
+        panel = inspection_objects.Panel(panel_number)
 
         fail, photo, photo_ultraviolet = \
             images_operations.read_photos_for_registration(settings, panel_number)
 
         if fail:
-            # asignar resultados de fallo general a cada tablero
-            for board_number in range(first_board, last_board+1):
-                board = inspection_objects.Board(board_number=board_number, panel_number=panel_number,
-                    stage='registration',
-                    position_in_panel=get_board_position_in_panel(board_number, settings["boards_per_panel"]),
-                )
-
-                board.set_status("general_failed", code=fail)
-                board.process_results()
-                photos_results.val += board.get_results_string()
-
-            # abortar registro de la foto
+            # procesar resultados de todos los tableros del panel como error
+            add_boards_in_panel_to_results_as_error(
+                results, panel, settings["boards_per_panel"], fail,
+            )
+            # abortar registro del panel
             continue
 
 
-        # registro global
+        # Registro global
         if settings["registration_mode"] == "registration_mode:global":
-            # Registro de todo el panel (registra la fotografía completa)
-            registration_fail, images, photo, photo_ultraviolet, rotation, 
-            translation = reg_methods_func.register_image(
+            # registra la fotografía completa
+            [registration_fail, images, photo, photo_ultraviolet, rotation,
+            translation] = reg_methods_func.register_image(
                 photo, photo_ultraviolet, registration_settings,
             )
 
-            images_operations.export_local_registration_images(
-                images, board, "white", settings, registration_fail,
+            images_operations.export_global_registration_images(
+                images, panel, "white", settings, registration_fail,
             )
 
             if registration_fail:
-                # asignar resultados a cada tablero como si fuera fallo de registro local
-                for board_number in range(first_board, last_board+1):
-                    board = inspection_objects.Board(board_number=board_number, panel_number=panel_number,
-                        stage='registration',
-                        position_in_panel=get_board_position_in_panel(board_number, settings["boards_per_panel"]),
-                    )
-
-                    board.set_status("registration_failed", code=registration_fail)
-                    board.process_results()
-                    photos_results.val += board.get_results_string()
-
-                # abortar registro de la foto
+                add_boards_in_panel_to_results_as_registration_failed(
+                    results, panel, settings["boards_per_panel"], 
+                    registration_fail,
+                )
+                
+                panel.set_as_registration_failed(code=registration_fail)
+                results.val += panel.get_results_string()
+                # abortar la inspección de este panel
                 continue
 
-        # Procesar los tableros con multihilos
-        panel_results = StaticVar("")
+        # multihilos para tableros
         threads = threads_operations.create_threads(
             func=inspect_boards,
             threads_num=settings["threads_num_for_boards"],
             targets_num=settings["boards_per_panel"],
-            func_args=[results, panel, settings, references, registration_settings, 
-            stage, photo, photo_ultraviolet],
+            func_args=[results, panel, settings, references, 
+            registration_settings, stage, photo, photo_ultraviolet],
         )
 
         threads_operations.run_threads(threads)
-        # agregar resultados de la foto
-        photos_results.val += panel_results.val
 
-    # agregar resultados de todas las fotos
-    results.val += photos_results.val
+        panel.create_results_string()
+        results.val += panel.get_results_string()
 
     return results
 
@@ -410,8 +408,8 @@ def run_inspection(first_panel, last_panel, results, settings, references,
         # Registro global
         if settings["registration_mode"] == "registration_mode:global":
             # registrar la fotografía completa
-            registration_fail, images, photo, photo_ultraviolet, rotation, \
-            translation = reg_methods_func.register_image(
+            [registration_fail, images, photo, photo_ultraviolet, rotation,
+            translation] = reg_methods_func.register_image(
                 photo, photo_ultraviolet, registration_settings,
             )
 

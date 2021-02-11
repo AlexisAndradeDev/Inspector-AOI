@@ -1,6 +1,6 @@
 import copy
 import threading
-from inspector_packageOptimizandoNuevo import math_functions
+from inspector_package import math_functions
 
 def run_threads(threads):
     # Correr los procesos de los hilos
