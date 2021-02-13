@@ -417,10 +417,10 @@ def inspect_inspection_points(image, image_ultraviolet, board, inspection_points
             status = results_management.evaluate_algorithm_status(inspection_function_status, algorithm)
 
             # ! agregar localización encontrada con la función de inspección a los resultados de la función de inspección.
-            if location == "not_available"
+            if location == "not_available":
                 results.append("not_available")
             else:
-                results.append(location["coordinates"])
+                results.append(location)
 
             algorithm_results = results_management.get_algorithm_results(
                 algorithm_results=algorithm_results, algorithm=algorithm,
