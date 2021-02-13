@@ -416,6 +416,12 @@ def inspect_inspection_points(image, image_ultraviolet, board, inspection_points
 
             status = results_management.evaluate_algorithm_status(inspection_function_status, algorithm)
 
+            # ! agregar localización encontrada con la función de inspección a los resultados de la función de inspección.
+            if location == "not_available"
+                results.append("not_available")
+            else:
+                results.append(location["coordinates"])
+
             algorithm_results = results_management.get_algorithm_results(
                 algorithm_results=algorithm_results, algorithm=algorithm,
                 results=results, status=status, fails=fails, location=location,
@@ -781,7 +787,7 @@ def inspection_function_transitions(inspection_image, algorithm):
         Imagen filtrada, imagen rgb con las transiciones encontradas dibujadas y
         el punto tomado como location.
     Retorna como resultados de algoritmo:
-        Número de transiciones encontradas, ancho del componente.
+        Número de transiciones encontradas, ancho del componente, coordenadas de la transición.
     """
     location = "not_available"
     status = "good" # inicializar como good
@@ -829,7 +835,7 @@ def inspection_function_transitions(inspection_image, algorithm):
         if algorithm["parameters"]["min_component_width"] <= component_width <= algorithm["parameters"]["max_component_width"]:
             status = "bad"
 
-    window_results = [transitions_number, component_width]
+    window_results = [transitions_number, component_width, location]
     return fails, location, window_results, status, images_to_return
 
 def calculate_location_for_transitions(required_transitions, transitions):
