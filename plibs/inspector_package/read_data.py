@@ -5,6 +5,66 @@ para cada una de las etapas (debug, registro, inspección).
 from inspector_package import (cv_func, excepts, 
     files_management, inspection_objects,)
 
+def get_rotation_points_and_translation_point(rotation_point1_data, 
+        rotation_point2_data, translation_point_data):
+    """
+    Retorna los diccionarios de los puntos de rotación y traslación utilizados
+    en el método de registro <rotation_points_and_translation_point>.
+
+    Args:
+        rotation_point1_data (list): Lista con los datos del punto de 
+            rotación 1 (obtenida directamente del archivo de datos de 
+            entrada).
+        rotation_point2_data (list): Lista con los datos del punto de 
+            rotación 1 (obtenida directamente del archivo de datos de 
+            entrada).
+        translation_point_data (list): Lista con los datos del punto de 
+            traslación (obtenida directamente del archivo de datos de 
+            entrada).
+
+    Returns:
+        rotation_point1 (dict): Diccionario con los datos del punto
+            de rotación 1.
+        rotation_point2 (dict): Diccionario con los datos del punto
+            de rotación 2.
+        translation_point (dict): Diccionario con los datos del punto
+            de traslación.
+    """    
+    # Punto de rotación 1
+    [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
+    filters, contours_filters] = rotation_point1_data
+
+    rotation_point1 = cv_func.create_reference_point(
+        rp_type=rp_type, name="ROTATION_POINT1", coordinates=coordinates,
+        color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
+        invert_binary=invert_binary, filters=filters, 
+        contours_filters=contours_filters,
+    )
+
+    # Punto de rotación 2
+    [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
+    filters, contours_filters] = rotation_point2_data
+
+    rotation_point2 = cv_func.create_reference_point(
+        rp_type=rp_type, name="ROTATION_POINT2", coordinates=coordinates,
+        color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
+        invert_binary=invert_binary, filters=filters, 
+        contours_filters=contours_filters,
+    )
+
+    # Punto de traslación
+    [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
+    filters, contours_filters] = translation_point_data
+
+    translation_point = cv_func.create_reference_point(
+        rp_type=rp_type, name="TRANSLATION_POINT", coordinates=coordinates,
+        color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
+        invert_binary=invert_binary, filters=filters, 
+        contours_filters=contours_filters,
+    )
+
+    return rotation_point1, rotation_point2, translation_point
+
 def get_registration_settings(registration_data):
     """
     Retorna un diccionario con la configuración de registro.
@@ -23,38 +83,11 @@ def get_registration_settings(registration_data):
         [rotation_point1_data, rotation_point2_data, translation_point_data,
         target_angle, [target_x, target_y], rotation_iterations] = method_data
 
-        # Punto de rotación 1
-        [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
-        filters, contours_filters] = rotation_point1_data
-
-        rotation_point1 = cv_func.create_reference_point(
-            rp_type=rp_type, name="ROTATION_POINT1", coordinates=coordinates,
-            color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
-            invert_binary=invert_binary, filters=filters, 
-            contours_filters=contours_filters,
-        )
-
-        # Punto de rotación 2
-        [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
-        filters, contours_filters] = rotation_point2_data
-
-        rotation_point2 = cv_func.create_reference_point(
-            rp_type=rp_type, name="ROTATION_POINT2", coordinates=coordinates,
-            color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
-            invert_binary=invert_binary, filters=filters, 
-            contours_filters=contours_filters,
-        )
-
-        # Punto de traslación
-        [rp_type, coordinates, color_scale, lower_color, upper_color, invert_binary,
-        filters, contours_filters] = translation_point_data
-
-        translation_point = cv_func.create_reference_point(
-            rp_type=rp_type, name="TRANSLATION_POINT", coordinates=coordinates,
-            color_scale=color_scale, lower_color=lower_color, upper_color=upper_color,
-            invert_binary=invert_binary, filters=filters, 
-            contours_filters=contours_filters,
-        )
+        rotation_point1, rotation_point2, translation_point = \
+            get_rotation_points_and_translation_point(
+                rotation_point1_data, rotation_point2_data, 
+                translation_point_data,
+            )
 
         registration_settings = {
             "method":registration_method,
