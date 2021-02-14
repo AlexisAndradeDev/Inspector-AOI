@@ -25,7 +25,7 @@ ESTRUCTURAS
 
 
 ALGORITMOS
-algorithm; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; nombre_de_algoritmo; status; luz; resultados_de_función_de_inspección; códigos_de_fallos#
+algorithm; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; nombre_de_algoritmo; status; luz; resultados_de_función_de_inspección; coordenadas_donde_se_inspeccionó; códigos_de_fallos#
 
 Los resultados escritos por cada función de inspección (resultados_de_función_de_inspección) se encuentran en el directorio:
     Documentacion/Otros/Funciones-de-inspeccion/

@@ -1,4 +1,5 @@
-from inspector_package import (ins_func, cv_func, results_management, images_operations)
+from inspector_package import (ins_func, cv_func, results_management, 
+    images_operations, math_functions)
 
 def execute_inspection_function(inspection_image_filt, algorithm):
     """
@@ -66,10 +67,34 @@ def execute_inspection_function(inspection_image_filt, algorithm):
 
     return fails, location, results, status, resulting_images
 
-def calculate_location_inside_algorithm_in_photo(inspection_point, 
+def get_algorithm_coordinates_in_board(algorithm_coordinates, origin):
+    """
+    Suma las coordenadas del algoritmo dentro del punto de inspección más
+    las coordenadas que el algoritmo toma como origen, retornando
+    las coordenadas donde se buscará finalmente el algoritmo tomando
+    como origen la esquina superior izquierda del tablero.
+
+    Args:
+        algorithm_coordinates (list): Coordenadas [x1,y1,x2,y2] de la
+            ventana del algoritmo.
+        origin (list): Coordenada [x,y] que el algoritmo tomará como
+            origen. Puede ser la coordenada del punto de inspección,
+            o la localización retornada por otro algoritmo (como la
+            localización encontrada con transiciones).
+
+    Returns:
+        coordinates (list): Coordenadas de la ventana del algoritmo
+            tomando como origen la esquina superior izquierda del tablero.
+    """
+    x1, y1 = math_functions.sum_lists(algorithm_coordinates[:2], origin)
+    x2, y2 = math_functions.sum_lists(algorithm_coordinates[2:], origin)
+    coordinates = [x1,y1,x2,y2]
+    return coordinates
+
+def calculate_location_inside_algorithm_in_board(inspection_point, 
         algorithm, location):
     """Localización encontrada con un algoritmo (que toma el origen de la
-    ventana del algoritmo) tomando como origen el (0,0) de la foto."""
+    ventana del algoritmo) tomando como origen el (0,0) del tablero."""
 
     if location["type"] == "one_coordinate":
         # Convertir a par de coordenadas
@@ -117,7 +142,8 @@ def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
 
     algorithm_results = {
         "string":"", "status":"good", "inspection_function_results":[], 
-        "location":"not_available", "codes":[], "locked": False
+        "location":"not_available", "coordinates_in_board":[], "codes":[], 
+        "locked": False,
     }
 
     # no inspeccionar el algoritmo si se asignó para ignorarlo en él
@@ -150,15 +176,17 @@ def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
         )
         return algorithm_results
 
+    algorithm_results["coordinates_in_board"] = get_algorithm_coordinates_in_board(
+        algorithm["coordinates"], origin,
+    )
+
     if algorithm["light"] == "ultraviolet":
         inspection_image = cv_func.crop_image(
-            image_ultraviolet, algorithm["coordinates"],
-            take_as_origin=origin,
+            image_ultraviolet, algorithm_results["coordinates_in_board"]
         )
     else:
         inspection_image = cv_func.crop_image(
-            image, algorithm["coordinates"],
-            take_as_origin=origin,
+            image, algorithm_results["coordinates_in_board"],
         )
 
     # Filtrar imagen
@@ -173,7 +201,7 @@ def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
 
     if location != "not_available":
         # guardar localización tomando como origen el (0,0) del tablero
-        location = calculate_location_inside_algorithm_in_photo(
+        location = calculate_location_inside_algorithm_in_board(
             inspection_point, algorithm, location,
         )
 
@@ -186,7 +214,8 @@ def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
     algorithm_results["string"] = \
         results_management.create_algorithm_results_string(
             algorithm, board, algorithm_results["status"],
-            algorithm_results["inspection_function_results"],
+            algorithm_results["inspection_function_results"], 
+            algorithm_results["coordinates_in_board"],
             algorithm_results["codes"],
         )
     algorithm_results["locked"] = True # no puede volver a inspeccionarse

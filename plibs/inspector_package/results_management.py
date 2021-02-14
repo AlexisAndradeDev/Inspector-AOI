@@ -1,17 +1,19 @@
 from inspector_package import files_management, inspection_objects
 
 def create_algorithm_results_string(algorithm, board, status, 
-                                    inspection_function_results, codes):
+                                    inspection_function_results, 
+                                    algorithm_coordinates_in_board, codes):
     """Retorna el string de resultados del algoritmo."""
     [inspection_point, reference, board, panel] = \
         inspection_objects.get_containers_of_inspection_object(
             inspection_object=algorithm, unlinked_container=board,
         )
 
-    results = "{};{};{};{};{};{};{};{};{};{}#".format(
+    results = "{};{};{};{};{};{};{};{};{};{};{}#".format(
         "algorithm", panel.get_number(), board.get_position_in_panel(), 
         reference["name"], inspection_point["name"], algorithm["name"],
-        status, algorithm["light"], inspection_function_results, codes,
+        status, algorithm["light"], inspection_function_results, 
+        algorithm_coordinates_in_board, codes,
     )
     return results
 
@@ -201,6 +203,7 @@ def set_algorithm_as_error(algorithm, board, algorithm_results, code):
     algorithm_results["string"] = create_algorithm_results_string(
         algorithm, board, algorithm_results["status"], 
         algorithm_results["inspection_function_results"],
+        algorithm_results["coordinates_in_board"],
         algorithm_results["codes"],
     )
 
@@ -232,19 +235,6 @@ def add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, al
 
     return algorithms_results
 
-def get_algorithm_results(algorithm_results, algorithm, results, status, fails, location, images):
-    # crear string de resultados
-    algorithm_results["string"] = create_algorithm_results_string(
-        algorithm["name"], algorithm["light"], status, results, fails,
-    )
-
-    algorithm_results["status"] = status
-    algorithm_results["fails"] = fails
-    algorithm_results["location"] = location
-    algorithm_results["images"] = images
-
-    return algorithm_results
-
 def write_results(results, stage):
     """
     Escribe el archivo de resultados.
@@ -274,12 +264,13 @@ def test_create_results():
     alg = {"light":"white", "name": "algo", "object_type": "algorithm", "inspection_point": ip}
 
     print(create_algorithm_results_string(
-        algorithm=alg, board=board, status="good", results=[], fails=[])
+        algorithm=alg, board=board, status="good", inspection_function_results=[], 
+        algorithm_coordinates_in_board=[5,5,10,15], codes=[])
     )
     print(create_inspection_point_results_string(
         inspection_point=ip, board=board, status="good")
     )
     print(create_reference_results_string(
         reference=ref, board=board, status="good", 
-        reference_algorithm_results=[])
+        reference_algorithm_results_string=[])
     )
