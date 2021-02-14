@@ -1,0 +1,4 @@
+Ocurren cuando el registro de un tablero falla.
+Se escriben dentro de los resultados del tablero.
+
+Códigos de errores en: Documentacion/Otros/Codigos/registration-fails.txt

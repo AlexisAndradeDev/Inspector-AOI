@@ -1,0 +1,3 @@
+Son errores que afectan la inspección de todo un panel.
+
+Actualmente no hay errores de paneles.

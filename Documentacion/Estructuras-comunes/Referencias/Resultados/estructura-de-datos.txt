@@ -1,0 +1,60 @@
+Los resultados en la nueva estructura estarán totalmente desordenados.
+En cada resultado se indicará si es de una referencia, algoritmo, etc., según
+la palabra que se escriba en el primer elemento de los resultados:
+    algorithm, inspection_point, reference, board, panel.
+
+El símbolo «#» funcionará como separador de las listas de resultados.
+El símbolo «;» funcionará como separador dentro de las listas.
+
+El orden de las listas de resultados es aleatorio.
+    Puede escribirse:
+        resultados_de_un_algoritmo#
+        resultados_de_un_panel#
+        resultados_de_un_punto_de_inspección#
+        resultados_de_un_algoritmo#
+        resultados_de_un_tablero#
+    La estructura no lleva un orden de escritura.
+
+Al final de los resultados, el tiempo de inspección se indicará con:
+    $&$tiempo_total
+    Ej.: $&$0.758456743
+
+
+
+ESTRUCTURAS
+
+
+ALGORITMOS
+algorithm; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; nombre_de_algoritmo; status; luz; resultados_de_función_de_inspección; coordenadas_donde_se_inspeccionó; códigos_de_fallos#
+
+Los resultados escritos por cada función de inspección (resultados_de_función_de_inspección) se encuentran en el directorio:
+    Documentacion/Otros/Funciones-de-inspeccion/
+
+Si no ocurrieron fallos, «códigos_de_fallos» se escribirá como una lista vacía: []
+
+
+PUNTOS DE INSPECCIÓN
+inspection_point; número_de_panel; número_de_tablero; nombre_de_referencia; nombre_de_punto_de_inspección; status#
+
+
+REFERENCIAS
+reference; número_de_panel; número_de_tablero; nombre_de_referencia; status; resultados_del_algoritmo_de_parte; código_de_error#
+
+Si no hay código de error, «código_de_error» se escribirá como: None
+
+
+TABLEROS
+board; número_de_panel; número_de_tablero; status; código_de_error#
+
+Si no hay código de error, «código_de_error» se escribirá como: None
+
+
+PANELES:
+panel; número_de_panel; status; código_de_error#
+
+Si no hay código de error, «código_de_error» se escribirá como: None
+
+
+
+Los códigos de error y de fallos se encuentran en: Documentacion/Otros/Codigos/
+Los posibles status se encuentran en: Documentacion/Otros/Status/

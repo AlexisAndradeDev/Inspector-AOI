@@ -1,20 +1,37 @@
+ADVERTENCIA: Para escribir rutas de directorios, utilizar el slash / y no el backslash \
+
+
 [
 
-['Ruta de los tableros terminando en /', 'uv_inspection:True/False', num_de_fotos, num_de_tableros_por_foto, num_de_multihilos_para_fotos, num_de_multihilos_para_tableros, num_de_multihilos_para_referencias, 'check:no/yes/total'],
+[
+'ruta_de_imagenes', 'inspeccion_ultravioleta', numero_de_paneles, tableros_por_panel, multihilos_para_paneles,
+multihilos_para_tableros, multihilos_para_referencias, 'modo_de_revision'
+],
 
 [datos_de_referencias],
 
 ]
 
-EJEMPLO:
+donde: 
 
-[
+'ruta_de_imagenes': establece el directorio en el cual se leerán las imágenes de los tableros.
+    La ruta debe terminar en «/». Ejemplo: 'C:/Dexill/Inspector/Alpha-Premium/x64/pd/'
 
-['C:/Dexill/Inspector/Alpha-Premium/x64/pd/', "uv_inspection:True", 5, 4, 5, 2, 2],
+inspeccion_ultravioleta: determina si se inspeccionará con luz ultravioleta.
+    Puede ser 'uv_inspection:True' o 'uv_inspection:False'.
 
-[datos_de_referencias],
+numero_de_paneles: número de paneles que se inspeccionarán.
 
-]
+tableros_por_panel: número de tableros que contiene cada panel.
 
+multihilos_para_paneles: número de multihilos para inspeccionar paneles.
 
-La documentación acerca de los datos de referencias, se encuentran en la carpeta Documentacion/Estructuras-comunes/Referencias/
+multihilos_para_tableros: número de multihilos para inspeccionar tableros.
+
+multihilos_para_referencias: número de multihilos para inspeccionar referencias.
+
+modo_de_revision: determina el modo de revisión.
+    Ver: Documentacion/Otros/Modo-de-revision/General.txt
+
+datos_de_referencias: Ver: Documentacion/Estructuras-comunes/Referencias/Datos-de-entrada/
+

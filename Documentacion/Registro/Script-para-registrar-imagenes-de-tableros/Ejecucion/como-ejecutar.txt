@@ -5,7 +5,7 @@ Este archivo debe contener los datos de registro. La documentacion del archivo r
 
 En el archivo regallbrds_dt.di se escribe la dirección de la carpeta que contiene las imágenes de los tableros desalineados.
 En la dirección se deben encontrar las imágenes con el formato de nombre: 
-	numero_de_foto.bmp
+	numero_de_panel.bmp
 
 Ejemplo:
 	1.bmp

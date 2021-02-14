@@ -1,6 +1,0 @@
-Ocurren si hay un fallo al registrar un tablero (con modo de registro local).
-
-Se escriben dentro de los resultados generales del tablero.
-
-
-Códigos de errores en: Documentacion/Otros/Codigos/registration-fails.txt

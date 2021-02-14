@@ -1,20 +1,16 @@
-Fallos que ocurren al inspeccionar un algoritmo, un punto de inspección o una referencia.
-
+Son errores que afectan la inspección de un algoritmo.
+Se escriben dentro de los resultados del algoritmo.
 
 
 ALGO_TO_TAKE_AS_ORIGIN_DOESNT_HAVE_COORDINATES: 
     Significa no se pudo obtener las coordenadas del algoritmo que otro algoritmo 
     tomaría como origen de coordenadas.
 
-
 TEMPLATE_DOESNT_EXIST-{número_de_template}:
     No existe la imagen del template número N
 
 MT_ERROR-{número_de_template}:
     No pudo realizarse el template matching con esa template.
-
-UNKNOWN_CF_ERROR-{número_de_template}:
-    Hubo un error en el bucle para filtrar múltiples coincidencias con ese template.
 
 TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED: 
     No se pudo calcular la intersección entre dos transiciones.
@@ -23,3 +19,5 @@ TRANSITIONS_INTERSECTIONS_COULD_NOT_BE_CALCULATED:
 TRANSITIONS_NAMES_CAN_NOT_INTERSECT:
     Las transiciones de las que se quiere calcular una intersección no pueden intersectarse entre sí.
 
+INVALID_INSPECTION_FUNCTION:
+    El nombre de la función de inspección no es válido.

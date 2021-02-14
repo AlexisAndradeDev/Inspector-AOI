@@ -6,7 +6,7 @@ Este archivo debe contener los datos de debugeo. La documentación del archivo d
 En el archivo dbg_dt.di se escribe la dirección de la carpeta que contiene las imágenes de los tableros alineados (generalmente, con el script regallbrds.py).
 
 En la dirección se deben encontrar las imágenes con el formato de nombre: 
-	num_de_foto-num_de_tablero-luz-registered.bmp
+	panel-tablero-luz-registered.bmp
 
 
 
@@ -19,7 +19,7 @@ Ejemplo:
     2-3-white-registered.bmp
 	
 Si se usa luz ultravioleta, las imágenes llevan el nombre de:
-    num_de_foto-num_de_tablero-ultraviolet-registered.bmp
+    panel-tablero-ultraviolet-registered.bmp
     
 Ejemplo:
     1-1-ultraviolet-registered.bmp

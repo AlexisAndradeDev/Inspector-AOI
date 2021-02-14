@@ -13,29 +13,8 @@ ignorar_status_bad: True/False.
     Si es True, y el algoritmo obtiene status "bad", el punto de inspección que lo contiene no
     modificará su status por culpa de este algoritmo.
 
-status_necesario_para_ser_good: si la función de inspección obtiene el status que se establece, 
-    su status se transformará a "good". Si no obtiene el status que se indicó,
-    y el status que obtuvo no es un status especial (como "failed"), el status
-    del algoritmo se transformará a "bad".
-    Por ejemplo:
-        El status necesario es "good", y la función de inspección obtiene "good":
-            el status del algoritmo es "good"
-        El status necesario es "good", y la función de inspección obtiene "bad":
-            el status del algoritmo es "bad"
-        El status necesario es "bad", y la función de inspección obtiene "bad":
-            el status del algoritmo es "good"
-        El status necesario es "bad", y la función de inspección obtiene "good":
-            el status del algoritmo es "bad"
-        El status necesario es "good", y la función de inspección obtiene "failed":
-            el status del algoritmo es "failed"
-        El status necesario es "bad", y la función de inspección obtiene "failed":
-            el status del algoritmo es "failed"
-        
-        Experimental, no encuentro un uso práctico a lo siguiente:
-            El status necesario es "failed", y la función de inspección obtiene "failed":
-                el status del algoritmo es "good"
-            El status necesario es "failed", y la función de inspección obtiene "good":
-                el status del algoritmo es "bad"
+status_necesario_para_ser_good: Debe ser "good" o "bad". No puede asignarse otro estado, de hacerlo ocasionará fallos.
+    Ver Documentacion/Otros/Status/status-de-algoritmos.txt
 
 Si no se quiere encadenar el algoritmo a ningún otro algoritmo, dejar algoritmo_al_que_está_encadenado y status_necesario_del_algoritmo_al_que_está_encadenado
 como None y None.

@@ -1,0 +1,10 @@
+Ocurren cuando el registro de una región de un tablero falla.
+Por ejemplo, si un tablero está dividido en dos fotografías, y el registro de una de las mitades falla, el fallo de registro será un «fallo de registro local». 
+
+Los fallos de registro local afectan únicamente a la región del tablero en la que ocurren; no afectan a la inspección de otras regiones del mismo tablero.
+
+
+* Actualmente no se utilizan, ya que no se ha desarrollado el registro local.
+
+
+Códigos de errores en: Documentacion/Otros/Codigos/registration-fails.txt

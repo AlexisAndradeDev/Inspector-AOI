@@ -1,6 +1,13 @@
 Si la función de skip no pasa, el tablero se omite y no se inspecciona.
 
-Los datos de la función skip son exactamente los mismos que los de un algoritmo cualquiera.
+Los datos de la función skip son exactamente los mismos que los de un algoritmo.
 
-Si no pasa la función de skip, el único resultado que contendrá el tablero es 
-el de la función de skip con estructura de resultados como si fuera un algoritmo.
+
+Si no pasa la función de skip, se escribirán sus resultados en el archivo de resultados con la estructura:
+
+skip_function; número_de_panel; número_de_tablero; nombre_asignado_a_la_funcion_skip; status; luz; resultados_de_función_de_inspección; códigos_de_fallos#
+
+Los resultados escritos por cada función de inspección (resultados_de_función_de_inspección) se encuentran en el directorio:
+    Documentacion/Otros/Funciones-de-inspeccion/
+
+Si no ocurrieron fallos, «códigos_de_fallos» se escribirá como una lista vacía: []

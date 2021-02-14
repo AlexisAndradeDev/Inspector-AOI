@@ -1,11 +1,16 @@
-class MT_ERROR(Exception):
-    """Se lanza al tener un error al utilizar cv2.matchTemplate en find_matches
-    del módulo cv_func."""
-    def __init__(self):
-        pass
+"""Módulo con las clases de excepciones."""
 
-class UNKNOWN_CF_ERROR(Exception):
-    """Se lanza al tener un error en el bucle para filtrar múltiples coincidencias
-    en find_matches del módulo cv_func."""
-    def __init__(self):
-        pass
+class AlgorithmError(Exception):
+    """Son errores que afectan a todo el proceso de inspección."""
+    def __init__(self, *args):
+        super().__init__(*args)
+
+class BoardError(Exception):
+    """Son errores que afectan a todo el proceso de inspección."""
+    def __init__(self, *args):
+        super().__init__(*args)
+
+class FatalError(Exception):
+    """Son errores que afectan a todo el proceso de inspección."""
+    def __init__(self, *args):
+        super().__init__(*args)

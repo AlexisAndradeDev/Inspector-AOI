@@ -1,14 +1,13 @@
-Son errores que afectan a la inspección de todos los tableros.
-Es el tipo de error prioritario para solucionar.
+Son errores que afectan a todo el proceso de inspección.
 
 Los fatal_errors se escriben con el signo '%' antes del código de error.
 
----> Cuando ocurre un fatal_error, el archivo de resultados se encuentra vacío, conteniendo
-     solamente el código del fatal_error
+Cuando ocurre un fatal_error, el archivo de resultados se encuentra vacío, conteniendo sólo el código del fatal_error
 
 
 
+REQUIRED_TRANSITIONS_NOT_VALID: Si una transición no tiene un nombre válido en la estructura de datos de entrada.
 
-NO_RESULTS: Ocurre cuando no se pudo producir los resultados de ningún tablero.
+NO_RESULTS: No se pudo producir los resultados de ningún tablero.
 
-NO_RESULTING_IMAGES: No se pudo producir ninguna imagen para escribir.
+WRONG_UV_INSPECTION_FLAG: El parámetro de configuración para definir si se usará luz ultravioleta «uv_inspection» está mal escrito en los datos de entrada.

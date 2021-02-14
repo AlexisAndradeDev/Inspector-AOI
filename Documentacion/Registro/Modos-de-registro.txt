@@ -1,16 +1,33 @@
-Se tienen dos modos de registro: global y local.
+Se tienen tres modos de registro: global, por tablero y local. El modo «local» es simplemente teórico, no se ha desarrollado.
+
+
 
 GLOBAL
+Se activa asignando 'registration_mode:global' en el parámetro de modo_de_registro de los datos de configuración.
 
 Registra la fotografía completa antes de comenzar a inspeccionar cada tablero. 
 El método de registro se aplica una única vez en la fotografía completa, y una vez registrada, se procede con la inspección de cada tablero.
-    Fallos de registro global: Documentacion/Otros/Codigos/global-registration-fails.txt
+    Fallos de registro global: Documentacion/Otros/Codigos/global-registration-fail.txt
 
 
-LOCAL
+POR TABLERO
+Se activa asignando 'registration_mode:board' en el parámetro de modo_de_registro de los datos de configuración.
 
-Registra cada tablero individualmente aplicándole el método de registro a cada uno. Necesita que el método de registro pueda llevarse a cabo en cada tablero.
-    Fallos de registro local: Documentacion/Otros/Codigos/local-registration-fails.txt
+Registra cada tablero individualmente aplicándole el método de registro a cada uno. 
+El método de registro debe poder llevarse a cabo en cada tablero.
+    Fallos de registro por tablero: Documentacion/Otros/Codigos/board-registration-fail.txt
 
 
-El nombre de las imágenes exportadas por el modo de revisión cambia según el modo de registro: Documentacion/Otros/Modo-de-revision/General.txt (sección «REGISTRO LOCAL» y «REGISTRO GLOBAL»)
+LOCAL (TEÓRICO, NO SE HA DESARROLLADO)
+Se activará asignando 'registration_mode:local' en el parámetro de modo_de_registro de los datos de configuración.
+
+Registra una región de un tablero.
+Por ejemplo, si un tablero está dividido en dos fotografías, registrará cada fotografía por separado.
+El método de registro debe poder llevarse a cabo en cada región del tablero.
+    Fallos de registro local: Documentacion/Otros/Codigos/local-registration-fail.txt
+
+
+
+NOMBRE DE LAS IMÁGENES DEL MODO DE REVISIÓN
+
+El nombre de las imágenes exportadas por el modo de revisión cambia según el modo de registro: Documentacion/Otros/Modo-de-revision/General.txt (sección «REGISTRO GLOBAL y «REGISTRO POR TABLERO»)

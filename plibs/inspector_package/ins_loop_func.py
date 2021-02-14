@@ -1,302 +1,489 @@
-from inspector_package import cv_func, ins_func, operations, results_management, reg_methods_func
+"""Contiene las funciones para iniciar los procesos de inspección, debugeo 
+y registro pre-debugeo."""
+
+from inspector_package import (cv_func, ins_ref,
+    threads_operations, inspection_objects, results_management, 
+    reg_methods_func, images_operations, files_management,)
 
 from os import remove as delete_file
 from timeit import default_timer as timer
 from cv2 import imread
 
-def use_skip_function(board_image, skip_function):
+class StaticVar:
+    def __init__(self, val):
+        self.val = val
+
+def get_first_last_boards_in_photo(boards_per_panel, panel_number):
+    first_board = boards_per_panel * (panel_number-1) + 1
+    last_board = boards_per_panel * (panel_number)
+    return first_board, last_board
+
+def get_first_last_boards_in_thread(first_board_position, last_board_position, boards_per_panel, panel_number):
+    first_board_in_panel_number = boards_per_panel * (panel_number-1) + 1
+    last_board_in_panel_number = boards_per_panel * (panel_number)
+
+    first_board = first_board_in_panel_number + (first_board_position - 1)
+    last_board = last_board_in_panel_number - (boards_per_panel - last_board_position)
+
+    return first_board, last_board
+
+def crop_board_image(board, settings, photo, photo_ultraviolet):
+    """
+    Recorta la región del tablero.
+
+    Args:
+        board (inspection_objects.Board): Almacena información sobre el tablero.
+        settings, photo, photo_ultraviolet - 
+            Ver ins_loop_func.start_inspection_loop()
+
+    Returns:
+        board_image (numpy.ndarray): Fotografía del panel.
+        board_image_ultraviolet (numpy.ndarray)): Fotografía UV del panel.
+    """
+    board_index = board.get_position_in_panel()-1
+    coordinates = settings["boards_coordinates"][board_index]
+
+    board_image = cv_func.crop_image(photo, coordinates)
+    if settings["uv_inspection"]:
+        board_image_ultraviolet = cv_func.crop_image(photo_ultraviolet, coordinates)
+    else:
+        board_image_ultraviolet = None
+
+    return board_image, board_image_ultraviolet
+
+def add_boards_in_panel_to_results_as_registration_failed(results, panel, boards_per_panel, 
+        code):
+    """
+    Asigna a todos los tableros de un panel el estado de fallo de registro con
+    el código del fallo; luego, añade los resultados de cada tablero al string
+    de resultados.
+
+    Args:
+        results (ins_loop_func.StaticVar): Almacena el string de resultados.
+        panel (inspection_objects.Panel): Panel que contiene a estos tableros.
+        boards_per_panel (int): Número de tableros que cada panel contiene.
+        code (str): Código de fallo/error.
+    """
+    for board_position in range(1, boards_per_panel+1):
+        board = inspection_objects.Board(panel, board_position)
+        board.set_as_registration_failed(code)
+        results.val += board.get_results_string()
+
+def add_boards_in_panel_to_results_as_error(results, panel, boards_per_panel, 
+        code):
+    """
+    Realiza lo mismo que add_boards_in_panel_to_results_as_registration_failed(),
+    la única diferencia es que asigna estado de error.
+
+    Args:
+        results, panel, boards_per_panel, code - 
+            Ver add_boards_in_panel_to_results_as_registration_failed()
+    """
+    for board_position in range(1, boards_per_panel+1):
+        board = inspection_objects.Board(panel, board_position)
+        board.set_as_error(code)
+        results.val += board.get_results_string()
+
+def use_skip_function(board_image, board_image_ultraviolet, skip_function):
+    """
+    Retorna los resultados de la función de skip.
+
+    Args:
+        board_image (numpy.ndarray): Fotografía del tablero.
+        board_image_ultraviolet (numpy.ndarray): Fotografía UV del tablero.
+        skip_function (dict): Contiene los datos de la función de skip
+            como un diccionario de algoritmo.
+
+    Returns:
+        skip (bool): False si el status es 'good'; True si no lo es.
+        status, results, resulting_images, fails - Ver ins_ref.execute_inspection_function()
+    """    
     coordinates = skip_function["coordinates"]
-    inspection_image = cv_func.crop_image(board_image,coordinates)
+
+    if skip_function["light"] == "ultraviolet":
+        inspection_image = cv_func.crop_image(board_image_ultraviolet, coordinates)
+    else:
+        inspection_image = cv_func.crop_image(board_image, coordinates)
+
     # Aplicar filtros secundarios al punto de inspección
     inspection_image_filt = cv_func.apply_filters(
         img=inspection_image,
         filters=skip_function["filters"]
     )
 
-    fails, location, results, status, resulting_images = ins_func.execute_algorithm(inspection_image_filt, skip_function)
+    fails, location, results, status, resulting_images = ins_ref.execute_inspection_function(
+        inspection_image_filt, skip_function
+    )
 
     if status != "good":
-        # skippear
-        return True, status, results, resulting_images, fails
+        skip = True
     else:
-        return False, status, results, resulting_images, fails
+        skip = False
+    return skip, status, results, resulting_images, fails
 
-def inspect_boards(first_board, last_board, results, photo_number, references, registration_settings, settings, stage, photo=None, photo_ultraviolet=None):
-    if stage in ["registration", "inspection"]:
-        # Calcular el número del primer tablero y del último tablero para el registro pre-debugeo
+def inspect_boards(first_board_position, last_board_position, results, panel, 
+                   settings, references, registration_settings, stage, photo, 
+                   photo_ultraviolet):
+    """
+    Inspecciona tableros. Añade sus resultados al string de resultados.
 
-        # en registro, first_board es en realidad la posición dentro del panel
-        # del primer tablero que inspeccionará, y last_board es la posición en el panel del último
-        first_board_position = first_board
-        last_board_position = last_board
-
-        first_board, last_board = operations.get_first_last_boards_in_thread(first_board_position, last_board_position, settings["boards_per_photo"], photo_number)
-
-
+    Args:
+        first_board_position (int): Posición del primer tablero que se 
+            inspeccionará.
+        last_board_position (int): Posición del último tablero que se 
+            inspeccionará.
+        results (ins_loop_func.StaticVar): Almacena el string de resultados.
+        panel (inspection_objects.Panel): Panel que contiene a estos tableros.
+        photo (numpy.ndarray or None): Fotografía del panel.
+            Si se está en etapa de debug, será None.
+        photo_ultraviolet (numpy.ndarray or None): Fotografía UV del panel.
+            Si no hay fotografía ultravioleta, será None.
+            Si se está en etapa de debug, será None.
+        settings, references, registration_settings, stage -
+            Ver ins_loop_func.start_inspection_loop()
+    """
     # la función range toma desde first hasta last-1, así que hay que sumarle 1
-    for board_number in range(first_board, last_board+1):
-        board = results_management.ObjectInspected(board_number=board_number, photo_number=photo_number, stage=stage, position_in_photo=operations.get_board_position_in_photo(board_number, settings["boards_per_photo"]))
+    for board_position in range(first_board_position, last_board_position+1):
+        board = inspection_objects.Board(
+            panel, position_in_panel=board_position,
+        )
 
-        # Recortar región del tablero
-        if stage in ["inspection", "registration"]:
-            coordinates = settings["boards_coordinates"][board.get_position_in_photo()-1]
-            board_image = cv_func.crop_image(photo, coordinates)
-            if settings["uv_inspection"] == "uv_inspection:True":
-                board_image_ultraviolet = cv_func.crop_image(photo_ultraviolet, coordinates)
-            else:
-                board_image_ultraviolet = None
+        if stage in ['inspection', 'registration']:
+            board_image, board_image_ultraviolet = crop_board_image(
+                board, settings, photo, photo_ultraviolet
+            )
 
-        # Skip
-        if stage in ["inspection"]:
-            # función skip
-            skip, skip_status, skip_results, skip_images, skip_fails = use_skip_function(board_image, settings["skip_function"])
 
-            # exportar imágenes de la función de skip si el modo de revisión es total o si no pasó el skip
-            if settings["check_mode"] == "check:total" or (settings["check_mode"] == "check:yes" and skip):
-                operations.export_algorithm_images(
-                    images=skip_images, photo_number=board.get_photo_number(), board_number=board.get_position_in_photo(),
-                    reference_name="skip_function", inspection_point_name="skip_function",
-                    algorithm_name=settings["skip_function"]["name"],
-                    light=settings["skip_function"]["light"],
-                    images_path=settings["check_mode_images_path"]
+        # Skip function
+        if stage in ['inspection']:
+            skip, skip_status, skip_results, skip_images, skip_fails = \
+                use_skip_function(
+                    board_image, board_image_ultraviolet, 
+                    settings["skip_function"],
+                )
+
+            if (settings["check_mode"] == "check:total" or
+                    (settings["check_mode"] == "check:yes" and skip)
+                ):
+                images_operations.export_skip_function_images(
+                    skip_images, settings["skip_function"], board,
+                    settings["check_mode_images_path"],
                 )
 
             if skip:
-                board.set_status("skip")
+                # el único algoritmo del tablero será la función skip
+                skip_results = \
+                    results_management.create_skip_function_results_string(
+                        settings["skip_function"], board, skip_status, 
+                        skip_results, skip_fails,
+                    )
+                results.val += skip_results
 
-                # agregar resultados de la función skip con &%&
-                skip_function_results = results_management.create_algorithm_results_string(
-                    settings["skip_function"]["name"], settings["skip_function"]["light"],
-                    skip_status, skip_results, skip_fails
-                )
-                board.add_references_results(references_results="")
-                board.process_results()
-
-                results.val += board.get_results()
+                board.set_as_skip()
+                results.val += board.get_results_string()
 
                 # abortar inspección del tablero
                 continue
 
 
         # Registro
-        if stage in ["inspection", "registration"]:
+        if stage in ['inspection', 'registration']:
             if settings["registration_mode"] == "registration_mode:local":
-                # Registro local
                 registration_fail, registration_images, aligned_board_image, \
-                aligned_board_image_ultraviolet, rotation, translation = reg_methods_func.register_image(
-                    board_image, board_image_ultraviolet, registration_settings,
+                aligned_board_image_ultraviolet, rotation, translation = \
+                    reg_methods_func.register_image(
+                        board_image, board_image_ultraviolet, 
+                        registration_settings,
+                    )
+
+                images_operations.export_local_registration_images(
+                    registration_images, board, "white", settings, 
+                    registration_fail,
                 )
 
-                operations.export_registration_images(registration_images, board.get_photo_number(), board.get_position_in_photo(), "white", settings["check_mode_images_path"], settings["check_mode"], registration_fail)
-
                 if registration_fail:
-                    # si falló, se aborta la inspección del tablero y se continúa con el siguiente
-                    board.set_status("registration_failed", code=registration_fail)
-
-                    if stage == "inspection":
-                        board.add_references_results(references_results="")
-
-                    board.process_results()
-                    results.val += board.get_results()
-
+                    board.set_as_registration_failed(code=registration_fail)
+                    results.val += board.get_results_string()
+                    # abortar inspección del tablero
                     continue
 
             elif settings["registration_mode"] == "registration_mode:global":
-                # la imagen ya está alineada
+                # la imagen ya está registrada
                 aligned_board_image = board_image
                 aligned_board_image_ultraviolet = board_image_ultraviolet
 
-
-            # escribir imagen del tablero alineado
-            operations.export_aligned_board_image(aligned_board_image, aligned_board_image_ultraviolet,
-                stage, board.get_photo_number(), board.get_position_in_photo()
+            # escribir imagen del tablero registrado
+            images_operations.export_registered_board_image(
+                aligned_board_image, aligned_board_image_ultraviolet, 
+                settings, board, stage,
             )
 
-
-        elif stage == "debug":
+        elif stage == 'debug':
             # debugeo lee las imágenes de los tableros ya alineadas, no registra
-            aligned_board_image = imread("{0}{1}-{2}-white-registered.bmp".format(settings["read_images_path"], board.get_photo_number(), board.get_position_in_photo()))
+            # luz blanca
+            aligned_board_image = imread(
+                "{0}{1}-{2}-white-registered.bmp".format(
+                    settings["read_images_path"], 
+                    panel.get_number(), board.get_position_in_panel()
+                )
+            )
+
             if aligned_board_image is None:
-                board.set_status("general_failed", code="IMG_DOESNT_EXIST") # !GENERAL_FAIL
-                board.add_references_results(references_results="")
-                board.process_results()
-                results.val += board.get_results()
+                board.set_as_error(code="IMG_DOESNT_EXIST") # !BOARD_ERROR
+                results.val += board.get_results_string()
+                # abortar inspección del tablero
                 continue
 
-            if settings["uv_inspection"] == "uv_inspection:True":
-                aligned_board_image_ultraviolet = imread("{0}{1}-{2}-ultraviolet-registered.bmp".format(settings["read_images_path"], board.get_photo_number(), board.get_position_in_photo()))
+            # luz ultravioleta
+            if settings["uv_inspection"]:
+                aligned_board_image_ultraviolet = imread(
+                    "{0}{1}-{2}-ultraviolet-registered.bmp".format(
+                        settings["read_images_path"], 
+                        panel.get_number(), board.get_position_in_panel()
+                    )
+                )
+
                 if aligned_board_image_ultraviolet is None:
-                    board.set_status("general_failed", code="UV_IMG_DOESNT_EXIST") # !GENERAL_FAIL
-                    board.add_references_results(references_results="")
-                    board.process_results()
-                    results.val += board.get_results()
+                    board.set_as_error(code="UV_IMG_DOESNT_EXIST") # !BOARD_ERROR
+                    results.val += board.get_results_string()
                     continue
+            else:
+                aligned_board_image_ultraviolet = None
 
 
         # Inspeccionar referencias con multihilos
-        if stage in ["inspection", "debug"]:
-            if settings["uv_inspection"] == "uv_inspection:True":
-                threads = operations.create_threads(
-                    func=ins_func.inspect_references,
-                    threads_num=settings["threads_num_for_references"],
-                    targets_num=len(references),
-                    func_args=[aligned_board_image,board,references,stage,settings["check_mode"],aligned_board_image_ultraviolet]
-                )
-            else:
-                threads = operations.create_threads(
-                    func=ins_func.inspect_references,
-                    threads_num=settings["threads_num_for_references"],
-                    targets_num=len(references),
-                    func_args=[aligned_board_image,board,references,stage,settings["check_mode"],None]
-                )
+        if stage in ['inspection', 'debug']:
+            threads = threads_operations.create_threads(
+                func=ins_ref.inspect_references,
+                threads_num=settings["threads_num_for_references"],
+                targets_num=len(references),
+                func_args=[results, panel, board,
+                settings, references, stage, aligned_board_image, 
+                aligned_board_image_ultraviolet],
+            )
 
-            operations.run_threads(threads)
+            threads_operations.run_threads(threads)
 
-        board.process_results()
+        board.create_results_string()
+        results.val += board.get_results_string()
 
-        if not board.get_results():
-            # si no se obtuvo resultados de ninguna referencia
-            board.set_status("general_error", code="NO_RESULTS") # !GENERAL_ERROR
+def run_registration(first_panel, last_panel, results, settings, 
+                     registration_settings, stage):
+    """
+    (Debug) Crea e inicia los multihilos para inspeccionar tableros de un
+    panel.
 
-        # agregar resultados del tablero
-        results.val += board.get_results()
+    Args:
+        first_panel, last_panel, results, settings, registration_settings, stage -
+            Ver ins_loop_func.run_inspection()
+    """
+    references = None
 
+    for panel_number in range(first_panel, last_panel+1):
+        panel = inspection_objects.Panel(panel_number)
 
-def run_registration(first_photo, last_photo, results, registration_settings, settings):
-    """Exclusivo para la etapa de registro pre-debugeo."""
-    photos_results = operations.StaticVar("")
-
-    for photo_number in range(first_photo, last_photo+1):
-        first_board, last_board = operations.get_first_last_boards_in_photo(settings["boards_per_photo"], photo_number)
-        fail, photo, photo_ultraviolet = operations.read_photos_for_registration(settings, photo_number)
+        fail, photo, photo_ultraviolet = \
+            images_operations.read_photos_for_registration(settings, panel_number)
 
         if fail:
-            # asignar resultados de fallo general a cada tablero
-            for board_number in range(first_board, last_board+1):
-                board = results_management.ObjectInspected(board_number=board_number, photo_number=photo_number,
-                    stage="registration",
-                    position_in_photo=operations.get_board_position_in_photo(board_number, settings["boards_per_photo"]),
-                )
-
-                board.set_status("general_failed", code=fail)
-                board.process_results()
-                photos_results.val += board.get_results()
-
-            # abortar registro de la foto
+            # procesar resultados de todos los tableros del panel como error
+            add_boards_in_panel_to_results_as_error(
+                results, panel, settings["boards_per_panel"], fail,
+            )
+            # abortar registro del panel
             continue
 
 
         # Registro global
         if settings["registration_mode"] == "registration_mode:global":
-            # Registro de todo el panel (registra la fotografía completa)
-            registration_fail, images, photo, photo_ultraviolet, rotation, translation = reg_methods_func.register_image(
+            # registra la fotografía completa
+            [registration_fail, images, photo, photo_ultraviolet, rotation,
+            translation] = reg_methods_func.register_image(
                 photo, photo_ultraviolet, registration_settings,
             )
 
-            operations.export_registration_images(images, photo_number, "global_registration", "white", settings["check_mode_images_path"], settings["check_mode"], registration_fail)
+            images_operations.export_global_registration_images(
+                images, panel, "white", settings, registration_fail,
+            )
 
             if registration_fail:
-                # asignar resultados a cada tablero como si fuera fallo de registro local
-                for board_number in range(first_board, last_board+1):
-                    board = results_management.ObjectInspected(board_number=board_number, photo_number=photo_number,
-                        stage="registration",
-                        position_in_photo=operations.get_board_position_in_photo(board_number, settings["boards_per_photo"]),
-                    )
-
-                    board.set_status("registration_failed", code=registration_fail)
-                    board.process_results()
-                    photos_results.val += board.get_results()
-
-                # abortar registro de la foto
+                add_boards_in_panel_to_results_as_registration_failed(
+                    results, panel, settings["boards_per_panel"], 
+                    registration_fail,
+                )
+                
+                panel.set_as_registration_failed(code=registration_fail)
+                results.val += panel.get_results_string()
+                # abortar la inspección de este panel
                 continue
 
-        # Procesar los tableros con multihilos
-        threads = operations.create_threads(
+        # multihilos para tableros
+        threads = threads_operations.create_threads(
             func=inspect_boards,
             threads_num=settings["threads_num_for_boards"],
-            targets_num=settings["boards_per_photo"],
-            func_args=[photos_results, photo_number, None, registration_settings, settings, "registration", photo, photo_ultraviolet],
+            targets_num=settings["boards_per_panel"],
+            func_args=[results, panel, settings, references, 
+            registration_settings, stage, photo, photo_ultraviolet],
         )
 
-        operations.run_threads(threads)
+        threads_operations.run_threads(threads)
 
-    results.val += photos_results.val
+        panel.create_results_string()
+        results.val += panel.get_results_string()
 
     return results
 
-def run_debug(first_photo, last_photo, results, references, settings):
-    registration_settings, stage, photo, photo_ultraviolet = None, "debug", None, None
+def run_debug(first_panel, last_panel, results, settings, references, stage):
+    """
+    (Debug) Crea e inicia los multihilos para inspeccionar tableros de un
+    panel.
 
-    for photo_number in range(first_photo, last_photo+1):
+    Args:
+        first_panel, last_panel, results, settings, references, stage -
+            Ver ins_loop_func.run_inspection()
+    """
+    registration_settings, photo, photo_ultraviolet = None, None, None
+
+    for panel_number in range(first_panel, last_panel+1):
+        panel = inspection_objects.Panel(panel_number)
+
         # multihilos para tableros
-        threads = operations.create_threads(
+        threads = threads_operations.create_threads(
             func=inspect_boards,
             threads_num=settings["threads_num_for_boards"],
-            targets_num=settings["boards_per_photo"],
-            func_args=[results, photo_number, references, registration_settings, settings, stage, photo, photo_ultraviolet]
+            targets_num=settings["boards_per_panel"],
+            func_args=[results, panel, settings, references, 
+            registration_settings, stage, photo, photo_ultraviolet],
         )
 
-        operations.run_threads(threads)
+        threads_operations.run_threads(threads)
 
-def run(references, registration_settings, settings, stage, photo=None, photo_ultraviolet=None):
-    results = operations.StaticVar("")
-    total_time = 0
+        panel.create_results_string()
+        results.val += panel.get_results_string()
 
-    # registro global
-    if stage == "inspection":
-        photo_number = 1 # sólo hay una fotografía por inspección
+def read_inspection_photo(settings):
+    """
+    Retorna la fotografía de luz blanca y la fotografía ultravioleta.
 
+    Args:
+        settings - Ver ins_loop_func.start_inspection_loop()
+
+    Returns:
+        photo (numpy.ndarray): Fotografía del panel.
+        photo_ultraviolet (numpy.ndarray)): Fotografía UV del panel.
+    """
+    photo = images_operations.force_read_image(
+        settings["read_images_path"] + "photo.bmp"
+    )
+    delete_file(settings["read_images_path"] + "photo.bmp")
+
+    if settings["uv_inspection"]:
+        photo_ultraviolet = images_operations.force_read_image(
+            settings["read_images_path"] + "photo-ultraviolet.bmp"
+        )
+        delete_file(settings["read_images_path"] + "photo-ultraviolet.bmp")
+    else:
+        photo_ultraviolet = None
+ 
+    return photo, photo_ultraviolet
+
+def run_inspection(first_panel, last_panel, results, settings, references, 
+                   registration_settings, stage):
+    """
+    (Inspección) Crea e inicia los multihilos para inspeccionar tableros de un 
+    panel.
+
+    Args:
+        first_panel (int): Número del primer panel que se inspeccionará.
+        last_panel (int): Número del último panel que se inspeccionará.
+        results (ins_loop_func.StaticVar): Almacena el string de resultados.
+        settings, references, registration_settings, stage - 
+            Ver ins_loop_func.start_inspection_loop()
+    """
+    photo, photo_ultraviolet = read_inspection_photo(settings)
+
+    for panel_number in range(first_panel, last_panel+1):
+        panel = inspection_objects.Panel(panel_number)
+
+        # Registro global
         if settings["registration_mode"] == "registration_mode:global":
-            # Registro de todo el panel (registra la fotografía completa)
-            start = timer()
-
-            registration_fail, images, photo, photo_ultraviolet, rotation, translation = reg_methods_func.register_image(
+            # registrar la fotografía completa
+            [registration_fail, images, photo, photo_ultraviolet, rotation,
+            translation] = reg_methods_func.register_image(
                 photo, photo_ultraviolet, registration_settings,
             )
 
-            # exportar imágenes de registro si el modo de revisión es total o si falló
-            operations.export_registration_images(images, photo_number, "global_registration", "white", settings["check_mode_images_path"], settings["check_mode"], registration_fail)
+            images_operations.export_global_registration_images(
+                images, panel, "white", settings, registration_fail,
+            )
 
             if registration_fail:
-                # abortar la inspección
-                results.val += "%%{}".format(registration_fail)
-                return results
+                add_boards_in_panel_to_results_as_registration_failed(
+                    results, panel, settings["boards_per_panel"], 
+                    registration_fail,
+                )
 
+                panel.set_as_registration_failed(code=registration_fail)
+                results.val += panel.get_results_string()
+                # abortar la inspección de este panel
+                continue
 
-            end = timer()
-            # agregar tiempo de registro al tiempo de inspección
-            total_time += end-start
-
-    # Inspeccionar con multihilos
-    if stage == "inspection":
         # multihilos para tableros
-        threads = operations.create_threads(
+        threads = threads_operations.create_threads(
             func=inspect_boards,
             threads_num=settings["threads_num_for_boards"],
-            targets_num=settings["boards_per_photo"],
-            func_args=[results, photo_number, references, registration_settings, settings, stage, photo, photo_ultraviolet]
+            targets_num=settings["boards_per_panel"],
+            func_args=[results, panel, settings, references, 
+            registration_settings, stage, photo, photo_ultraviolet],
         )
 
-    elif stage == "debug":
-        # multihilos para tableros
-        threads = operations.create_threads(
+        threads_operations.run_threads(threads)
+
+        panel.create_results_string()
+        results.val += panel.get_results_string()
+
+def run(settings, references, registration_settings, stage):
+    """
+    Crea e inicia los multihilos para inspeccionar paneles.
+
+    Args:
+        settings, references, registration_settings, stage - 
+            Ver ins_loop_func.start_inspection_loop().
+
+    Returns:
+        results (ins_loop_func.StaticVar): Almacena el string de resultados.
+    """
+    results = StaticVar("")
+    total_time = 0
+
+    # Crear multihilos
+    if stage == 'inspection':
+        threads = threads_operations.create_threads(
+            func=run_inspection,
+            threads_num=settings["threads_num_for_panels"],
+            targets_num=settings["panels_num"],
+            func_args=[results, settings, references, registration_settings, stage]
+        )
+
+    elif stage == 'debug':
+        threads = threads_operations.create_threads(
             func=run_debug,
-            threads_num=settings["threads_num_for_photos"],
-            targets_num=settings["photos_num"],
-            func_args=[results, references, settings]
+            threads_num=settings["threads_num_for_panels"],
+            targets_num=settings["panels_num"],
+            func_args=[results, settings, references, stage]
         )
 
-    elif stage == "registration":
-        # multihilos para tableros
-        threads = operations.create_threads(
+    elif stage == 'registration':
+        threads = threads_operations.create_threads(
             func=run_registration,
-            threads_num=settings["threads_num_for_photos"],
-            targets_num=settings["photos_num"],
-            func_args=[results, registration_settings, settings]
+            threads_num=settings["threads_num_for_panels"],
+            targets_num=settings["panels_num"],
+            func_args=[results, settings, registration_settings, stage]
         )
 
+    # Correr multihilos
     start = timer()
-    operations.run_threads(threads)
+    threads_operations.run_threads(threads)
     end = timer()
     total_time += end-start
 
@@ -308,23 +495,36 @@ def run(references, registration_settings, settings, stage, photo=None, photo_ul
 
     return results
 
-def start_inspection_loop(references, registration_settings, settings, stage):
-    if stage == "inspection":
+def wait_for_image_or_exit_file():
+    while True:
+        if files_management.file_exists("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo.bmp"):
+            # si existe la imagen de los tableros se da la orden de inspeccionar
+            return "inspect"
+        elif files_management.file_exists("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/exit.ii"):
+            # si existe el archivo exit.ii se da la orden de salir de la inspección
+            return "exit"
+
+def start_inspection_loop(settings, references, registration_settings, stage):
+    """
+    Inicia los procesos de inspección, debugeo o registro pre-debugeo.
+
+    Args:
+        settings (dict): Diccionario con la configuración general.
+        references (list): Lista con los diccionarios de las referencias
+            creados con 'create_reference'.
+        registration_settings (dict): Diccionario con la configuración
+            de registro.
+        stage (str): Etapa que se ejecutará. 
+            'debug', 'inspection', 'registration'.
+    """
+    if stage == 'inspection':
         while True:
             instruction = wait_for_image_or_exit_file()
 
             if instruction == "inspect":
-                photo = operations.force_read_image("{0}photo.bmp".format(settings["read_images_path"]))
-                delete_file("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo.bmp")
+                results = run(settings, references, registration_settings, stage)
 
-                if settings["uv_inspection"] == "uv_inspection:True":
-                    photo_ultraviolet = operations.force_read_image("{0}photo-ultraviolet.bmp".format(settings["read_images_path"]))
-                    delete_file("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo-ultraviolet.bmp")
-                    results = run(references, registration_settings, settings, stage, photo=photo, photo_ultraviolet=photo_ultraviolet)
-                else:
-                    results = run(references, registration_settings, settings, stage, photo=photo)
-
-                operations.write_results(results.val, stage)
+                results_management.write_results(results.val, stage)
                 # vaciar los resultados
                 results.val = ""
 
@@ -332,19 +532,9 @@ def start_inspection_loop(references, registration_settings, settings, stage):
                 delete_file("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/exit.ii")
                 break # salir del bucle de inspección
 
-    elif stage == "debug" or stage == "registration":
-        results = run(references, registration_settings, settings, stage)
+    elif stage == 'debug' or stage == 'registration':
+        results = run(settings, references, registration_settings, stage)
 
-        operations.write_results(results.val, stage)
+        results_management.write_results(results.val, stage)
         # vaciar los resultados
         results.val = ""
-
-
-def wait_for_image_or_exit_file():
-    while True:
-        if operations.file_exists("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/photo.bmp"):
-            # si existe la imagen de los tableros se da la orden de inspeccionar
-            return "inspect"
-        elif operations.file_exists("C:/Dexill/Inspector/Alpha-Premium/x64/inspections/data/exit.ii"):
-            # si existe el archivo exit.ii se da la orden de salir de la inspección
-            return "exit"

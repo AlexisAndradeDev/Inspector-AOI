@@ -1,9 +1,0 @@
-Ocurren si hay un fallo al registrar el panel de tableros (con modo de registro global).
-
-Se escriben con el signo '%%' antes del código de error.
-
----> El archivo de resultados contendrá solamente el código.
-
-
-Códigos de errores en: Documentacion/Otros/Codigos/registration-fails.txt
-
