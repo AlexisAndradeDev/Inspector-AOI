@@ -555,7 +555,7 @@ def inspection_function_transitions(inspection_image, algorithm):
         Imagen filtrada, imagen rgb con las transiciones encontradas dibujadas y
         el punto tomado como location.
     Retorna como resultados de algoritmo:
-        Número de transiciones encontradas, ancho del componente, coordenadas de la transición.
+        Número de transiciones encontradas, ancho del componente.
     """
     location = "not_available"
     status = "good" # inicializar como good
