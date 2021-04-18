@@ -130,7 +130,7 @@ def get_algorithm_coordinates_origin(algorithm, inspection_point,
         origin = inspection_point["coordinates"]
     else:
         # tomar otro algoritmo
-        origin = algorithms_results[algorithm["take_as_origin"]]["location"]
+        origin = algorithms_results[algorithm["take_as_origin"]]["coordinates_in_board"]
     return origin
 
 def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
