@@ -190,7 +190,7 @@ def determinate_required_transitions(transitions_data):
     """
     transitions_number = len(transitions_data)
 
-    required_transitions = transitions_data.keys()
+    required_transitions = list(transitions_data.keys())
 
     for transition in required_transitions:
         if transition not in ["across1", "across2", "along"]:
