@@ -22,7 +22,7 @@ def create_skip_function_results_string(skip_function, board, status,
     """Retorna el string de resultados de la función de skip."""
     panel = inspection_objects.get_container_of_inspection_object(board)
 
-    results = "{};{};{};{};{};{};{};{};{};{}#".format(
+    results = "{};{};{};{};{};{};{};{}#".format(
         "skip_function", panel.get_number(), board.get_position_in_panel(),
         skip_function["name"], status, skip_function["light"], 
         inspection_function_results, codes,
