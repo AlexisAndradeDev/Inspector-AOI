@@ -114,14 +114,15 @@ def calculate_location_inside_algorithm_in_board(inspection_point,
 
     # localización = localización dentro de la ventana del algoritmo +
     # coordenadas del algoritmo + coordenadas del punto de inspección
-    coordinates = math_functions.sum_lists(
+    location_in_board = math_functions.sum_lists(
         location["coordinates"],
         math_functions.sum_lists(
             inspection_point["coordinates"],
             algorithm["coordinates"][:2],
         ),
     )
-    return location["coordinates"]
+
+    return location_in_board
 
 def get_algorithm_coordinates_origin(algorithm, inspection_point, 
                                     algorithms_results):
@@ -130,7 +131,7 @@ def get_algorithm_coordinates_origin(algorithm, inspection_point,
         origin = inspection_point["coordinates"]
     else:
         # tomar otro algoritmo
-        origin = algorithms_results[algorithm["take_as_origin"]]["coordinates_in_board"]
+        origin = algorithms_results[algorithm["take_as_origin"]]["location"]
     return origin
 
 def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
