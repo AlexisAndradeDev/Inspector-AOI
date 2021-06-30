@@ -8,18 +8,23 @@ Si se quiere encontrar las 3 transiciones:
 [
 calcular_ancho_del_componente, ancho_mínimo_del_componente, ancho_máximo_del_componente,
 [
-["across1", "lado", coordenadas, diferencia_de_brillo_minima, "tipo_de_diferencia", "orientacion_de_busqueda", tamano_del_grupo],
-["across2", "lado", coordenadas, diferencia_de_brillo_minima, "tipo_de_diferencia", "orientacion_de_busqueda" tamano_del_grupo],
-["along", "lado", coordenadas, diferencia_de_brillo_minima, "tipo_de_diferencia", "orientacion_de_busqueda" tamano_del_grupo],
+
+    ["across1", "lado", coordenadas, diferencia_de_brillo_minima, "tipo_de_diferencia", "orientacion_de_busqueda", tamano_del_grupo, binarizar, ["escala_de_colores_para_el_binarizado", [color_mínimo, color_máximo], invertir_binarizado]],
+
+    ["across2", "lado", coordenadas, ...],
+    ["along", "lado", coordenadas, ...],
 ],
+
 ]
 
 
 donde:
 
 calcular_ancho_del_componente: True/False
+
 ancho_mínimo_del_componente: falla si la resta de los across (ancho del componente) no es mayor o igual al ancho mínimo del componente.
     Si calcular_ancho_del_componente es False, dejar ancho_mínimo_del_componente como None
+
 ancho_máximo_del_componente: falla si la resta de los across (ancho del componente) no es menor o igual al ancho máximo del componente.
     Si calcular_ancho_del_componente es False, dejar ancho_máximo_del_componente como None
 
@@ -70,6 +75,32 @@ tamano_del_grupo: número de filas o columnas que se promediarán para calcular 
     La diferencia de brillo se calculará con el brillo de cada grupo.
 
 
+binarizar: True/False
+    Determina si la imagen de la transición se binarizará al momento de buscarla.
+
+escala_de_colores_para_el_binarizado: "hsv", "gray".
+    Determina la escala de colores que se usará para binarizar la imagen.
+
+
+[color_mínimo, color_máximo]: Los pixeles (de la imagen en la escala de colores establecida con escala_de_colores_para_el_binarizado) que se encuentren entre el rango mínimo y máximo se convertirán a color blanco; los que se encuentren fuera del rango, se convertirán a negro.
+    Ejemplo:
+        Con escala_de_colores_para_el_binarizado en "hsv":
+            [[50,20,30], [255, 100, 150]]
+            color_mínimo = [50,20,30]
+            color_máximo = [255, 100, 150]
+        Con escala_de_colores_para_el_binarizado en "gray":
+            [80, 190]
+            color_mínimo = 80
+            color_máximo = 190
+        Los pixeles cuyo color sea mayor o igual al rango mínimo y menor o igual al máximo, serán blancos; los demás, serán negros.
+
+
+invertir_binarizado: True/False
+    Establece si los colores de la imagen binarizada se invertirán.
+    Si es False, los pixeles dentro del rango de color mínimo y máximo serán blancos; los que estén fuera serán negros.
+    Si es True, los pixeles dentro del rango de color mínimo y máximo serán *negros*; los que estén fuera del rango serán *blancos*.
+
+
 
 El ancho del componente (distancia entre ambos across) puede calcularse teniendo por lo menos ambos across.
 
@@ -105,9 +136,9 @@ por ejemplo:
 IMÁGENES QUE EXPORTA
 
     - Imagen filtrada
+    - Imagen de cada transición (aparecerá binarizada si el binarizado se activó)
     - Imagen con las transiciones dibujadas
         * Si se encontraron 2 transiciones que se intersectan, se dibujará también el punto donde se
         intersectan.
         * Si se encontraron 3 transiciones, se dibujará el punto central (entre los 2 across y sobre el
         along).
-

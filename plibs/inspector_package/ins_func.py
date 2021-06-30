@@ -223,6 +223,10 @@ def get_transitions_data(transitions_data):
             "brightness_difference_type": transition_data[4],
             "searching_orientation": transition_data[5],
             "group_size": transition_data[6],
+            "binarize": transition_data[7],
+            "color_scale_for_binary": transition_data[8][0],
+            "color_range": transition_data[8][1],
+            "invert_binary": transition_data[8][2],
         }
 
         # agregar datos de la transición a la lista de transiciones
@@ -552,8 +556,10 @@ def inspection_function_unique_transition(inspection_image, algorithm):
 def inspection_function_transitions(inspection_image, algorithm):
     """
     Las imágenes a exportar cuando se utiliza transitions son:
-        Imagen filtrada, imagen rgb con las transiciones encontradas dibujadas y
-        el punto tomado como location.
+        - Imagen filtrada
+        - Imagen procesada de cada transición (con binarizado si se usó)
+        - Imagen rgb con las transiciones encontradas dibujadas y
+          el punto tomado como location.
     Retorna como resultados de algoritmo:
         Número de transiciones encontradas, ancho del componente.
     """
@@ -566,9 +572,12 @@ def inspection_function_transitions(inspection_image, algorithm):
 
 
     # encontrar transiciones
-    transitions_number, transitions = cv_func.find_transitions(
+    transitions_number, transitions, transitions_images = cv_func.find_transitions(
         inspection_image, algorithm["parameters"]["transitions_data"],
     )
+
+    # agregar imágenes de transiciones
+    resulting_images = {**resulting_images, **transitions_images} # merge dicts
 
     transitions_drawn_image = cv_func.draw_transitions(inspection_image, transitions)
 
