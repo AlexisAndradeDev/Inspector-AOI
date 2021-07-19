@@ -4,6 +4,9 @@ import numpy as np
 
 from inspector_package import math_functions, excepts
 
+def image_is_rgb(img):
+    return True if img.shape[2] == 3 else False
+
 def draw_found_circle(img, x, y, c1_size=1, c1_color=(0,255,255), c1_thickness=1, c2_size=3, c2_color=(0,0,255), c2_thickness=1):
     found = img.copy()
     cv2.circle(found, (x, y), c1_size, c1_color, c1_thickness)
@@ -787,6 +790,8 @@ def find_matches(img, template, min_calification, required_matches, color_scale,
 
 
 def find_transitions(image, transitions_data):
+    transitions_images = {}
+
     transitions = {}
     for transition_data in transitions_data.values():
         brightness_difference = 0
@@ -794,10 +799,19 @@ def find_transitions(image, transitions_data):
 
         transition_searching_orientation = get_transition_searching_orientation(transition_data)
 
-        transition_coordinate, brightness_difference = find_transition(
-            transition_image, transition_searching_orientation, transition_data["min_difference"],
-            transition_data["brightness_difference_type"], transition_data["group_size"],
+        (transition_coordinate, brightness_difference,
+        processed_transition_image) = \
+                find_transition(
+            transition_image, transition_searching_orientation, 
+            transition_data["min_difference"],
+            transition_data["brightness_difference_type"], 
+            transition_data["group_size"], transition_data["binarize"], 
+            transition_data["color_scale_for_binary"], 
+            transition_data["color_range"], transition_data["invert_binary"],
         )
+
+        transitions_images[transition_data["name"]] = processed_transition_image
+
         if transition_coordinate is None:
             continue
 
@@ -822,7 +836,7 @@ def find_transitions(image, transitions_data):
         transitions[transition["name"]] = transition
 
     transitions_number = len(transitions)
-    return transitions_number, transitions
+    return transitions_number, transitions, transitions_images
 
 def draw_transitions(image, transitions):
     drawn = image.copy() # no corromper la original
@@ -853,22 +867,57 @@ def calculate_distance_between_across_transitions(across1, across2):
     distance = abs(across1["coordinate"] - across2["coordinate"])
     return distance
 
-def find_transition(img, orientation, min_difference, brightness_difference_type, group_size):
+def binarize_transition_image(img, color_scale_for_binary, color_range, invert_binary):
+    if color_scale_for_binary == "gray":
+        # binarizar con gray
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        [lower, upper] = color_range
+        color_converted_img = cv2.inRange(gray, lower, upper)
+    elif color_scale_for_binary == "hsv":
+        # binarizar con hsv
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        [lower, upper] = color_range
+        lower, upper = np.array(lower), np.array(upper)
+        color_converted_img = cv2.inRange(hsv, lower, upper)
+    if invert_binary:
+        color_converted_img = cv2.bitwise_not(color_converted_img)
+
+    return color_converted_img
+
+def find_transition(img, orientation, min_difference, brightness_difference_type, 
+        group_size, binarize=False, color_scale_for_binary=None, color_range=None, 
+        invert_binary=None):
+    height, width = img.shape[:2]
+
+    if binarize:
+        color_converted_img = binarize_transition_image(img, 
+            color_scale_for_binary, color_range, invert_binary
+        )
+    else:
+        color_converted_img = img.copy()
+
     coordinate = None
     if orientation == "left_to_right":
-        coordinate, brightness_difference = find_transition_left_to_right(img, min_difference, brightness_difference_type, group_size)
+        coordinate, brightness_difference = find_transition_left_to_right(
+            color_converted_img, height, width, min_difference, 
+            brightness_difference_type, group_size)
     elif orientation == "right_to_left":
-        coordinate, brightness_difference = find_transition_right_to_left(img, min_difference, brightness_difference_type, group_size)
+        coordinate, brightness_difference = find_transition_right_to_left(
+            color_converted_img, height, width, min_difference, 
+            brightness_difference_type, group_size)
     elif orientation == "up_to_down":
-        coordinate, brightness_difference = find_transition_up_to_down(img, min_difference, brightness_difference_type, group_size)
+        coordinate, brightness_difference = find_transition_up_to_down(
+            color_converted_img, height, width, min_difference, 
+            brightness_difference_type, group_size)
     elif orientation == "down_to_up":
-        coordinate, brightness_difference = find_transition_down_to_up(img, min_difference, brightness_difference_type, group_size)
-    return coordinate, brightness_difference
+        coordinate, brightness_difference = find_transition_down_to_up(
+            color_converted_img, height, width, min_difference,
+            brightness_difference_type, group_size)
 
-def find_transition_left_to_right(img, min_difference, brightness_difference_type, group_size):
-    [height, width, _] = img.shape
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return coordinate, brightness_difference, color_converted_img
 
+def find_transition_left_to_right(img, height, width, min_difference, 
+        brightness_difference_type, group_size):
     # obtener los rangos de los grupos de columnas
     groups_ranges = math_functions.elements_per_partition(
         number_of_elements=width, number_of_partitions=math.ceil(width/group_size), get_as_indexes=True
@@ -894,10 +943,7 @@ def find_transition_left_to_right(img, min_difference, brightness_difference_typ
     # Si no se encontró una transición
     return None, None
 
-def find_transition_right_to_left(img, min_difference, brightness_difference_type, group_size):
-    [height, width, _] = img.shape
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
+def find_transition_right_to_left(img, height, width, min_difference, brightness_difference_type, group_size):
     # obtener los rangos de los grupos de columnas
     groups_ranges = math_functions.elements_per_partition(
         number_of_elements=width, number_of_partitions=math.ceil(width/group_size), get_as_indexes=True
@@ -923,10 +969,7 @@ def find_transition_right_to_left(img, min_difference, brightness_difference_typ
     # Si no se encontró una transición
     return None, None
 
-def find_transition_up_to_down(img, min_difference, brightness_difference_type, group_size):
-    [height, width, _] = img.shape
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
+def find_transition_up_to_down(img, height, width, min_difference, brightness_difference_type, group_size):
     # obtener los rangos de los grupos de filas
     groups_ranges = math_functions.elements_per_partition(
         number_of_elements=height, number_of_partitions=math.ceil(height/group_size), get_as_indexes=True
@@ -952,10 +995,7 @@ def find_transition_up_to_down(img, min_difference, brightness_difference_type, 
     # Si no se encontró una transición
     return None, None
 
-def find_transition_down_to_up(img, min_difference, brightness_difference_type, group_size):
-    [height, width, _] = img.shape
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
+def find_transition_down_to_up(img, height, width, min_difference, brightness_difference_type, group_size):
     # obtener los rangos de los grupos de filas
     groups_ranges = math_functions.elements_per_partition(
         number_of_elements=height, number_of_partitions=math.ceil(height/group_size), get_as_indexes=True
