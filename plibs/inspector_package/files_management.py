@@ -2,7 +2,7 @@ import os
 import codecs
 
 def read_file(path):
-    with open(path, 'r') as f:
+    with codecs.open(path, "r", encoding='utf8') as f:
         data = f.read()
         f.close()
     return data
