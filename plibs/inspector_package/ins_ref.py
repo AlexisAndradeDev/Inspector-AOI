@@ -134,7 +134,7 @@ def get_algorithm_coordinates_origin(algorithm, inspection_point,
         origin = algorithms_results[algorithm["take_as_origin"]]["location"]
     return origin
 
-def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
+def inspect_algorithm(algorithms_results, algorithms_status, results, board, inspection_point, algorithm,
                       settings, image, image_ultraviolet):
     # si el algoritmo ya fue procesado, no volver a inspeccionarlo
     if algorithm["name"] in algorithms_results:
@@ -153,6 +153,16 @@ def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
         # nombre, y los resultados se actualizarán a los de este último.
         algorithm_results["status"] = "not_executed"
         return algorithm_results
+
+    # inspeccionar el algoritmo al que está encadenado si todavía no se ha 
+    # inspeccionado
+    if (algorithm["chained_to"] != None and 
+            algorithms_results.get(algorithm["chained_to"]) == None):
+        inspect_algorithm(algorithms_results, algorithms_status, results, board, 
+            inspection_point,
+            inspection_point["algorithms"][algorithm["chained_to"]],
+            settings, image, image_ultraviolet,
+        )
 
     # no inspeccionar el algoritmo si la cadena no cumple con el status
     if (algorithm["chained_to"] != None and
@@ -197,7 +207,7 @@ def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
 
 
     # Ejecutar función de inspección
-    [fails, location, results, inspection_function_status, resulting_images] = \
+    [fails, location, inspection_function_results, inspection_function_status, resulting_images] = \
         execute_inspection_function(inspection_image_filt, algorithm)
 
     if location != "not_available":
@@ -207,7 +217,7 @@ def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
         )
 
     algorithm_results["location"] = location
-    algorithm_results["inspection_function_results"] = results
+    algorithm_results["inspection_function_results"] = inspection_function_results
     algorithm_results["codes"] += fails
     algorithm_results["status"] = results_management.update_algorithm_status(
         algorithm_results["status"], inspection_function_status, algorithm,
@@ -231,6 +241,8 @@ def inspect_algorithm(algorithms_results, board, inspection_point, algorithm,
             settings["check_mode_images_path"]
         )
 
+    results_management.save_algorithm_results(algorithm, algorithm_results, algorithms_results, algorithms_status, results)
+
     return algorithm_results
 
 
@@ -241,24 +253,10 @@ def inspect_algorithms(results, board, inspection_point, settings, image,
     # resultados de cada algoritmo
     algorithms_results = {}
 
-    for algorithm in inspection_point["algorithms"]:
+    for algorithm in inspection_point["algorithms"].values():
         algorithm_results = inspect_algorithm(
-            algorithms_results, board, inspection_point, algorithm, settings, 
+            algorithms_results, algorithms_status, results, board, inspection_point, algorithm, settings, 
             image, image_ultraviolet,
-        )
-
-        # agregar dict de resultados
-        algorithms_results[algorithm["name"]] = algorithm_results
-
-        # agregar string de resultados
-        if algorithm_results["status"] != "not_executed":
-            results.val += algorithm_results["string"]
-
-        # actualizar status global
-        algorithms_status = results_management.update_algorithms_status(
-            algorithms_status=algorithms_status,
-            algorithm_status=algorithm_results["status"],
-            algorithm=algorithm
         )
 
     return algorithms_status, algorithms_results

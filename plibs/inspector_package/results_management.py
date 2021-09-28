@@ -207,33 +207,32 @@ def set_algorithm_as_error(algorithm, board, algorithm_results, code):
         algorithm_results["codes"],
     )
 
+def save_algorithm_results(algorithm, algorithm_results, algorithms_results, algorithms_status, results):
+    """
+    Manipula directamente el diccionario de los resultados de los algoritmos.
+    Agrega el diccionario de resultados del algoritmo al diccionario de 
+    resultados de todos los algoritmos.
+    Agrega el string de resultados del algoritmo al string de todos los 
+    resultados (al que se escribirá en el archivo de results).
+    Actualiza el status global de todos los algoritmos.
+    
+    Args:
+        algorithm (dict): Contiene los datos del algoritmo.
+        algorithm_results (dict): Contiene los resultados del algoritmo.
+    """
+    # agregar dict de resultados
+    algorithms_results[algorithm["name"]] = algorithm_results
 
+    # agregar string de resultados
+    if algorithm_results["status"] != "not_executed":
+        results.val += algorithm_results["string"]
 
-# !!!
-def add_algorithm_results_to_algorithms_results(algorithm, algorithm_results, algorithms_results,
-        add_string=True
-    ):
-
-    # añadir string de resultados
-    if add_string:
-        algorithms_results["string"] += algorithm_results["string"]
-
-    # añadir lista de resultados
-    algorithms_results["results"][algorithm["name"]] = algorithm_results["results"]
-
-    # añadir status del algoritmo
-    algorithms_results["algorithms_status"][algorithm["name"]] = algorithm_results["status"]
-
-    # añadir localización del algoritmo
-    algorithms_results["locations"][algorithm["name"]] = algorithm_results["location"]
-
-    # añadir imágenes del algoritmo
-    if algorithm_results["images"]:
-        algorithms_results["images"].append(
-            [algorithm["name"], algorithm["light"], algorithm_results["images"]],
-        )
-
-    return algorithms_results
+    # actualizar status global de todos los algoritmos
+    algorithms_status = update_algorithms_status(
+        algorithms_status=algorithms_status,
+        algorithm_status=algorithm_results["status"],
+        algorithm=algorithm
+    )
 
 def write_results(results, stage):
     """

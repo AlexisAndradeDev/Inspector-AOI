@@ -205,10 +205,10 @@ def create_algorithms(container_inspection_point, data):
     Returns:
         algorithms (list): Lista con los algoritmos procesados.
     """
-    algorithms = []
+    algorithms = {}
     for algorithm_data in data:
         algorithm = create_algorithm(container_inspection_point, algorithm_data)
-        algorithms.append(algorithm)
+        algorithms[algorithm["name"]] = algorithm
     return algorithms
 
 
