@@ -152,6 +152,7 @@ def inspect_algorithm(algorithms_results, algorithms_status, results, board, ins
         # Puede volver a inspeccionarse si hay otro algoritmo con el mismo
         # nombre, y los resultados se actualizarán a los de este último.
         algorithm_results["status"] = "not_executed"
+        results_management.save_algorithm_results(algorithm, algorithm_results, algorithms_results, algorithms_status, results)
         return algorithm_results
 
     # inspeccionar el algoritmo al que está encadenado si todavía no se ha 
@@ -171,6 +172,7 @@ def inspect_algorithm(algorithms_results, algorithms_status, results, board, ins
         # puede volver a inspeccionarse si hay otro algoritmo con el mismo
         # nombre
         algorithm_results["status"] = "not_executed"
+        results_management.save_algorithm_results(algorithm, algorithm_results, algorithms_results, algorithms_status, results)
         return algorithm_results
 
 
@@ -185,6 +187,7 @@ def inspect_algorithm(algorithms_results, algorithms_status, results, board, ins
             algorithm, board, algorithm_results,
             "ALGO_TO_TAKE_AS_ORIGIN_DOESNT_HAVE_COORDINATES",
         )
+        results_management.save_algorithm_results(algorithm, algorithm_results, algorithms_results, algorithms_status, results)
         return algorithm_results
 
     algorithm_results["coordinates_in_board"] = get_algorithm_coordinates_in_board(
