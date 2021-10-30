@@ -1,0 +1,39 @@
+[
+ruta_de_la_imagen,
+
+[filtros_secundarios],
+
+[
+    color_mínimo, color_máximo, escala_de_color, invertir_binarizado, figura_para_agrupar_contornos, tamaño_del_kernel_al_agrupar_contornos
+],
+    
+]
+
+donde:
+
+color_mínimo, color_máximo: Los pixeles que se encuentren entre el rango mínimo y máximo se convertirán a color blanco; los que se encuentren fuera del rango, se convertirán a negro.
+    Ejemplo:
+        Con escala de colores "hsv":
+            [50,20,30], [255, 100, 150]
+            color_mínimo = [50,20,30]
+            color_máximo = [255, 100, 150]
+        Con escala de colores "gray":
+            80, 190
+            color_mínimo = 80
+            color_máximo = 190
+
+escala_de_color: "hsv", "gray".
+    Determina la escala de colores que se usará para binarizar la imagen.
+
+invertir_binarizado: True/False
+    Establece si los colores de la imagen binarizada se invertirán.
+    Si es False, los pixeles dentro del rango de color mínimo y máximo serán blancos; los que estén fuera serán negros.
+    Si es True, los pixeles dentro del rango de color mínimo y máximo serán *negros*; los que estén fuera del rango serán *blancos*.
+
+figura_para_agrupar_contornos: "ellipse", "rectangle".
+    Determina qué figura tendrá la línea que unirá a un contorno con otro. Se recomienda visualizar ambas opciones para entender mejor este parámetro.
+
+tamaño_del_kernel_al_agrupar_contornos: (distancia_en_x, distancia_en_y)
+    Establece la distancia que tiene que haber entre un contorno y otro para ser considerados del mismo grupo. Esto determinará cómo se delimitarán las regiones de grupos de contornos.
+    Ejemplo: (12, 14)
+

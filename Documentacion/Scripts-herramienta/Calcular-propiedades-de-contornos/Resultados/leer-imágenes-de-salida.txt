@@ -1,0 +1,9 @@
+Las imágenes se exportan a la carpeta C:/Dexill/Inspector/Alpha-Premium/x64/pd/
+
+original.bmp : Imagen sin modificar.
+filtered.bmp : Imagen con filtros secundarios.
+binary.bmp : Imagen binarizada.
+contours_closed : Imagen con los contornos agrupados.
+centers.bmp : Imagen con el centro de cada contorno individual dibujado.
+rectangles.bmp : Imagen con un rectángulo dibujado alrededor de cada contorno individual.
+regions.bmp : Imagen con un rectángulo dibujado alrededor de cada grupo de contornos.

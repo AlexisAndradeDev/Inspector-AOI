@@ -1,0 +1,14 @@
+FUNCIÓN
+
+Obtiene diversas propiedades de los contornos encontrados en la imagen introducida
+con los parámetros introducidos. Escribe las imágenes de cada propiedad.
+
+Por ejemplo, se puede introducir la imagen de un stencil, y, con los parámetros introducidos, se binarizará la imagen, y se obtendrán propiedades como el centro de cada contorno (de cada agujero del stencil, por ejemplo) y coordenadas de regiones de contornos agrupados (para crear ventanas en Creación de programas de forma automática).
+
+EJECUCIÓN
+
+Se utilizará el archivo get_cs_pro.py
+
+En la carpeta « C:/Dexill/Inspector/Alpha-Premium/x64/pd/ » debe existir un archivo llamado get_cs_pro_dt.di, el cual contendrá los datos de entrada para el script.
+
+La estructura de datos se encuentra en el archivo Estructura-de-datos.txt, ubicado en el mismo directorio que este archivo.

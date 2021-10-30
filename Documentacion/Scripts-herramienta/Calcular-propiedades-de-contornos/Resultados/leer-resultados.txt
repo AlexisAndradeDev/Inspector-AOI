@@ -1,0 +1,18 @@
+Los resultados se escriben en el archivo get_cs_pro_results.do ubicado en la carpeta /x64/pd/
+
+[
+[centro_de_cada_contorno individual], 
+[rectángulo_delimitante_de_cada_contorno_individual],
+[región_de_cada_grupo_de_contornos]
+]
+
+donde:
+
+centro_de_cada_contorno_individual: Es una lista que contiene los [x,y] del centro de cada contorno.
+    [[x,y], [x,y], [x,y], ...]
+
+rectángulo_delimitante_de_cada_contorno_individual: Lista que contiene los [x1,y1,x2,y2] de cada contorno.
+    [[x1,y1,x2,y2], [x1,y1,x2,y2], [x1,y1,x2,y2], ...]
+
+región_de_cada_grupo_de_contornos: Lista que contiene [x1,y1,x2,y2] de cada grupo (regiones) de contornos.
+    [[x1,y1,x2,y2], [x1,y1,x2,y2], [x1,y1,x2,y2], ...]
