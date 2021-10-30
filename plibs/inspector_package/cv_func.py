@@ -374,6 +374,23 @@ def binarize_image(img, lower, upper, color_scale, invert_binary=False):
 
     return binary_image
 
+def get_contours_properties(contours):
+    contours_properties = {}
+
+    contours_properties["centers"] = []
+    contours_properties["bounding_rectangles"] = []
+    for cnt in contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+        coordinates = [x,y,x+w,y+h]
+        contours_properties["bounding_rectangles"].append(coordinates)
+
+        center = math_functions.average_coordinates(
+            coordinates[:2], coordinates[2:]
+        )
+        contours_properties["centers"].append(center)
+
+    return contours_properties
+
 def find_contours(img, lower, upper, color_scale, invert_binary=False):
     """Retorna todos los contornos, sin filtros."""
     # retorna los contornos encontrados y la imagen binarizada
@@ -381,7 +398,9 @@ def find_contours(img, lower, upper, color_scale, invert_binary=False):
 
     # Encontrar contornos
     try:
-        _, contours, _ = cv2.findContours(binary_image,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        _, contours, _ = cv2.findContours(
+            binary_image,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE
+        )
     except:
          return None, None
 
