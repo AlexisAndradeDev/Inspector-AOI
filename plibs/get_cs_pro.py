@@ -1,4 +1,4 @@
-"""Get contours properties - v1.0.0
+"""Get contours properties
 Obtiene diversas propiedades de los contornos encontrados en la imagen introducida
 con los parámetros introducidos. Escribe las imágenes de cada propiedad.
 """
